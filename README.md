@@ -14,7 +14,7 @@ Fortunately, in the absence of recent surveys we can rely on statistical model-b
 We propose an approach for providing annual, country-specific estimates of a set of related contraceptive supply-share outcomes (proportion of modern contraceptive methods supplied by the public and private sectors), that captures changes in the supply share over time, as well as correlations between rates of change across different methods. The approach is implemented via a Bayesian, hierarchical, penalized-spline model with multivariate-normal spline coefficients to capture the cross-method correlations and is evaluated on 30 countries.
 
 ## How to Install and Run mcmsupply
-
+<<< Insert link to CRAN >>>
 
 ## Getting started
 If you are just getting started with mcmsupply, we recommend starting with the tutorial vignette found on our package webpage: 
