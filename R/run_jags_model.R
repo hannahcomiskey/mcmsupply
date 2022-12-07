@@ -1,7 +1,7 @@
 #' Run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model
 #' @name run_jags_model
-#' @param mydata The DHS data SE_source_data_20.RDS from /data folder. Contains data for countries participating in the FP2030 initiative.
-#' @param nseg Ghe number of knots to use in the splines. Default is 12.#'
+#' @param jagsdata The inputs for the JAGS model
+#' @param jagsparams The parameters of the JAGS model you wish to review
 #' @return returns the jags model object
 #' importFrom("stats", "cor", "filter", "lag")
 #' @import R2jags runjags tidyverse tidybayes
