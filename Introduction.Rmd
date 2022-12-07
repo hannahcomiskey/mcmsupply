@@ -2,13 +2,12 @@
 title: "Using the modern contraceptive methods supply (mcmsupply) national-level model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using the Modern Contraceptive Methods Supply (MCMSupply) Model}
+  %\VignetteIndexEntry{Using the modern contraceptive methods supply (mcmsupply) national-level model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
-devtools::load_all()
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -22,12 +21,15 @@ The 'mcmsupply' package contains all you need to recreate the country-specific e
 To begin, load the library:
 ```{r}
 library(mcmsupply)
+library(tidyverse)
+library(ggplot2)
+library(broom.mixed)
 ```
 
 ## 1. Load the data 
 The data used in the paper is found in the /data folder. A full description of how the dataset was obtained can be found in the associated paper. 
 
-The 'SE_source_data_20' dataset contains  the proportions of modern contraceptives supplied over time by the public and private sectors. The data is calculated using DHS surveys. The dataset contains survey estimates for all countries in the DHS covering the years 1990 to 2019. 
+The 'SE_source_data_20' dataset contains  the proportions of modern contraceptives supplied over time by the public and private sectors. The data is calculated using national-level demographic and health surveys (DHS) and is filtered to only include observations with a sample size of 20 women or more. . The dataset contains survey estimates for 30 focus countries participating in FP2030 covering the years 1990 to 2019. 
 
 Column        | Description
 ------------- | -------------
@@ -75,21 +77,25 @@ Western Africa | Togo
 Eastern Africa | Uganda
 Eastern Africa | Zimbabwe
 
+
+
+Get the input data and filter the data to include the FP2030 focus countries discussed in the associated paper. 
 ```{r}
-SE_source_data_20 <- get_data()
+source_data <- mcmsupply::get_data(fp2030=TRUE)
 ```
+
 
 ## 2. Review the model inputs before modelling 
 
 Review the model correlations
-```{r, eval=FALSE}
+```{r}
 load("data/estimated_rho_matrix.rda")
 estimated_rho_matrix
 ```
 
-Review the JAGS inputs 
-```{r, eval=FALSE}
-set_up_jags_data(SE_source_data_20, nseg=12)
+Gather the JAGS inputs into a list
+```{r}
+setup_jags <- mcmsupply::set_up_jags_data(source_data, nseg=12)
 ```
 
 
@@ -113,7 +119,7 @@ set_up_jags_data(SE_source_data_20, nseg=12)
 4. The function saves the model results to the '/results' folder in the 'mod_results.RDS' file. 
 
 ```{r, eval=FALSE}
-mymod <- run_jags_model(SE_source_data_20)
+mymod <- mcmsupply::run_jags_model(source_data)
 ```
 
 ```{r, include=FALSE}
@@ -122,35 +128,49 @@ mymod <- readRDS("~/PhD/private_adjustment/mcmsupply/tests/testthat/ref_alpha_Bs
 
 ## 4. Review the  model output
 
-#### Applying indexing to data to match to estimates
+#### Reference tables for the indexing
+Note: We specify the method order as per the method-correlation matrix. Order of countries, methods and methods is important for matching to model estimates.
 
 ```{r}
-SE_source_data_20 <- mcmsupply::country_index_fun(SE_source_data_20, unique(SE_source_data_20$Country))
+n_country <- setup_jags$n_country 
+country_index_table <- tibble::tibble(Country = n_country,
+                              index_country = as.character(1:length(n_country)))
+
+n_method <- setup_jags$n_method
+method_index_table <- tibble::tibble(Method = n_method,
+                             index_method = as.character(1:length(n_method)))
+
+sector_index_table <- tibble::tibble(sector_category = c("Public", "Commercial_medical", "Other"),
+                             index_sector = as.character(1:3))
+
+all_years <- setup_jags$all_years
+n_all_years <- length(all_years)
+year_index_table <- tibble::tibble(average_year = all_years, 
+                           index_year = 1:n_all_years)
+
 ```
 
-####  Note: We specify the method order as per the method-correlation matrix. Order of methods is important for indexing and matching to model estimates.
+#### Applying indexing to data to match to estimates produced by the JAGS model
+
 ```{r}
-method_order <- c("Female Sterilization", "Implants", "Injectables", "IUD", "OC Pills" ) 
-SE_source_data_20 <- mcmsupply::method_index_fun(SE_source_data_20, method_order)
+source_data <- source_data %>%
+  dplyr::left_join(country_index_table)
+```
+
+```{r}
+source_data <- source_data %>%
+  dplyr::left_join(method_index_table)
+```
+
+```{r}
+source_data <- source_data %>%
+  dplyr::left_join(sector_index_table)
 ```
 
 #### Add index for years, smallest year starts at 1.
 ```{r}
-  all_years <- seq(from = 1990, to = 2025.5, by=0.5)
-  SE_source_data_20 <- SE_source_data_20 %>%
-    mutate(index_year = match(average_year,all_years))
-```
-
-#### Reference tables for the indexing
-```{r}
-country_index_table <- tibble(Country = unique(SE_source_data_20$Country),
-                              index_country = unique(SE_source_data_20$index_country))
-
-method_index_table <- tibble(Method = unique(SE_source_data_20$Method),
-                             index_method = unique(SE_source_data_20$index_method))
-
-sector_index_table <- tibble(Sector = c("Public", "Commercial_medical", "Other"),
-                             index_sector = 1:3)
+source_data <- source_data %>%
+  dplyr::mutate(index_year = match(average_year,all_years))
 ```
 
 #### Extract all parameters and get their median, SE and credible intervals
@@ -167,56 +187,27 @@ my_estimates <- broom.mixed::tidy(
 ```{r}
 my_P_estimates <- my_estimates %>% 
   dplyr::filter(grepl("P", term)) %>%
-  dplyr::mutate(sector_index = substr(str_split_fixed(term, ",", 4)[,1],3,3),
-                method_index = str_split_fixed(term, ",", 4)[,2],
-                country_index = str_split_fixed(term, ",", 4)[,3],
-                year_index = sub("]", "", str_split_fixed(term, ",", 4)[,4])
+  dplyr::mutate(index_sector = substr(stringr::str_split_fixed(term, ",", 4)[,1],3,3),
+                index_method = stringr::str_split_fixed(term, ",", 4)[,2],
+                index_country = stringr::str_split_fixed(term, ",", 4)[,3],
+                index_year = sub("]", "", stringr::str_split_fixed(term, ",", 4)[,4])
                 )
 
 my_P_estimates <- my_P_estimates %>% 
- dplyr::mutate(Country = case_when(
-   country_index == country_index_table$index_country[1] ~ country_index_table$Country[1],
-   country_index == country_index_table$index_country[2] ~ country_index_table$Country[2],
-   country_index == country_index_table$index_country[3] ~ country_index_table$Country[3],
-   country_index == country_index_table$index_country[4] ~ country_index_table$Country[4],
-   country_index == country_index_table$index_country[5] ~ country_index_table$Country[5],
-   country_index == country_index_table$index_country[6] ~ country_index_table$Country[6],
-   country_index == country_index_table$index_country[7] ~ country_index_table$Country[7],
-   country_index == country_index_table$index_country[8] ~ country_index_table$Country[8],
-   country_index == country_index_table$index_country[9] ~ country_index_table$Country[9],
-   country_index == country_index_table$index_country[10] ~ country_index_table$Country[10],
-   country_index == country_index_table$index_country[11] ~ country_index_table$Country[11],
-   country_index == country_index_table$index_country[12] ~ country_index_table$Country[12],
-   country_index == country_index_table$index_country[13] ~ country_index_table$Country[13],
-   country_index == country_index_table$index_country[14] ~ country_index_table$Country[14],
-   country_index == country_index_table$index_country[15] ~ country_index_table$Country[15],
-   country_index == country_index_table$index_country[16] ~ country_index_table$Country[16],
-   country_index == country_index_table$index_country[17] ~ country_index_table$Country[17],
-   country_index == country_index_table$index_country[18] ~ country_index_table$Country[18],
-   country_index == country_index_table$index_country[19] ~ country_index_table$Country[19],
-   country_index == country_index_table$index_country[20] ~ country_index_table$Country[20],
-   country_index == country_index_table$index_country[21] ~ country_index_table$Country[21],
-   country_index == country_index_table$index_country[22] ~ country_index_table$Country[22],
-   country_index == country_index_table$index_country[23] ~ country_index_table$Country[23],
-   country_index == country_index_table$index_country[24] ~ country_index_table$Country[24],
-   country_index == country_index_table$index_country[25] ~ country_index_table$Country[25],
-   country_index == country_index_table$index_country[26] ~ country_index_table$Country[26],
-   country_index == country_index_table$index_country[27] ~ country_index_table$Country[27],
-   country_index == country_index_table$index_country[28] ~ country_index_table$Country[28],
-   country_index == country_index_table$index_country[29] ~ country_index_table$Country[29],
-   country_index == country_index_table$index_country[30] ~ country_index_table$Country[30])) %>%
-  dplyr::mutate(sector_category = case_when( 
-    sector_index == sector_index_table$index_sector[1] ~ sector_index_table$Sector[1],
-    sector_index == sector_index_table$index_sector[2] ~ sector_index_table$Sector[2],
-    sector_index == sector_index_table$index_sector[3] ~ sector_index_table$Sector[3])) %>%
-  dplyr::mutate(Method = case_when( 
-    method_index == method_index_table$index_method[1] ~ method_index_table$Method[1],
-    method_index == method_index_table$index_method[2] ~ method_index_table$Method[2],
-    method_index == method_index_table$index_method[3] ~ method_index_table$Method[3],
-    method_index == method_index_table$index_method[4] ~ method_index_table$Method[4],
-    method_index == method_index_table$index_method[5] ~ method_index_table$Method[5])) %>%
-  dplyr::mutate(average_year = as.numeric(year_index) + min(SE_source_data_20$average_year - 1))
+ dplyr::left_join(country_index_table) %>%
+  dplyr::left_join(sector_index_table) %>%
+  dplyr:::left_join(method_index_table) 
 ```
+
+#### Match index year to 6-monthly increments and filter to only keep the mid-year results
+We fit the model using 6-monthly increments as opposed to whole-years as we found that it improved model fit.
+```{r}
+my_P_estimates <- my_P_estimates %>%
+  dplyr::mutate(index_year = as.numeric(index_year)) %>% 
+  dplyr::left_join(year_index_table) %>% # add back whole year column to calculations
+  dplyr::filter(average_year > floor(average_year)) # only take mid-year (eg: 2022.5) estimates
+```
+
 
 #### Standardizing contraceptive method names to match data
 ```{r}
@@ -228,21 +219,21 @@ my_P_estimates <- mcmsupply::standard_method_names(my_P_estimates)
 #### Adding error limits to data using SE
 
 ```{r}
-SE_source_data_20 <- SE_source_data_20 %>% mutate(
-  prop_min = proportion - 2*SE.proportion,
-  prop_max = proportion + 2*SE.proportion ) %>%
-  mutate(prop_max = ifelse(prop_max > 1, 1, prop_max)) %>%
-  mutate(prop_min = ifelse(prop_min < 0, 0, prop_min)) 
+source_data <- source_data %>% 
+  dplyr::mutate(prop_min = proportion - 2*SE.proportion) %>%
+  dplyr::mutate(prop_max = proportion + 2*SE.proportion) %>%
+  dplyr::mutate(prop_max = ifelse(prop_max > 1, 1, prop_max)) %>%
+  dplyr::mutate(prop_min = ifelse(prop_min < 0, 0, prop_min)) 
 ```
 
 ```{r, fig.width=9, fig.height=9}
 safe_colorblind_palette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-zimbab_data <- SE_source_data_20[which(SE_source_data_20$Country=='Zimbabwe'), ]
+zimbab_data <- source_data[which(source_data$Country=='Zimbabwe'), ]
 zimbab_calc <- my_P_estimates[which(my_P_estimates$Country=='Zimbabwe'), ] 
 zimbab_calc <- zimbab_calc %>% dplyr::filter(average_year <= 2025)
 
-ggplot() + 
+ggplot2::ggplot() + 
   ggtitle("Contraceptive Supply in Zimbabwe") +
   geom_line(data=zimbab_calc, aes(x=average_year, y=estimate, colour=sector_category)) +
   geom_point(data=zimbab_data, aes(x=average_year, y=proportion, colour=sector_category))+
