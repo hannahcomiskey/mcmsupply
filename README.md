@@ -19,3 +19,6 @@ Install the repo using our [Github page](https://github.com/hannahcomiskey/mcmsu
 ## Getting started
 If you are just getting started with mcmsupply, we recommend starting with the tutorial vignette found on our package [webpage](https://rstudioserver.hamilton.ie/s/807ccd57f55a496e8de95/files/PhD/private_adjustment/mcmsupply/docs/index.html)
 
+## Related works 
+Check out our preprint describing our methods used to estimate these modern contraceptive methods supply shares:
+https://arxiv.org/abs/2212.03844
