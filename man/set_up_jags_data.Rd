@@ -5,10 +5,12 @@
 \title{Clean the raw input DHS data so it is suitable to be used in the jags model.
 Primarily this function addresses missing observations and standard errors (SE), replaces extremely tiny SE with reasonable SE}
 \usage{
-set_up_jags_data(mydata)
+set_up_jags_data(mydata, mycountry = NULL)
 }
 \arguments{
 \item{mydata}{The DHS data SE_source_data_20.RDS from /data folder. Contains data for countries participating in the FP2030 initiative.}
+
+\item{mycountry}{The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.}
 }
 \value{
 returns a cleaned DHS dataset

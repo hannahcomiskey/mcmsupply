@@ -4,12 +4,16 @@
 \alias{run_jags_model}
 \title{Run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model}
 \usage{
-run_jags_model(jagsdata, jagsparams)
+run_jags_model(jagsdata, jagsparams, local_run = FALSE, mycountry)
 }
 \arguments{
-\item{mydata}{The DHS data SE_source_data_20.RDS from /data folder. Contains data for countries participating in the FP2030 initiative.}
+\item{jagsdata}{The inputs for the JAGS model}
 
-\item{nseg}{Ghe number of knots to use in the splines. Default is 12.#'}
+\item{jagsparams}{The parameters of the JAGS model you wish to review}
+
+\item{local_run}{TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.}
+
+\item{mycountry}{The name of the country you are estimating for.}
 }
 \value{
 returns the jags model object
