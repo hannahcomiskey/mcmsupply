@@ -3,6 +3,7 @@
 export(bs_bbase_precise)
 export(country_index_fun)
 export(get_data)
+export(get_local_parameters)
 export(method_index_fun)
 export(region_index_fun)
 export(run_jags_model)
