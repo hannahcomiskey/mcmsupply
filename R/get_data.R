@@ -8,7 +8,9 @@ get_data <- function(fp2030=TRUE) {
   load("data/SE_source_data_20.rda")
   load("data/Country_and_area_classification_inclFP2020.rda")
 
-  SE_source_data_20 <- SE_source_data_20 %>% dplyr::select(!c(Method_collapse, check_sum))
+  SE_source_data_20 <- SE_source_data_20 %>%
+    dplyr::select(!c(Method_collapse, check_sum))
+
   area_classification <- Country_and_area_classification_inclFP2020 %>%
     dplyr::select(`Country or area`, `Region`) %>%
     dplyr::rename(Country = `Country or area`)
