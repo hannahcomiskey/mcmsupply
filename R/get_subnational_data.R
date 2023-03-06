@@ -8,7 +8,7 @@
 #' For a one-country-province dataset: mydata <- get_subnational_data(local=TRUE, mycountry="Nepal")
 
 get_subnational_data <- function(local=FALSE, mycountry=NULL) {
-  load("data/subnatSE_source_data.rda")   # Read in SE data
+  load("data/subnat_FPsource_data.rda")   # Read in SE data
 
   subnatSE_source_data <- subnatSE_source_data %>%
     dplyr::mutate(prop.trans = proportion*((nrow(subnatSE_source_data)-1)+0.33)/nrow(subnatSE_source_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
