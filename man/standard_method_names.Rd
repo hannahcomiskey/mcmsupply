@@ -2,16 +2,19 @@
 % Please edit documentation in R/standard_method_names.R
 \name{standard_method_names}
 \alias{standard_method_names}
-\title{Apply standard naming for modern contraceptive methods to dataset}
+\title{Standardise the contraceptive method names}
 \usage{
 standard_method_names(my_data)
 }
 \arguments{
-\item{my_data}{A dataframe or tibble containing a column called "Method" which contains the names of modern contraceptive methods}
+\item{my_data}{The input data with a Method column to standardise}
 }
 \value{
-A dataframe or tibble that has standardised naming applied to the Method column
+Original input dataframe with Method column standardised.
 }
 \description{
-Apply standard naming for modern contraceptive methods to dataset
+Standardise the contraceptive method names
+}
+\examples{
+data_standard <- standard_method_names(mydata)
 }
