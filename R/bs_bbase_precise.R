@@ -1,16 +1,21 @@
-#' Get B-splines. Written by Dr. Niamh Cahill.
+#' Get precisely aligned basis functions
 #' @name bs_bbase_precise
-#' @param x  Vector of x-values (without NAs) for which splines need to be calculated (determines the number of rows of B.ik)
-#' @param lastobs = max(x) max x-value which determines knot placement. Aligns knot to most recent survey year.
-#' @param xl = min(x) min x-value which determines knot placement.
-#' @param xr = max(x) max x-value which determines knot placement
-#' @param nseg Number of segments to divide x vector into, used to place knots
-#' @param degree = 3 # currently tested only with degree 3
-#' @return returns B.ik matrix, each row is one observation, each column is one B-spline. Vector of knots indicating knot placement across x vector.
+#' @param x The vector of years you wish to create your basis functions over
+#' @param lastobs The year of the most recent survey you wish to align the knots with. Default is max(x).
+#' @param xl Default is xl = min(x)
+#' @param xr Default is xr = max(x)
+#' @param nseg Number of knots you wish to use
+#' @param deg The degree of the polynomial. Default is 3.
+#'
+#' @return B.ik is a matrix, each row is one observation, each column is one B-spline.
+#' knots.k is a vector of transformed knots.
+#' Kstar is the knot point of last observation
 #' @export
+#'
+#' @examples all_years <- seq(from = 1990, to = 2030.5, by=0.5)
+#' bs_bbase_precise(all_years, lastobs=2014.5, nseg = 12)
 
-
-bs_bbase_precise <- function(x = x,lastobs = max(x), xl = min(x), xr = max(x), nseg = 10, deg = 3) {
+bs_bbase_precise <- function(x = x,lastobs = max(x), xl = min(x), xr = max(x), nseg = nseg, deg = 3) {
   # Compute the length of the partitions
   dx <- (xr - xl) / nseg
   # Compute position of knot before last observation
