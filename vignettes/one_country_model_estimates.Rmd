@@ -82,7 +82,7 @@ Eastern Africa | Zimbabwe
 
 Get the input data and filter the data to include the FP2030 focus countries discussed in the associated paper. 
 ```{r}
-source_data <- mcmsupply::get_data(fp2030=TRUE)
+source_data <- mcmsupply::get_national_data(fp2030=TRUE)
 ```
 
 
@@ -205,7 +205,6 @@ jags_pars <- c("P",
 ```
 
 ## 3. Fit the model using the DHS survey data
-
 'run_national_jags_model' is a wrapper function that:
     1. Determines whether you want a local (one-country) or global model run at the national level
     2. Sets up the jags model to run with 150K iterations, 10K burn in observations and thinning to every 70th observation.

@@ -1,0 +1,261 @@
+---
+title: "Using the modern contraceptive methods supply (mcmsupply) national-level model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using the modern contraceptive methods supply (mcmsupply) national-level model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+The 'mcmsupply' package contains all you need to recreate the country-specific estimates of the proportion of  modern contraceptives supplied by the public and private sectors listed in the paper, "Estimating the Proportion of Modern Contraceptives Supplied by the Public and Private Sectors using a Bayesian Hierarchical Penalized Spline Model" by Hannah Comiskey, Dr. Leontine Alkema & Dr. Niamh Cahill
+
+# Workflow
+To begin, load the library:
+```{r}
+library(mcmsupply)
+library(tidyverse)
+library(ggplot2)
+library(broom.mixed)
+```
+
+## 1. Load the data 
+The data used in the paper is found in the /data folder. A full description of how the dataset was obtained can be found in the associated paper. 
+
+The 'SE_source_data_20' dataset contains  the proportions of modern contraceptives supplied over time by the public and private sectors. The data is calculated using national-level demographic and health surveys (DHS) and is filtered to only include observations with a sample size of 20 women or more. . The dataset contains survey estimates for 30 focus countries participating in FP2030 covering the years 1990 to 2019. 
+
+Column        | Description
+------------- | -------------
+Country       | The name of the country that the survey observation relates to
+Method        | The modern contraceptive method that the survey observation relates to
+average_year  | The average of the years the survey was carried out in
+sector_category | The breakdown of the public and private sectors
+proportion    | The proportion supplied by the sector named
+SE.proportion | The standard error associated with the proportion estimated in the survey
+n             | The number of households used to produce the estimate
+Method_collapse | The modern contraceptive method that the survey observation relates to
+
+- The dataset must be subsetted in order for the model to run. It is too large to run as one object. To subset the data, we divide it based on countries participating in the Family Planning 2030 initiative. The countries are listed below.
+
+World region  | Country
+------------- | -------------
+Southern Asia | Afghanistan
+Western Africa | Benin
+Western Africa | Burkina Faso
+Middle Africa | Cameroon
+Middle Africa | Congo
+Middle Africa | Congo Democratic Republic
+Western Africa | Cote d'Ivoire
+Eastern Africa | Ethiopia
+Western Africa | Ghana
+Western Africa | Guinea
+Southern Asia | India
+Eastern Africa | Kenya
+Western Africa | Liberia
+Eastern Africa | Madagascar
+Eastern Africa | Malawi
+Western Africa | Mali
+Eastern Africa | Mozambique
+South-Eastern Asia | Myanmar
+Southern Asia | Nepal
+Western Africa | Niger
+Western Africa | Nigeria
+Southern Asia | Pakistan
+South-Eastern Asia | Philippines
+Eastern Africa | Rwanda
+Western Africa | Senegal
+Western Africa | Sierra Leone
+Eastern Africa | Tanzania
+Western Africa | Togo
+Eastern Africa | Uganda
+Eastern Africa | Zimbabwe
+
+
+
+Get the input data and filter the data to include the FP2030 focus countries discussed in the associated paper. 
+```{r}
+source_data <- mcmsupply::get_data(fp2030=TRUE)
+```
+
+
+## 2. Review the model inputs before modelling 
+
+Review the model correlations
+```{r}
+load("data/estimated_rho_matrix.rda")
+estimated_rho_matrix
+```
+
+Gather the JAGS inputs into a list
+```{r}
+setup_jags <- mcmsupply::set_up_jags_data(source_data, nseg=12)
+```
+
+
+## 3. Fit the model using the DHS survey data
+
+'run_jags_model' is a wrapper function that:
+
+1. Links to set_up_jags_data function: 
+  + Retrieves the estimated correlations
+
+  + Substitutes any missing data where only one sector is missing using the fact that the proportions for a given method M, in country C, at time T over the three sectors should sum to 1. 
+  
+  + Applies the appropriate method, country and time indexing 
+  
+  + Calculate the country-specific basis splines used in the model
+
+2. Sets the parameters to be monitored in the model
+
+3. Sets up the jags model to run with 150K iterations, 10K burn in observations and thinning to every 70th observation.
+
+4. The function saves the model results to the '/results' folder in the 'mod_results.RDS' file. 
+
+```{r, eval=FALSE}
+mymod <- mcmsupply::run_jags_model(source_data)
+```
+
+```{r, include=FALSE}
+mymod <- readRDS("~/PhD/private_adjustment/mcmsupply/tests/testthat/ref_alpha_Bspline_15knots_6monthest.RDS")
+```
+
+## 4. Review the  model output
+
+#### Reference tables for the indexing
+Note: We specify the method order as per the method-correlation matrix. Order of countries, methods and methods is important for matching to model estimates.
+
+```{r}
+n_country <- setup_jags$n_country 
+country_index_table <- tibble::tibble(Country = n_country,
+                              index_country = as.character(1:length(n_country)))
+
+n_method <- setup_jags$n_method
+method_index_table <- tibble::tibble(Method = n_method,
+                             index_method = as.character(1:length(n_method)))
+
+sector_index_table <- tibble::tibble(sector_category = c("Public", "Commercial_medical", "Other"),
+                             index_sector = as.character(1:3))
+
+all_years <- setup_jags$all_years
+n_all_years <- length(all_years)
+year_index_table <- tibble::tibble(average_year = all_years, 
+                           index_year = 1:n_all_years)
+
+```
+
+#### Applying indexing to data to match to estimates produced by the JAGS model
+
+```{r}
+source_data <- source_data %>%
+  dplyr::left_join(country_index_table)
+```
+
+```{r}
+source_data <- source_data %>%
+  dplyr::left_join(method_index_table)
+```
+
+```{r}
+source_data <- source_data %>%
+  dplyr::left_join(sector_index_table)
+```
+
+#### Add index for years, smallest year starts at 1.
+```{r}
+source_data <- source_data %>%
+  dplyr::mutate(index_year = match(average_year,all_years))
+```
+
+#### Extract all parameters and get their median, SE and credible intervals
+```{r}
+my_estimates <- broom.mixed::tidy(
+  x = mymod,
+  robust = TRUE,
+  conf.int = TRUE,
+  conf.method = "quantile"
+)
+```
+
+#### Reverse indexing to get country, method, year and sector names
+```{r}
+my_P_estimates <- my_estimates %>% 
+  dplyr::filter(grepl("P", term)) %>%
+  dplyr::mutate(index_sector = substr(stringr::str_split_fixed(term, ",", 4)[,1],3,3),
+                index_method = stringr::str_split_fixed(term, ",", 4)[,2],
+                index_country = stringr::str_split_fixed(term, ",", 4)[,3],
+                index_year = sub("]", "", stringr::str_split_fixed(term, ",", 4)[,4])
+                )
+
+my_P_estimates <- my_P_estimates %>% 
+ dplyr::left_join(country_index_table) %>%
+  dplyr::left_join(sector_index_table) %>%
+  dplyr:::left_join(method_index_table) 
+```
+
+#### Match index year to 6-monthly increments and filter to only keep the mid-year results
+We fit the model using 6-monthly increments as opposed to whole-years as we found that it improved model fit.
+```{r}
+my_P_estimates <- my_P_estimates %>%
+  dplyr::mutate(index_year = as.numeric(index_year)) %>% 
+  dplyr::left_join(year_index_table) %>% # add back whole year column to calculations
+  dplyr::filter(average_year > floor(average_year)) # only take mid-year (eg: 2022.5) estimates
+```
+
+
+#### Standardizing contraceptive method names to match data
+```{r}
+my_P_estimates <- mcmsupply::standard_method_names(my_P_estimates)
+```
+
+## 5.Plot the results for one country
+
+#### Adding error limits to data using SE
+
+```{r}
+source_data <- source_data %>% 
+  dplyr::mutate(prop_min = proportion - 2*SE.proportion) %>%
+  dplyr::mutate(prop_max = proportion + 2*SE.proportion) %>%
+  dplyr::mutate(prop_max = ifelse(prop_max > 1, 1, prop_max)) %>%
+  dplyr::mutate(prop_min = ifelse(prop_min < 0, 0, prop_min)) 
+```
+
+```{r, fig.width=9, fig.height=9}
+safe_colorblind_palette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+zimbab_data <- source_data[which(source_data$Country=='Zimbabwe'), ]
+zimbab_calc <- my_P_estimates[which(my_P_estimates$Country=='Zimbabwe'), ] 
+zimbab_calc <- zimbab_calc %>% dplyr::filter(average_year <= 2025)
+
+ggplot2::ggplot() + 
+  ggtitle("Contraceptive Supply in Zimbabwe") +
+  geom_line(data=zimbab_calc, aes(x=average_year, y=estimate, colour=sector_category)) +
+  geom_point(data=zimbab_data, aes(x=average_year, y=proportion, colour=sector_category))+
+  geom_errorbar(data=zimbab_data, aes(ymin = prop_min, ymax = prop_max, x=average_year,
+                                      colour=sector_category), width = 1.5) +
+  geom_ribbon(data=zimbab_calc, aes(ymin=conf.low, ymax=conf.high, x=average_year,
+                                    fill=sector_category), colour=NA, alpha=0.2 ) +
+  labs(y="Proportion of contraceptives supplied", x = "Year") +
+  scale_y_continuous(limits=c(0,1))+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme(strip.text.x = element_text(size = 8)) +
+  scale_colour_manual(values= c("Public" = safe_colorblind_palette[3],
+                                "Commercial_medical" = safe_colorblind_palette[1] ,
+                                "Other" = safe_colorblind_palette[2])) +
+  scale_fill_manual(values=c("Public" = safe_colorblind_palette[3],
+                             "Commercial_medical" = safe_colorblind_palette[1] ,
+                             "Other" = safe_colorblind_palette[2])) +
+  theme(legend.position = "bottom")+
+  labs(fill = "Sector") +
+  guides(color="none") + 
+  facet_wrap(~Method)
+
+```
+
