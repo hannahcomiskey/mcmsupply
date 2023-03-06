@@ -1,0 +1,107 @@
+---
+title: "Calculating family planning source proportions from DHS survey microdata"
+author: "Hannah Comiskey"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+This vignette is an example of how I calculate family planning (FP) source aggregated observations from DHS microdata. Default data is included in this package in the /data folder. However, you can use this vignette to calculate FP source data for additional countries if required. This process would not have been possible without the help of Kristin Bietsch, PhD, Avenir Health. 
+
+## National level data
+
+To begin, you will need to register for access to the DHS program data. Further details on how to do this can be found on their website: https://dhsprogram.com/data/new-user-registration.cfm
+
+Once you have complete the registration, you can access the DHS data and download the datasets you require. For calculating the FP source dataset, you will need to download the **individual recode** files in the **.dta format**. 
+
+Below is an example of how you can begin with the raw DHS microdata .dta file and finish with an RDS file of FP source survey observations with uncertainty using the survey package from CRAN [1]. 
+
+1. Load required libraries 
+```{r, eval=FALSE}
+library(survey) # Calculating the weighted proportions with uncertainty
+library(dplyr) # Data manipulation
+library(tidyr) # Data manipulation
+library(haven) # Reading in DTA file into R 
+library(xlsx) # Write to xlsx formats
+library(labelled) # Reviewing labels within data
+```
+
+
+2. Set up folders for saving results and read in data. Begin extracting basic information from survey.
+```{r, eval=FALSE}
+folder <- "data/SEdata" # Set results folder
+data <- haven::read_dta(file="data/dta_files/TEST.DTA") # Read in DTA file downloaded from DHS program data
+year <-  min(data$v007) # Set the year of the survey
+survey <- "DHS"
+country_code <- unique(data$v000) # Unique country code identifier
+```
+
+3. Review and recode the contraceptive method names and supply sectors from their corresponding numerical codes to character entries.
+
+```{r, eval=FALSE}
+labelled::val_labels(data$v312) # Numerical codes and names of the contraceptive method used
+data <- data %>% mutate(modern_method_source= case_when(v312==6 ~ "Sterilization (F)",
+                                                        v312==7 ~ "Sterilization (M)",
+                                                        v312==2 ~ "IUD",
+                                                        v312==11 ~ "Implant",
+                                                        v312==3 ~ "Injectable",
+                                                        v312==1 ~ "OC Pills",
+                                                        v312==5 ~ "Condom (M)",
+                                                        v312==14 ~ "Condom (F)",
+                                                        v312==4 | v312==15 | v312== 17 | v312== 18 | v312== 19 | v312== 20 ~ "Other Modern Methods",
+                                                        v312==16 ~ "Emergency contraception",
+                                                        v312==0 | v312==8 | v312==9 | v312==10 | v312==12 ~ "None"))
+
+
+labelled::val_labels(data$v327) # Numerical codes and names of the contraceptive method supplier used
+data <- data %>% mutate(sector= case_when(v327==1 | v327==2 ~ "Public",
+                                          v327==3 ~ "NGO",
+                                          v327==4 ~ "Private Clinic",
+                                          v327==5 ~ "Pharmacy",
+                                          v327==6 ~ "Shop Church Friend",
+                                          v327==7 ~ "Other",
+                                          v327==8 ~  NA_character_))
+
+data <- data %>% mutate(sector_categories= case_when(v327==1 | v327==2 ~ "Public", # Further aggregate the sources into Public, private commercial medical and private other sectors
+                                          v327==3 ~ "Commercial_medical",
+                                          v327==4 ~ "Commercial_medical",
+                                          v327==5 ~ "Commercial_medical",
+                                          v327==6 ~ "Other",
+                                          v327==7 ~ "Other",
+                                          v327==8 ~  NA_character_))
+```
+
+```{r, eval=FALSE}
+data$num <- 1
+data$sampleweights <- data$v005/1000000 # As per the DHS data manual. This is the sample weights for each observation.
+
+data <- data %>% filter(is.na(sector_categories)==FALSE & modern_method_source %in% c("Implant", "Injectable", "OC Pills", "Sterilization (F)", "Sterilization (M)", "Condom (M)", "Condom (F)", "IUD","Other Modern Methods", "Emergency contraception"))
+
+data %>% count(sector)
+data %>% count(sector_categories)
+data %>% count(modern_method_source)
+counts <- data %>% group_by(sector_categories) %>% count(modern_method_source) %>% rename(method = modern_method_source)
+
+```
+
+
+
+
+
+## Subnational level data
+
+
+
+
+## References
+ICF. 2004-2017. Demographic and Health Surveys (various) [Datasets]. Funded by USAID. Rockville, Maryland: ICF [Distributor].
+
+Elizabeth Heger Boyle, Miriam King and Matthew Sobek. IPUMS-Demographic and Health Surveys: Version 9 [dataset]. IPUMS and ICF, 2022. https://doi.org/10.18128/D080.V9
+
+Lumley T (2020). “survey: analysis of complex survey samples.” R package version 4.0. 
+
