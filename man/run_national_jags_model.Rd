@@ -4,16 +4,16 @@
 \alias{run_national_jags_model}
 \title{Run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model}
 \usage{
-run_national_jags_model(jagsdata, jagsparams, local_run = FALSE, mycountry)
+run_national_jags_model(jagsdata, jagsparams, local = FALSE, mycountry = NULL)
 }
 \arguments{
 \item{jagsdata}{The inputs for the JAGS model}
 
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
 
-\item{local_run}{TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.}
+\item{local}{TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.}
 
-\item{mycountry}{The name of the country you are estimating for.}
+\item{mycountry}{The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.}
 }
 \value{
 returns the jags model object

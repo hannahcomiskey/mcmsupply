@@ -5,10 +5,12 @@
 \title{Clean the raw input DHS data so it is suitable to be used in the national-level jags model.
 Primarily this function addresses missing observations and standard errors (SE), replaces extremely tiny SE with reasonable SE}
 \usage{
-set_up_national_jags_data(mydata, mycountry = NULL)
+set_up_national_jags_data(mydata, local = FALSE, mycountry = NULL)
 }
 \arguments{
 \item{mydata}{The DHS data SE_source_data_20.RDS from /data folder. Contains data for countries participating in the FP2030 initiative.}
+
+\item{local}{TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.}
 
 \item{mycountry}{The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.}
 }
