@@ -1,0 +1,68 @@
+model{
+## Variance structure
+  for(g in 1:2) { # Sector (public,private) loop for covariance 
+    mu_delta[g,1:M_count] <- rep(0,M_count)
+    inv.sigma_delta[1:M_count,1:M_count,g] ~ dwish(natdf*natRmat[1:M_count,1:M_count,g],natdf) # S~dwish(R,p) => E(S) = p * solve(R)
+  }
+
+## Model Estimates
+  for(p in 1:P_count) { # subnat loop
+    for(m in 1:M_count){ # method loop
+      for (t in 1:n_years) { 
+        z[m,p,t] <- alpha_snms[1,m,p] + inprod(B.ik[p,t,],beta.k[1,m,p,])
+        r[m,p,t] <- alpha_snms[2,m,p] + inprod(B.ik[p,t,],beta.k[2,m,p,])
+      } # end **after tstar** loop
+    } # end M loop 
+  } # end P loop
+
+## Parameter Estimates 
+  for(s in 1:2){ # sector loop
+    for(p in 1:P_count) { # subnat loop
+      for(m in 1:M_count){ # method loop
+        alpha_snms[s,m,p] ~ dnorm(alpha_cms_hat[s,m], tau_alpha_snms_hat[s]) # sharing info across methods within a subnat area so each subnat public/private sector has an intercept. Tau-alpha is the cross-method sector variance.
+        beta.k[s,m,p,kstar[p]] <- 0 # kstar[p] is the knot at tstar for country c. Just the value of the intercept
+        for(j in 1:(kstar[p]-1)){ # before kstar[p] 
+          beta.k[s,m,p,(kstar[p] - j)] <- beta.k[s,m,p,(kstar[p] - j)+1] - delta.k[s,m,p,(kstar[p] - j)]
+        } # end K1 loop
+        for(j in (kstar[p]+1):K){ # after kstar[p] 
+          beta.k[s,m,p,j] <- beta.k[s,m,p,(j-1)] + delta.k[s,m,p,(j-1)]
+        } # end K2 loop
+      } # end m loop
+      
+      for(j in 1:H){ 
+        delta.k[s,c(1:M_count),p,j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s]) # delta are the slopes for country c and method m
+      } # end H loop
+    
+    } # end C loop
+  } # end S loop
+
+## Estimating all the Categories here (including total private)
+  for(p in 1:P_count){ # country loop
+    for(m in 1:M_count){ # method loop
+      for (t in 1:n_years) { # years loop  
+         P[1,m,p,t] <- 1/(1+exp(-(z[m,p,t]))) # modelling this as before assuming that z[m,p,t] is log(pi_public/pi_private)
+         
+         Q[m,p,t] <- 1/(1+exp(-(r[m,p,t]))) # logit-inverse of ratio
+
+         U[m,p,t] <- 1-P[1,m,p,t] # this then gives you the total private sector
+
+         P[2,m,p,t] <- Q[m,p,t]*U[m,p,t] # this is assuming that the logit(P[2,m,p,t]/U[m,p,t]) = r[m,p,t] i.e., we are modelling the ratio of private medical to private
+
+         P[3,m,p,t] <- U[m,p,t] - P[2,m,p,t] # other = private - private medical
+      }
+    }
+  }
+
+## Likelihood
+  for (k in 1:n_obs) {
+    y[k, 1] ~ dnorm(P[1,matchmethod[k],matchsubnat[k],matchyears[k]], tau_y[k,1])T(0,1)
+    y[k, 2] ~ dnorm(P[2,matchmethod[k],matchsubnat[k],matchyears[k]], tau_y[k,2])T(0,1)
+
+    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2) 
+    }
+    
+## Priors
+  for(s in 1:2) { # cross method variance (within a country)
+    tau_alpha[s] ~ dt(0,1,1)T(0,)
+  }
+}
