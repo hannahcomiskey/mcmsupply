@@ -13,7 +13,7 @@ run_national_jags_model <- function(jagsdata, jagsparams, local=FALSE, mycountry
   if(local==TRUE & is.null(mycountry)==FALSE) {
     mod <- jags.parallel(data=jagsdata,
                          parameters.to.save=jagsparams,
-                         model.file = "model/local_national_model_run.txt",
+                         model.file = "model/local_national_model.txt",
                          n.iter = 80000,
                          n.burnin = 10000,
                          n.thin = 35)
@@ -21,7 +21,7 @@ run_national_jags_model <- function(jagsdata, jagsparams, local=FALSE, mycountry
   } else {
     mod <- jags.parallel(data=jagsdata,
                          parameters.to.save=jagsparams,
-                         model.file = "model/global_national_model_run.txt",
+                         model.file = "model/global_national_model.txt",
                          n.iter = 150000,
                          n.burnin = 10000,
                          n.thin = 70)
