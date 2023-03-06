@@ -34,19 +34,21 @@ get_subnational_modelinputs(
 }
 \value{
 A list of modelling inputs for the JAGS model.
-1. Tstar is the year index for the most recent survey in each province.
-2. Kstar is the knot index that aligns with Tstar.
-3. B.ik are the basis functions.
-4. n_years are total number of years
-5. n_obs  are the total number of observations
-6. K are the number of knots.
-7. H is K-1. Used in the calculation of first order differences of spline coefficients.
-8. P_count is the number of subnational provinces/regions.
-9. M_count is the number of modern contraceptive methods.
-10. matchsubnat is the subnational province indexing to match the observed data to the predictions.
-11. matchcountry is the country indexing to match the observed data to the predictions.
-12. matchmethod is the method indexing to match the observed data to the predictions.
-13. matchyears is the year indexing to match the observed data to the predictions.
+\enumerate{
+\item Tstar is the year index for the most recent survey in each province.
+\item Kstar is the knot index that aligns with Tstar.
+\item B.ik are the basis functions.
+\item n_years are total number of years
+\item n_obs  are the total number of observations
+\item K are the number of knots.
+\item H is K-1. Used in the calculation of first order differences of spline coefficients.
+\item P_count is the number of subnational provinces/regions.
+\item M_count is the number of modern contraceptive methods.
+\item matchsubnat is the subnational province indexing to match the observed data to the predictions.
+\item matchcountry is the country indexing to match the observed data to the predictions.
+\item matchmethod is the method indexing to match the observed data to the predictions.
+\item matchyears is the year indexing to match the observed data to the predictions.
+}
 }
 \description{
 Get JAGS model inputs

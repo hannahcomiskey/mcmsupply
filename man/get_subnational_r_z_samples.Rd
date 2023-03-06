@@ -24,7 +24,7 @@ get_subnational_r_z_samples(
 
 \item{spatial}{TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.}
 
-\item{pkg_data}{Output of the `mcmsupplylocal::get_subnational_modelinputs()` function.}
+\item{pkg_data}{Output of the \code{mcmsupplylocal::get_subnational_modelinputs()} function.}
 
 \item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
 }

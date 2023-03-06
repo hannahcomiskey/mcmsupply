@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_subnational_point_estimates.R
 \name{plot_subnational_point_estimates}
 \alias{plot_subnational_point_estimates}
-\title{Plot median, 95% and 80% credible intervals for posterior samples of P from local JAGS model with the relevant survey data}
+\title{Plot median, 95\% and 80\% credible intervals for posterior samples of P from local JAGS model with the relevant survey data}
 \usage{
 plot_subnational_point_estimates(
   main_path,
@@ -13,15 +13,15 @@ plot_subnational_point_estimates(
 )
 }
 \arguments{
-\item{pkg_data}{Output of the `mcmsupplylocal::get_subnational_modelinputs()` function.}
+\item{pkg_data}{Output of the \code{mcmsupplylocal::get_subnational_modelinputs()} function.}
 
 \item{vis_path}{String. Path where your visualisations will be saved to.}
 
 \item{Psamps}{Posterior samples of P for one sector from JAGS model}
 }
 \value{
-Data frame of labelled posterior samples with median, 95% and 80% credible intervals estimates.
+Data frame of labelled posterior samples with median, 95\% and 80\% credible intervals estimates.
 }
 \description{
-Plot median, 95% and 80% credible intervals for posterior samples of P from local JAGS model with the relevant survey data
+Plot median, 95\% and 80\% credible intervals for posterior samples of P from local JAGS model with the relevant survey data
 }

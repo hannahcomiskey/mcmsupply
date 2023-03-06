@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_subnational_global_P_estimates.R
 \name{get_subnational_global_P_estimates}
 \alias{get_subnational_global_P_estimates}
-\title{Get median, 95% and 80% credible intervals for posterior samples of P from JAGS model}
+\title{Get median, 95\% and 80\% credible intervals for posterior samples of P from JAGS model}
 \usage{
 get_subnational_global_P_estimates(
   main_path,
@@ -27,10 +27,10 @@ get_subnational_global_P_estimates(
 \item{year_index_table}{Dataframe with time indexing applied. Used to match estimates to data.}
 }
 \value{
-Dataframe of labelled posterior samples with median, 95% and 80% credible intervals estimates.
+Dataframe of labelled posterior samples with median, 95\% and 80\% credible intervals estimates.
 }
 \description{
-Get median, 95% and 80% credible intervals for posterior samples of P from JAGS model
+Get median, 95\% and 80\% credible intervals for posterior samples of P from JAGS model
 }
 \examples{
 get_subnational_global_P_estimates(subnat_index_table, method_index_table, sector_type, year_index_table, P_samps)

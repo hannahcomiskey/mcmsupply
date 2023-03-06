@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_subnational_local_P_estimates.R
 \name{get_subnational_local_P_estimates}
 \alias{get_subnational_local_P_estimates}
-\title{Get median, 95% and 80% credible intervals for posterior samples of P from local JAGS model}
+\title{Get median, 95\% and 80\% credible intervals for posterior samples of P from local JAGS model}
 \usage{
 get_subnational_local_P_estimates(
   Psamps,
@@ -27,8 +27,8 @@ get_subnational_local_P_estimates(
 \item{sector_type}{String. Name of sector you are interested in. One of either ("Public", "Commercial medical", "Other")}
 }
 \value{
-Dataframe of labelled posterior samples with median, 95% and 80% credible intervals estimates.
+Dataframe of labelled posterior samples with median, 95\% and 80\% credible intervals estimates.
 }
 \description{
-Get median, 95% and 80% credible intervals for posterior samples of P from local JAGS model
+Get median, 95\% and 80\% credible intervals for posterior samples of P from local JAGS model
 }

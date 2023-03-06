@@ -16,7 +16,7 @@ get_subnational_P_point_estimates(
 \arguments{
 \item{main_path}{String. Path where you have set your model results to be saved to.}
 
-\item{pkg_data}{Output of the `mcmsupplylocal::get_subnational_modelinputs()` function.}
+\item{pkg_data}{Output of the \code{mcmsupplylocal::get_subnational_modelinputs()} function.}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
