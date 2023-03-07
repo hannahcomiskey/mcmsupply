@@ -100,9 +100,9 @@ dplyr::glimpse(pkg_data$data)
 Load your informative priors for the local JAGS model. If you wish to calculate your own priors, you can do so using the estimates from the corresponding (spatial/non-spatial) global model. An example of how to get these estimates in found in the /data-raw folder.
 
 ```{r, include=TRUE, message=FALSE}
-load("data/sigma_delta_hat_subnationalmod.rda")
+load("data/sigma_matrix_subnationalmod.rda")
 load("data/median_alphacms_subnationalmod.rda")
-load("data/tau_alpha_pms_hat_subnationalmod.rda")
+load("data/tau_alphapms_subnationalmod.rda")
 
 myalpha_med <- median_alphacms[,,"Nepal"] # Take out relevant country
 ```

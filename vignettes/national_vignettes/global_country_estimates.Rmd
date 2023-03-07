@@ -29,7 +29,7 @@ library(broom.mixed)
 ## 1. Load the data 
 The data used in the paper is found in the /data folder. A full description of how the dataset was obtained can be found in the associated paper. 
 
-The 'SE_source_data_20' dataset contains  the proportions of modern contraceptives supplied over time by the public and private sectors. The data is calculated using national-level demographic and health surveys (DHS) and is filtered to only include observations with a sample size of 20 women or more. . The dataset contains survey estimates for 30 focus countries participating in FP2030 covering the years 1990 to 2019. 
+The 'national_FPsource_data' dataset contains  the proportions of modern contraceptives supplied over time by the public and private sectors. The data is calculated using national-level demographic and health surveys (DHS) and is filtered to only include observations with a sample size of 20 women or more. The dataset contains survey estimates for 30 focus countries participating in FP2030 covering the years 1990 to 2019. 
 
 Column        | Description
 ------------- | -------------
@@ -187,7 +187,7 @@ H <- K-1
 
 ###  Prepare global correlations for JAGS model input
 ```{r}
-load("data/estimated_rho_matrix_national.rda")
+load("data/estimated_global_bational_correlations")
 
 estimated_rho_matrix <- estimated_rho_matrix %>%
   dplyr::select(row, column, public_cor, private_cor)
