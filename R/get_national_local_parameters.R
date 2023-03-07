@@ -7,9 +7,9 @@
 
 get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
   # Read in national alpha estimates ---------------------------------
-  load("data/median_alpha_region_intercepts_nationalmod.rda")
-  load("data/precision_alpha_country_intercepts_nationalmod.rda")
-  load("data/Bspline_sigma_matrix_median_nationalmod.rda")
+  load("data/median_alpharms_nationalmod.rda")
+  load("data/tau_alphacms_nationalmod.rda")
+  load("data/sigma_matrix_nationalmod.rda")
 
   mydata <- get_data(fp2030=fp2030) # Read complete data set in without filtering for any country
   mydata <- set_up_jags_data(mydata, mycountry=NULL)
