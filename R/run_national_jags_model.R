@@ -13,8 +13,12 @@
 #' @import R2jags runjags tidyverse tidybayes
 #' @export
 
-run_national_jags_model <- function(jagsdata, jagsparams, local=FALSE, main_path = "results/",
+run_national_jags_model <- function(jagsdata, jagsparams, local=FALSE, main_path,
                                     n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
+
+  print("Saving results to the following pathway:")
+  print(main_path)
+
   if(local==TRUE & is.null(mycountry)==FALSE) {
     mod <- jags.parallel(data=jagsdata,
                          parameters.to.save=jagsparams,

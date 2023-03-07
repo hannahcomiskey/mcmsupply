@@ -14,8 +14,12 @@
 #' @import R2jags runjags tidyverse tidybayes foreach doMC sf spdep geodata
 #' @export
 
-run_subnational_jags_model <- function(jagsdata, jagsparams, local=FALSE, spatial=FALSE, main_path = "results/",
+run_subnational_jags_model <- function(jagsdata, jagsparams, local=FALSE, spatial=FALSE, main_path,
                                        n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
+
+  print("Saving results to the following pathway:")
+  print(main_path)
+
   doMC::registerDoMC() # start parallel runs, save results in steps
 
   # get model file
