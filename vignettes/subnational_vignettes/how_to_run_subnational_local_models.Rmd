@@ -74,13 +74,13 @@ This function returns the inputs for the JAGS model in a list:
 - n_method: Vector to indicate the order of the methods used in estimation
 - n_country: Vector to indicate the order of the countries used in estimation
 - n_subnat: Vector to indicate the order of the subnational provinces used in estimation
-- n_subnat: Vector to indicate the order of the subcontinents used in estimation
+- n_superregion: Vector to indicate the order of the subcontinents used in estimation
 - all_years: Vector of year indexing used in the model
 - matchsuperegion: Vector used to match the data to the model estimates via the subcontinents
 - matchsubnat: Vector used to match the data to the model estimates via the subnational provinces
 - matchcountry: Vector used to match the data to the model estimates via the countries
 - matchmethod: Vector used to match the data to the model estimates via the methods
-- matchmethod: Vector used to match the data to the model estimates via the years
+- matchyears: Vector used to match the data to the model estimates via the years
 
 
 ```{r, include=TRUE, message=FALSE}
@@ -100,11 +100,7 @@ dplyr::glimpse(pkg_data$data)
 Load your informative priors for the local JAGS model. If you wish to calculate your own priors, you can do so using the estimates from the corresponding (spatial/non-spatial) global model. An example of how to get these estimates in found in the /data-raw folder.
 
 ```{r, include=TRUE, message=FALSE}
-load("data/sigma_matrix_subnationalmod.rda")
-load("data/median_alphacms_subnationalmod.rda")
-load("data/tau_alphapms_subnationalmod.rda")
-
-myalpha_med <- median_alphacms[,,"Nepal"] # Take out relevant country
+local_params <- get_subnational_local_parameters("Nepal")
 ```
 
 Get your neighbours list - this is for the variance-covariance matrix of the spatial CAR component. The 'path' parameter lists where you wish to store your geographic boundaries data. 

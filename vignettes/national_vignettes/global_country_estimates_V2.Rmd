@@ -1,0 +1,187 @@
+---
+title: "How to run a global national model"
+author: "Hannah Comiskey"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+The 'mcmsupply' package contains all you need to recreate the country-specific estimates of the proportion of  modern contraceptives supplied by the public and private sectors listed in the paper, "Estimating the Proportion of Modern Contraceptives Supplied by the Public and Private Sectors using a Bayesian Hierarchical Penalized Spline Model" by Hannah Comiskey, Dr. Leontine Alkema & Dr. Niamh Cahill
+
+# Workflow
+To begin, load the library:
+```{r, warning = FALSE}
+#library(mcmsupply)
+devtools::load_all()
+library(tidyverse)
+library(ggplot2)
+library(broom.mixed)
+```
+
+## 1. Load the data 
+The data used in the paper is found in the /data folder. A full description of how the dataset was obtained can be found in the associated paper. 
+
+The 'national_FPsource_data' dataset contains  the proportions of modern contraceptives supplied over time by the public and private sectors. The data is calculated using national-level demographic and health surveys (DHS) and is filtered to only include observations with a sample size of 20 women or more. The dataset contains survey estimates for 30 focus countries participating in FP2030 covering the years 1990 to 2019. 
+
+Column        | Description
+------------- | -------------
+Country       | The name of the country that the survey observation relates to
+Method        | The modern contraceptive method that the survey observation relates to
+average_year  | The average of the years the survey was carried out in
+sector_category | The breakdown of the public and private sectors
+proportion    | The proportion supplied by the sector named
+SE.proportion | The standard error associated with the proportion estimated in the survey
+n             | The number of households used to produce the estimate
+Method_collapse | The modern contraceptive method that the survey observation relates to
+
+- The dataset must be subsetted in order for the model to run. It is too large to run as one object. To subset the data, we divide it based on countries participating in the Family Planning 2030 initiative. The countries are listed below.
+
+World region  | Country
+------------- | -------------
+Southern Asia | Afghanistan
+Western Africa | Benin
+Western Africa | Burkina Faso
+Middle Africa | Cameroon
+Middle Africa | Congo
+Middle Africa | Congo Democratic Republic
+Western Africa | Cote d'Ivoire
+Eastern Africa | Ethiopia
+Western Africa | Ghana
+Western Africa | Guinea
+Southern Asia | India
+Eastern Africa | Kenya
+Western Africa | Liberia
+Eastern Africa | Madagascar
+Eastern Africa | Malawi
+Western Africa | Mali
+Eastern Africa | Mozambique
+South-Eastern Asia | Myanmar
+Southern Asia | Nepal
+Western Africa | Niger
+Western Africa | Nigeria
+Southern Asia | Pakistan
+South-Eastern Asia | Philippines
+Eastern Africa | Rwanda
+Western Africa | Senegal
+Western Africa | Sierra Leone
+Eastern Africa | Tanzania
+Western Africa | Togo
+Eastern Africa | Uganda
+Eastern Africa | Zimbabwe
+
+
+## Get your data
+This function 'get_national_data' retrieves the raw family planning national source data, applies some basic cleaning and joins the FP source data to a country classification dataframe for additional geographic information.
+
+The parameters of this function are: 
+
+- local: Default is FALSE. This indicates whether or not you are running a local (single country) or global (multicountry) model. We set this as TRUE here.
+
+- mycountry: Default is NULL. When local=TRUE, this parameter indicates the name of the country, as a string, whose data you wish to use in your local model run. A list of country names can be found in the /vignette folder under 'country_names.Rmd'. We set this to "Nepal" for this model run. 
+
+- fp2030: Default is TRUE. The code is not tested for countries outside of those participating in the FP2030 initiative.
+
+```{r}
+cleaned_natdata <- get_national_data(local=FALSE, mycountry=NULL, fp2030=TRUE)
+```
+
+## Get the JAGS model inputs and the cleaned data
+
+The parameters for this function include:
+
+- fp2030: Default is TRUE. The code is not tested for countries outside of those participating in the FP2030 initiative.
+- spatial: Default is FALSE. This indicates whether or not you wish to include a CAR spatial component into the model.
+- startyear: Numeric. Indicating the year you wish to begin your estimation at. 
+- startyear: Numeric. Indicating the year you wish to finish your estimation at. 
+- nsegments: Default is 12. Numeric. Indicating how many knots you wish to include in your spline.
+- raw_subnatdata: The dataset retrieved using the 'get_subnational_data' function.
+
+This function returns the inputs for the JAGS model in a list: 
+
+- data: The cleaned FP source subnational dataset 
+- tstar: A vector of year indexes used to align the splines with the most recent survey year for each subnational province
+- kstar: A vector of the knot index that align with tstar
+- B.ik: An array of basis functions, one fit to each province. 
+- n_years: The number of 6-monthly increments used in estimation 
+- n_obs: Number of survey observations in the data
+- K: The number of knots in the basis splines
+- H: K-1, used in the estimation of the spline coefficients in the model.
+- C_count: Number of countries in the data
+- M_count: Number of methods in the data 
+- R_count: Number of subcontinents in the data.
+- n_method: Vector to indicate the order of the methods used in estimation
+- n_country: Vector to indicate the order of the countries used in estimation
+- all_years: Vector of year indexing used in the model
+- matchsuperegion: Vector used to match the data to the model estimates via the subcontinents
+- matchcountry: Vector used to match the data to the model estimates via the countries
+- matchmethod: Vector used to match the data to the model estimates via the methods
+- matchyears: Vector used to match the data to the model estimates via the years
+
+
+```{r}
+pkg_data <- get_national_modelinputs(fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+
+```
+
+###  Prepare global correlations for JAGS model input
+```{r}
+load("data/estimated_global_national_correlations.rda")
+
+estimated_rho_matrix <- estimated_rho_matrix %>%
+  dplyr::select(row, column, public_cor, private_cor)
+  
+my_SE_rho_matrix <- estimated_rho_matrix %>%
+  dplyr::select(public_cor, private_cor)
+
+```
+
+2. Create your JAGS data list 
+
+```{r}
+jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], 
+                  se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+                  rho = my_SE_rho_matrix, 
+                  kstar = pkg_data$Kstar,
+                  B.ik = pkg_data$B.ik, 
+                  n_years = pkg_data$n_years,
+                  n_obs = pkg_data$n_obs,
+                  K = pkg_data$K,
+                  H = pkg_data$H,
+                  C_count = pkg_data$C_count,
+                  R_count = pkg_data$R_count,
+                  M_count = pkg_data$M_count,
+                  matchcountry = pkg_data$matchcountry,
+                  matchregion = pkg_data$matchsuperregion,
+                  matchmethod = pkg_data$matchmethod,
+                  matchyears = pkg_data$matchyears
+)
+
+```
+
+## Fit the model using the DHS survey data
+'run_national_jags_model' is a wrapper function that:
+    1. Determines whether you want a local (one-country) or global model run at the national level
+    2. Sets up the jags model to run with 150K iterations, 10K burn in observations and thinning to every 70th observation.
+    3. The function saves the model results to the '/results' folder in the 'mod_global_results.RDS' file. 
+
+```{r}
+run_national_jags_model(jagsdata = jags_data, jagsparams = NULL, local=FALSE, main_path = "results/national/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL)
+```
+
+## Review the  model output
+```{r}
+point_estimates <- get_national_P_point_estimates(main_path="results/national/", pkg_data, local=FALSE, mycountry=NULL)
+```
+
+## Plot the results
+
+```{r}
+plot_national_point_estimates(main_path="results/national/", vis_path="visualisation/national/global/", pkg_data, local=FALSE, mycountry=NULL) 
+```

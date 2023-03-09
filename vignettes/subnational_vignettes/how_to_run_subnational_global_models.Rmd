@@ -2,7 +2,9 @@
 title: "How to run a global subnational model with or without a spatial component"
 author: "Hannah Comiskey"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    code_download: true
 ---
 
 ```{r setup, include=FALSE}
@@ -175,7 +177,7 @@ The parameters of this function include:
 
 
 ```{r, message=FALSE, eval=FALSE}
-get_subnational_P_point_estimates(main_path = "results/global_nonspatial/", pkg_data, local=FALSE, spatial=FALSE, mycountry=NULL)
+get_subnational_P_point_estimates(main_path = "results/subnational/global_nonspatial/", pkg_data, local=FALSE, spatial=FALSE, mycountry=NULL)
 ```
 
 
@@ -188,7 +190,7 @@ The parameters of this function include:
 - vis_path: The pathway to the folder you wish to store your visualisations in. 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_subnational_point_estimates(main_path = "results/global_nonspatial/", pkg_data = pkg_data, vis_path = "visualisations/global_nonspatial/", local=FALSE, mycountry=NULL)
+plot_subnational_point_estimates(main_path = "results/subnational/global_nonspatial/", pkg_data = pkg_data, vis_path = "visualisations/subnational/global_nonspatial/", local=FALSE, mycountry=NULL)
 ```
 
 ## Ta-da! 

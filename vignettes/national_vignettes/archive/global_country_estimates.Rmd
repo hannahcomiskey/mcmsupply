@@ -78,18 +78,68 @@ Eastern Africa | Uganda
 Eastern Africa | Zimbabwe
 
 
-Get the input data and filter the data to include the FP2030 focus countries discussed in the associated paper. 
+## Get your data
+This function 'get_national_data' retrieves the raw family planning national source data, applies some basic cleaning and joins the FP source data to a country classification dataframe for additional geographic information.
+
+The parameters of this function are: 
+
+- local: Default is FALSE. This indicates whether or not you are running a local (single country) or global (multicountry) model. We set this as TRUE here.
+
+- mycountry: Default is NULL. When local=TRUE, this parameter indicates the name of the country, as a string, whose data you wish to use in your local model run. A list of country names can be found in the /vignette folder under 'country_names.Rmd'. We set this to "Nepal" for this model run. 
+
+- fp2030: Default is TRUE. The code is not tested for countries outside of those participating in the FP2030 initiative.
+
 ```{r}
-source_data <- mcmsupply::get_national_data(fp2030=TRUE)
+cleaned_natdata <- mcmsupply::get_national_data(local=FALSE, mycountry=NULL, fp2030=TRUE)
 ```
 
+## Get the JAGS model inputs and the cleaned data
 
-## 2. Gather the model inputs before modelling 
+The parameters for this function include:
 
-Clean the raw DHS data to make it suitable for modelling. This function addresses issues with missingness and tiny standard error values.
-```{r}
-cleanedsource_data <- mcmsupply::set_up_national_jags_data(source_data, local=FALSE, mycountry=NULL)
+- fp2030: Default is TRUE. The code is not tested for countries outside of those participating in the FP2030 initiative.
+- spatial: Default is FALSE. This indicates whether or not you wish to include a CAR spatial component into the model.
+- startyear: Numeric. Indicating the year you wish to begin your estimation at. 
+- startyear: Numeric. Indicating the year you wish to finish your estimation at. 
+- nsegments: Default is 12. Numeric. Indicating how many knots you wish to include in your spline.
+- raw_subnatdata: The dataset retrieved using the 'get_subnational_data' function.
+
+This function returns the inputs for the JAGS model in a list: 
+
+- data: The cleaned FP source subnational dataset 
+- tstar: A vector of year indexes used to align the splines with the most recent survey year for each subnational province
+- kstar: A vector of the knot index that align with tstar
+- B.ik: An array of basis functions, one fit to each province. 
+- n_years: The number of 6-monthly increments used in estimation 
+- n_obs: Number of survey observations in the data
+- K: The number of knots in the basis splines
+- H: K-1, used in the estimation of the spline coefficients in the model.
+- C_count: Number of countries in the data
+- P_count: Number of subnational provinces in the data 
+- M_count: Number of methods in the data 
+- R_count: Number of subcontinents in the data.
+- n_method: Vector to indicate the order of the methods used in estimation
+- n_country: Vector to indicate the order of the countries used in estimation
+- n_subnat: Vector to indicate the order of the subnational provinces used in estimation
+- n_subnat: Vector to indicate the order of the subcontinents used in estimation
+- all_years: Vector of year indexing used in the model
+- matchsuperegion: Vector used to match the data to the model estimates via the subcontinents
+- matchsubnat: Vector used to match the data to the model estimates via the subnational provinces
+- matchcountry: Vector used to match the data to the model estimates via the countries
+- matchmethod: Vector used to match the data to the model estimates via the methods
+- matchmethod: Vector used to match the data to the model estimates via the years
+
+
+```{r, include=TRUE, message=FALSE}
+pkg_data <- mcmsupply::get_national_modelinputs(fp2030=TRUE, local=FALSE,
+                                                          spatial=FALSE,
+                                                          startyear=1990, endyear=2028.5,
+                                                          nsegments=12, cleaned_natdata)
+
+dplyr::glimpse(pkg_data$data)
+
 ```
+
 
 ##### Adding indexes to proportions so we can match estimates to data
 ```{r}

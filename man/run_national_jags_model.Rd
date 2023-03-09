@@ -4,16 +4,33 @@
 \alias{run_national_jags_model}
 \title{Run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model}
 \usage{
-run_national_jags_model(jagsdata, jagsparams, local = FALSE, mycountry = NULL)
+run_national_jags_model(
+  pkg_data,
+  jagsparams = NULL,
+  local = FALSE,
+  main_path,
+  n_iter = 80000,
+  n_burnin = 10000,
+  n_thin = 35,
+  mycountry = NULL
+)
 }
 \arguments{
-\item{jagsdata}{The inputs for the JAGS model}
-
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
 
-\item{local}{TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.}
+\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
-\item{mycountry}{The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.}
+\item{main_path}{Default is "results/". String to indicate where to save results.}
+
+\item{n_iter}{Default is 80000. Number of itterations to do in JAGS model.}
+
+\item{n_burnin}{Default is 10000. Number of samples to burn-in in JAGS model.}
+
+\item{n_thin}{Default is 35. Number of samples to thin by in JAGS model.}
+
+\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
+
+\item{jagsdata}{The inputs for the JAGS model}
 }
 \value{
 returns the jags model object

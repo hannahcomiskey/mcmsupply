@@ -4,9 +4,13 @@
 \alias{get_national_data}
 \title{Get the DHS data used for modelling the proportion of modern contraceptives supplied by the public and private sectors at the national level.}
 \usage{
-get_national_data(fp2030 = TRUE)
+get_national_data(local = FALSE, mycountry = NULL, fp2030 = TRUE)
 }
 \arguments{
+\item{local}{TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.}
+
+\item{mycountry}{The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.}
+
 \item{fp2030=TRUE}{Filter raw data to only include the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.}
 }
 \value{

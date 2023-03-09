@@ -5,11 +5,11 @@
 \title{Run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private sectors at a subnational level using a Bayesian hierarchical penalized spline model}
 \usage{
 run_subnational_jags_model(
-  jagsdata,
-  jagsparams,
+  pkg_data,
+  jagsparams = NULL,
   local = FALSE,
   spatial = FALSE,
-  main_path = "results/",
+  main_path,
   n_iter = 80000,
   n_burnin = 10000,
   n_thin = 35,
@@ -17,8 +17,6 @@ run_subnational_jags_model(
 )
 }
 \arguments{
-\item{jagsdata}{The inputs for the JAGS model}
-
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
@@ -34,6 +32,8 @@ run_subnational_jags_model(
 \item{n_thin}{Default is 35. Number of samples to thin by in JAGS model.}
 
 \item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
+
+\item{jagsdata}{The inputs for the JAGS model}
 }
 \value{
 returns the jags model object
