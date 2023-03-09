@@ -6,9 +6,9 @@ kenya_data <- readRDS("data-raw/kenya_admin2_FPsource.RDS") %>% # admin-2 level 
                 sector_categories = sector_category) %>%
   dplyr::select(!Method_collapse)
 
-subnatSE_source_data <- subnatSE_source_data %>%
+subnat_FPsource_data <- subnatSE_source_data %>%
   ungroup() %>%
   dplyr::select(all_of(colnames(kenya_data))) %>%
   bind_rows(kenya_data)
 
-usethis::use_data(subnatSE_source_data)
+usethis::use_data(subnat_FPsource_data, overwrite = TRUE)
