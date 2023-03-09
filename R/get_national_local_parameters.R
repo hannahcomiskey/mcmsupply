@@ -11,19 +11,18 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
   load("data/tau_alphacms_nationalmod.rda")
   load("data/sigma_matrix_nationalmod.rda")
 
-  mydata <- get_data(fp2030=fp2030) # Read complete data set in without filtering for any country
-  mydata <- set_up_jags_data(mydata, mycountry=NULL)
+  mydata <- get_national_data(fp2030=fp2030) # Read complete data set in without filtering for any country
 
   # Match regional intercepts to country names  ------------------------
   region_country_match <- mydata %>%
-    select(Country, Region) %>%
+    select(Country, Super_region) %>%
     distinct() %>%
     filter(Country==mycountry) # List of matching countries to super-regions
 
-  mydata <- region_index_fun(mydata, unique(mydata$Region))
-  region_index_table <- tibble(Region = unique(mydata$Region), index_region = unique(mydata$index_region))
-  dimnames(median_alpha_region_intercepts)[[3]] <- as.list(unlist(region_index_table$Region)) # Apply region names to parameter estimates
-  myalpha_med <- median_alpha_region_intercepts[,,region_country_match$Region] # Take out relevant region
+  mydata <- superregion_index_fun(mydata, unique(mydata$Super_region))
+  region_index_table <- tibble(Super_region = unique(mydata$Super_region), index_superregion = unique(mydata$index_superregion))
+  dimnames(median_alpha_region_intercepts)[[3]] <- as.list(unlist(region_index_table$Super_region)) # Apply region names to parameter estimates
+  myalpha_med <- median_alpha_region_intercepts[,,region_country_match$Super_region] # Take out relevant region
 
   return(list(alphahat_region = myalpha_med,
               tau_alphahat_cms = precision_alpha_country_intercepts,

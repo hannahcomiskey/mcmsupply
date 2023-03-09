@@ -13,11 +13,29 @@
 #' @import R2jags runjags tidyverse tidybayes
 #' @export
 
-run_national_jags_model <- function(jagsdata, jagsparams, local=FALSE, main_path,
+run_national_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, main_path,
                                     n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
 
-  print("Saving results to the following pathway:")
-  print(main_path)
+  print(paste0("Saving results to the following pathway: ", main_path))
+
+  # Get default data input list for JAGS
+  jagsdata <- get_national_JAGSinput_list(pkg_data, local= local,  mycountry=mycountry)
+
+  # Get default parameters to monitor
+  if(is.null(jagsparams)==TRUE ) {
+    if(local==FALSE) { # global
+      jagsparams <- c("P",
+                      "beta.k",
+                      "alpha_cms",
+                      "phi")
+    } else { # local
+      jagsparams <- c("P",
+                     "alpha_cms",
+                     "phi",
+                     "beta.k",
+                     "inv.sigma_delta")
+    }
+  }
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
     mod <- jags.parallel(data=jagsdata,

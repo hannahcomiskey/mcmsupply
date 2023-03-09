@@ -14,11 +14,32 @@
 #' @import R2jags runjags tidyverse tidybayes foreach doMC sf spdep geodata
 #' @export
 
-run_subnational_jags_model <- function(jagsdata, jagsparams, local=FALSE, spatial=FALSE, main_path,
+run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, spatial=FALSE, main_path,
                                        n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
 
-  print("Saving results to the following pathway:")
-  print(main_path)
+  print(paste0("Saving results to the following pathway: ", main_path))
+
+  # Get JAGS input data list
+  jagsdata <- get_subnational_JAGSinput_list(pkg_data, local= local, spatial=spatial,  mycountry=mycountry)
+
+  # Get JAGS params to monitor
+  if(is.null(jagsparams)==TRUE ) {
+    if(local==FALSE) { # global
+      jags_pars <- c("alpha_pms",
+                     "alpha_cms",
+                     "tau_alpha",
+                     "phi", # spatial CAR parameter
+                     "beta.k",
+                     "sigma_delta",
+                     "delta.k")
+    } else { # local
+      jags_pars <- c("P",
+                     "alpha_pms",
+                     "phi",
+                     "beta.k",
+                     "inv.sigma_delta")
+    }
+  }
 
   doMC::registerDoMC() # start parallel runs, save results in steps
 

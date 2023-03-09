@@ -25,16 +25,9 @@ get_subnational_P_point_estimates <- function(main_path, pkg_data, local=FALSE, 
 
   # Creating index tables for reference ------------------------------------------------------------
   subnat_index_table <- mydata %>% select(Country, Region, index_subnat) %>% ungroup() %>% distinct()
-  glimpse(subnat_index_table)
-
   country_index_table <- tibble(Country = n_country, index_country = unique(mydata$index_country))
-  glimpse(country_index_table)
-
   method_index_table <- tibble(Method = n_method, index_method = 1:5)
-  glimpse(method_index_table)
-
   sector_index_table <- tibble(Sector = n_sector, index_sector = 1:3)
-
   year_index_table <- tibble(average_year = all_years,
                              index_year = 1:n_all_years,
                              floored_year = floor(all_years))

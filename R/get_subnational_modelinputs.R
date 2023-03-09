@@ -43,13 +43,14 @@ get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE,
 
   if(spatial==TRUE){
     load("data/global_provincial_neighbouradj.rda")   # Filter for spatial countries: Not all countries have GPS data
+    W = global_provincial_neighbouradj * 1L
     roworder <- rownames(global_provincial_neighbouradj)
-
+    colnames(W) <- roworder # Arrange W in the order of the subnational indexing
     clean_FPsource <- clean_FPsource %>%
       dplyr::rowwise() %>%
       dplyr::mutate(Country_region = paste0(Country, "_", Region)) %>%
       dplyr::filter(Country_region %in% roworder)
-  }
+    }
 
   clean_FPsource <- standard_method_names(clean_FPsource) # Standardizing method names
   country_subnat_tbl <- clean_FPsource %>%
@@ -131,27 +132,66 @@ get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE,
   K <- dim(res$B.ik)[2]
   H <- K-1
 
-  return(list(data = clean_FPsource,
-              tstar = T_star$index_year,
-              kstar = Kstar,
-              B.ik = B.ik,
-              n_years = n_all_years,
-              n_obs = n_obs,
-              K = K,
-              H = H,
-              C_count = length(n_country),
-              P_count = length(n_subnat),
-              M_count = length(n_method),
-              R_count = length(n_superregion),
-              n_method = n_method, # As per the method correlation matrix
-              n_country = n_country,
-              n_subnat = n_subnat,
-              n_super_region = n_superregion,
-              all_years = all_years,
-              matchsuperregion = match_superregion,
-              matchsubnat = match_subnat,
-              matchcountry = match_country,
-              matchmethod = match_method,
-              matchyears = match_years
-  ))
+  if(spatial==TRUE & local==FALSE) {
+    country_region_order <- paste0(index_country_subnat_tbl$Country, "_", index_country_subnat_tbl$Region) # Keep cols that we have data for in both GPS and FP source
+
+    W1 <- as_tibble(W) %>%
+      mutate(Country_province = roworder) %>%
+      dplyr::filter(Country_province %in% country_region_order) %>%
+      dplyr::arrange(Country_province, by=country_region_order) %>%
+      dplyr::select(all_of(country_region_order))
+
+    D = diag(rowSums(W1)) # Neighbour count
+
+    mylist = list(data = clean_FPsource,
+                  tstar = T_star$index_year,
+                  kstar = Kstar,
+                  B.ik = B.ik,
+                  n_years = n_all_years,
+                  n_obs = n_obs,
+                  K = K,
+                  H = H,
+                  W = W1,
+                  D = D,
+                  P_zeroes = rep(0, length(n_subnat)),
+                  C_count = length(n_country),
+                  P_count = length(n_subnat),
+                  M_count = length(n_method),
+                  R_count = length(n_superregion),
+                  n_method = n_method, # As per the method correlation matrix
+                  n_country = n_country,
+                  n_subnat = n_subnat,
+                  n_super_region = n_superregion,
+                  all_years = all_years,
+                  matchsuperregion = match_superregion,
+                  matchsubnat = match_subnat,
+                  matchcountry = match_country,
+                  matchmethod = match_method,
+                  matchyears = match_years )
+  } else {
+    mylist = list(data = clean_FPsource,
+                tstar = T_star$index_year,
+                kstar = Kstar,
+                B.ik = B.ik,
+                n_years = n_all_years,
+                n_obs = n_obs,
+                K = K,
+                H = H,
+                C_count = length(n_country),
+                P_count = length(n_subnat),
+                M_count = length(n_method),
+                R_count = length(n_superregion),
+                n_method = n_method, # As per the method correlation matrix
+                n_country = n_country,
+                n_subnat = n_subnat,
+                n_super_region = n_superregion,
+                all_years = all_years,
+                matchsuperregion = match_superregion,
+                matchsubnat = match_subnat,
+                matchcountry = match_country,
+                matchmethod = match_method,
+                matchyears = match_years
+    )
+  }
+  return(mylist)
 }

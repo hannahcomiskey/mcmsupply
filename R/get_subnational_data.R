@@ -10,8 +10,8 @@
 get_subnational_data <- function(local=FALSE, mycountry=NULL) {
   load("data/subnat_FPsource_data.rda")   # Read in SE data
 
-  subnatSE_source_data <- subnatSE_source_data %>%
-    dplyr::mutate(prop.trans = proportion*((nrow(subnatSE_source_data)-1)+0.33)/nrow(subnatSE_source_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
+  subnatSE_source_data <- subnat_FPsource_data %>%
+    dplyr::mutate(prop.trans = proportion*((nrow(subnat_FPsource_data)-1)+0.33)/nrow(subnat_FPsource_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
     dplyr::filter(n>1) %>%
     dplyr::filter(SE.proportion!=0) %>%
     dplyr::filter(Region!="NA")
@@ -85,6 +85,7 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL) {
     dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
+    print(paste0("Getting data for ",mycountry))
     mydata <- FP_source_data_wide %>% dplyr::filter(Country==mycountry)
 
     if(mycountry == "Rwanda") { # Addressing issues with Rwanda subnational region names
