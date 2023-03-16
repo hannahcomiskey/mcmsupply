@@ -9,6 +9,12 @@ national_FPsource_format <- list(
     "missing" = FALSE,
     "required" = TRUE
   ),
+  "Super_region" = list(
+    "type" = "value",
+    "valid" = data %>% dplyr::ungroup() %>% dplyr::select(Region) %>% unique() %>% unlist() %>% as.vector(),
+    "missing" = FALSE,
+    "required" = TRUE
+  ),
   "Method" = list(
     "type" = "value",
     "valid" = data %>% dplyr::ungroup() %>% dplyr::select(Method) %>% unique() %>% unlist() %>% as.vector(),

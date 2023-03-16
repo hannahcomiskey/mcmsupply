@@ -13,12 +13,8 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
   } else {
     national_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
     load("data/national_FPsource_format.rda")
-    check_format(national_FPsource_format, subnat_FPsource_data) # Check if user input data is suitable for inclusion
+    check_format(national_FPsource_format, national_FPsource_data) # Check if user input data is suitable for inclusion
   }
-
-  SE_source_data <- national_FPsource_data %>%
-    dplyr::select(!c(Method_collapse, check_sum)) %>%
-    dplyr::rename(Super_region = Region)
 
   if(fp2030==TRUE) {
     FP_2030_countries <- c("Afghanistan","Benin","Burkina Faso","Cameroon",
@@ -27,13 +23,11 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
                            "Malawi","Mali", "Mozambique", "Myanmar", "Nepal", "Niger", "Nigeria", "Pakistan",
                            "Philippines", "Rwanda", "Senegal", "Sierra Leone", "Togo", "Tanzania", "Uganda", "Zimbabwe")
 
-    SE_source_data <- SE_source_data %>% dplyr::filter(Country %in% FP_2030_countries)
+    national_FPsource_data <- national_FPsource_data %>% dplyr::filter(Country %in% FP_2030_countries)
   }
 
-  FP_source_data_wide <- SE_source_data %>%
+  FP_source_data_wide <- national_FPsource_data %>%
     dplyr::ungroup() %>%
-    dplyr::select(Country, Super_region, Method, average_year, sector_category, prop.trans, n) %>%
-    dplyr::rename(proportion = prop.trans) %>%
     dplyr::group_by(Country, Super_region, Method, average_year, sector_category) %>%
     dplyr::distinct() %>%
     tidyr::pivot_wider(names_from = sector_category, values_from = c(proportion,n)) %>%
@@ -69,7 +63,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))
 
   ## Remove SE missing for two sectors ---------------------
-  SE_source_data_wide <- SE_source_data %>% # SE data
+  SE_source_data_wide <- national_FPsource_data %>% # SE data
     dplyr::ungroup() %>%
     dplyr::select(Country, Super_region, Method, average_year, sector_category, SE.proportion) %>%
     tidyr::pivot_wider(names_from = sector_category, values_from = SE.proportion) %>%
@@ -100,7 +94,8 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::select(Country, Super_region, Method, average_year, Commercial_medical.SE, Public.SE, Other.SE, count_NA)
 
   # Merge SE and proportion data together
-  FP_source_data_wide <- left_join(FP_source_data_wide, SE_source_data_wide)
+  FP_source_data_wide <- left_join(FP_source_data_wide, SE_source_data_wide) %>%
+    dplyr::arrange(Country, Super_region, Method, average_year)
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
     print(paste0("Getting data for ",mycountry))
