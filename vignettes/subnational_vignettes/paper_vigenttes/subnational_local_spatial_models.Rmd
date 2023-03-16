@@ -47,12 +47,12 @@ mod_global <- run_subnational_jags_model(pkg_data = pkg_data, local=TRUE, spatia
 ## Get posterior point estimates
 
 ```{r, message=FALSE, eval=FALSE}
-get_subnational_P_point_estimates(main_path = "results/local_spatial/", pkg_data, local=TRUE, spatial=TRUE, mycountry="Nepal")
+get_subnational_P_point_estimates(main_path = "results/subnational/local_spatial/", pkg_data, local=TRUE, spatial=TRUE, mycountry="Nepal")
 ```
 
 
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_subnational_point_estimates(main_path = "results/local_spatial/", pkg_data = pkg_data, vis_path = "visualisations/local_spatial/", local=TRUE, mycountry="Nepal")
+plot_subnational_point_estimates(main_path = "results/subnational/local_spatial/", pkg_data = pkg_data, vis_path = "visualisation/subnational/local_spatial/", local=TRUE, mycountry="Nepal")
 ```

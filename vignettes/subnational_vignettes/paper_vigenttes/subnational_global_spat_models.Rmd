@@ -51,6 +51,6 @@ get_subnational_P_point_estimates(main_path = "results/subnational/global_spatia
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_subnational_point_estimates(main_path = "results/subnational/global_spatial/", pkg_data = pkg_data, vis_path = "visualisations/subnational/global_spatial/", local=FALSE, mycountry=NULL)
+plot_subnational_point_estimates(main_path = "results/subnational/global_spatial/", pkg_data = pkg_data, vis_path = "visualisation/subnational/global_spatial/", local=FALSE, mycountry=NULL)
 ```
 
