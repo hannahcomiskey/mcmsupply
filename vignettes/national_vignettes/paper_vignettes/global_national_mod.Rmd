@@ -1,0 +1,54 @@
+---
+title: "How to run a global national model"
+author: "Hannah Comiskey"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load your library
+
+```{r, include=TRUE, message=FALSE}
+library(mcmsupply)
+library(dplyr)
+```
+
+
+```{r, include=FALSE}
+devtools::load_all()
+```
+
+
+## Load the data 
+
+```{r, include=TRUE, message=FALSE}
+cleaned_natdata <- get_national_data(local=FALSE, mycountry=NULL, fp2030=TRUE)
+```
+
+## Get the JAGS model inputs and the cleaned data
+
+```{r, include=TRUE, message=FALSE, warning=FALSE}
+pkg_data <- get_national_modelinputs(fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+
+```
+
+## Fit the model using the DHS survey data
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+run_national_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=FALSE, main_path = "results/national/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL)
+```
+
+## Review the  model output
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+get_national_P_point_estimates(main_path="results/national/", pkg_data, local=FALSE, mycountry=NULL)
+```
+
+## Plot the results
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plot_national_point_estimates(main_path="results/national/", vis_path="visualisation/national/global/", pkg_data, local=FALSE, mycountry=NULL) 
+```

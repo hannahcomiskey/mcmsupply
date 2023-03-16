@@ -81,7 +81,7 @@ Eastern Africa | Zimbabwe
 
 Get the input data and filter the data to include the FP2030 focus countries discussed in the associated paper. 
 ```{r}
-source_data <- mcmsupply::get_data(fp2030=TRUE)
+source_data <- mcmsupply::get_national_data(fp2030=TRUE)
 ```
 
 
@@ -89,13 +89,13 @@ source_data <- mcmsupply::get_data(fp2030=TRUE)
 
 Review the model correlations
 ```{r}
-load("data/estimated_rho_matrix.rda")
+load("data/estimated_rho_matrix_national.rda")
 estimated_rho_matrix
 ```
 
 Gather the JAGS inputs into a list
 ```{r}
-setup_jags <- mcmsupply::set_up_jags_data(source_data, nseg=12)
+setup_jags <- mcmsupply::set_up_national_jags_data(source_data)
 ```
 
 
@@ -119,7 +119,7 @@ setup_jags <- mcmsupply::set_up_jags_data(source_data, nseg=12)
 4. The function saves the model results to the '/results' folder in the 'mod_results.RDS' file. 
 
 ```{r, eval=FALSE}
-mymod <- mcmsupply::run_jags_model(source_data)
+mymod <- mcmsupply::run_national_jags_model(source_data)
 ```
 
 ```{r, include=FALSE}

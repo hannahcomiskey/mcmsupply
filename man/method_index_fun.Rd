@@ -2,18 +2,22 @@
 % Please edit documentation in R/method_index.R
 \name{method_index_fun}
 \alias{method_index_fun}
-\title{Indexing Functions for methods used in data.}
+\title{Apply method indexing to data}
 \usage{
 method_index_fun(my_data, my_methods)
 }
 \arguments{
-\item{my_data}{The data with a  method column you want to index.}
+\item{my_data}{The sub-national family planning source data for the country of interest.}
 
-\item{my_methods}{A vector of methods used in the data}
+\item{my_methods}{A vector of your contraceptive methods in the order you wished them indexed.}
 }
 \value{
-returns data with methods indexed
+Dataframe with method indexing applied
 }
 \description{
-Indexing Functions for methods used in data.
+Apply method indexing to data
+}
+\examples{
+  n_method <- c("Female Sterilization", "Implants", "Injectables", "IUD", "OC Pills" ) # As per the method correlation matrix
+method_index_fun(mydata, n_method)
 }

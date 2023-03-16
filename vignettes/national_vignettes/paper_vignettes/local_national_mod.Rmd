@@ -1,0 +1,54 @@
+---
+title: "How to run a national level model for a single country"
+author: "Hannah Comiskey"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load your library
+
+```{r, include=TRUE, message=FALSE}
+library(mcmsupply)
+library(dplyr)
+```
+
+
+```{r, include=FALSE}
+devtools::load_all()
+```
+
+## Load the data 
+
+```{r, include=TRUE, message=FALSE, warning=FALSE}
+cleaned_natdata <- get_national_data(local=TRUE, mycountry="Nepal", fp2030=TRUE)
+```
+
+## Get the JAGS model inputs and the cleaned data
+
+```{r, include=TRUE, message=FALSE, warning=FALSE}
+pkg_data <- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+
+```
+
+## Fit the model 
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+run_national_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/national/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Nepal")
+```
+
+## Review the  model output
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+get_national_P_point_estimates(main_path="results/national/local/", pkg_data, local=TRUE, mycountry="Nepal")
+```
+
+## Plot the results
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plot_national_point_estimates(main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Nepal") 
+```

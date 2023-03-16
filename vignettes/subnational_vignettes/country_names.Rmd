@@ -1,0 +1,54 @@
+---
+title: "Country names"
+author: "Hannah Comiskey"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tibble)
+```
+
+## Introduction 
+This vignette lists the country names in the supplied data that local and/or spatial modelling is possible for.
+
+## Country names
+
+```{r table1, tidy=FALSE, echo = FALSE}
+data1 <- tibble::tribble(
+  ~"Country names", ~"Included in spatial modelling",
+  "Afghanistan",     "Yes",
+"Benin",             "Yes",
+"Burkina Faso",      "Yes",
+"Cameroon",          "Yes",
+"Democratic Republic of Congo",    "No",
+"Cote d’Ivoire",     "No",
+"Ethiopia",          "Yes",
+"Ghana",             "Yes",
+"Guinea",            "Yes",
+"India",             "Yes",
+"Kenya",             "Yes",
+"Liberia",           "Yes",
+"Madagascar",        "Yes",
+"Malawi",            "Yes",
+"Mali",              "Yes",
+"Mozambique",       "Yes",
+"Nepal",            "Yes",
+"Niger",            "Yes",
+"Nigeria",          "Yes",
+"Pakistan",         "Yes",
+"Rwanda",           "Yes",
+"Senegal",          "Yes",
+"Tanzania",         "Yes",
+"Uganda",           "Yes",
+"Zimbabwe",         "Yes"
+)
+
+knitr::kable((data1), booktabs = TRUE,
+caption = 'A table listed the countries available for local modelling. \n The `included in spatial modelling` column indicates whether or not a country has GPS data for including a spatial component. \n Not all countries have data availaible for this.')
+```
+
+
+
+
