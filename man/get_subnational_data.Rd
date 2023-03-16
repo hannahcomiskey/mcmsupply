@@ -4,12 +4,18 @@
 \alias{get_subnational_data}
 \title{Get subnational family planning source data}
 \usage{
-get_subnational_data(local = FALSE, mycountry = NULL)
+get_subnational_data(
+  local = FALSE,
+  mycountry = NULL,
+  surveydata_filepath = NULL
+)
 }
 \arguments{
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
 \item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
+
+\item{surveydata_filepath}{Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{subnat_FPsource_data}}.}
 }
 \value{
 The input data for your country of interest, used as an input to the mcmsupply model

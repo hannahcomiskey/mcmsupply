@@ -3,11 +3,18 @@
 #' @param local TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.
 #' @param mycountry The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.
 #' @param fp2030=TRUE Filter raw data to only include the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.
+#' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{national_FPsource_data}}.
 #' @return returns the DHS data set used for inputs into the model
 #' @export
 
-get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE) {
-  load("data/national_FPsource_data.rda")
+get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
+  if(is.null(surveydata_filepath)==TRUE){
+    load("data/national_FPsource_data.rda") # Read in data
+  } else {
+    national_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
+    load("data/national_FPsource_format.rda")
+    check_format(national_FPsource_format, subnat_FPsource_data) # Check if user input data is suitable for inclusion
+  }
 
   SE_source_data <- national_FPsource_data %>%
     dplyr::select(!c(Method_collapse, check_sum)) %>%

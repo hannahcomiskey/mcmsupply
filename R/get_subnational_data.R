@@ -2,14 +2,20 @@
 #' @name get_subnational_data
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
+#' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{subnat_FPsource_data}}.
 #' @return The input data for your country of interest, used as an input to the mcmsupply model
 #' @export
 #' @examples For an all-country-province dataset : mydata <- get_subnational_data(local=FALSE, mycountry=NULL)
 #' For a one-country-province dataset: mydata <- get_subnational_data(local=TRUE, mycountry="Nepal")
 
-get_subnational_data <- function(local=FALSE, mycountry=NULL) {
-  load("data/subnat_FPsource_data.rda")   # Read in SE data
-
+get_subnational_data <- function(local=FALSE, mycountry=NULL, surveydata_filepath=NULL) {
+  if(is.null(surveydata_filepath)==TRUE){
+    load("data/subnat_FPsource_data.rda")   # Read in SE data
+  } else {
+    subnat_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
+    load("data/subnat_FPsource_format.rda")
+    check_format(subnat_FPsource_format, subnat_FPsource_data) # Check if user input data is suitable for inclusion
+  }
   subnatSE_source_data <- subnat_FPsource_data %>%
     dplyr::mutate(prop.trans = proportion*((nrow(subnat_FPsource_data)-1)+0.33)/nrow(subnat_FPsource_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
     dplyr::filter(n>1) %>%
