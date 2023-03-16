@@ -16,10 +16,6 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     check_format(national_FPsource_format, national_FPsource_data) # Check if user input data is suitable for inclusion
   }
 
-  SE_source_data <- national_FPsource_data %>%
-    dplyr::select(!c(Method_collapse, check_sum)) %>%
-    dplyr::rename(Super_region = Region)
-
   if(fp2030==TRUE) {
     FP_2030_countries <- c("Afghanistan","Benin","Burkina Faso","Cameroon",
                            "Congo", "Congo Democratic Republic", "Cote d'Ivoire",
@@ -27,10 +23,10 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
                            "Malawi","Mali", "Mozambique", "Myanmar", "Nepal", "Niger", "Nigeria", "Pakistan",
                            "Philippines", "Rwanda", "Senegal", "Sierra Leone", "Togo", "Tanzania", "Uganda", "Zimbabwe")
 
-    SE_source_data <- SE_source_data %>% dplyr::filter(Country %in% FP_2030_countries)
+    national_FPsource_data <- national_FPsource_data %>% dplyr::filter(Country %in% FP_2030_countries)
   }
 
-  FP_source_data_wide <- SE_source_data %>%
+  FP_source_data_wide <- national_FPsource_data %>%
     dplyr::ungroup() %>%
     dplyr::select(Country, Super_region, Method, average_year, sector_category, prop.trans, n) %>%
     dplyr::rename(proportion = prop.trans) %>%

@@ -28,4 +28,8 @@ national_FPsource_data <- SE_source_data %>%
                             Country=="Moldova" ~ "Eastern Europe",
                             TRUE ~ as.character(Region)))
 
-usethis::use_data(national_FPsource_data)
+national_FPsource_data <- national_FPsource_data %>%
+  dplyr::select(!c(Method_collapse, check_sum)) %>%
+  dplyr::rename(Super_region = Region)
+
+usethis::use_data(national_FPsource_data, overwrite=TRUE)
