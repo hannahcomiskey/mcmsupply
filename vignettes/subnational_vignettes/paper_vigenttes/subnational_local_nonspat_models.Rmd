@@ -17,11 +17,6 @@ library(dplyr)
 ```
 
 
-```{r, include=FALSE}
-devtools::load_all()
-```
-
-
 ## Get your data
 
 ```{r, include=TRUE, message=FALSE}
