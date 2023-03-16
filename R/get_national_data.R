@@ -13,7 +13,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
   } else {
     national_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
     load("data/national_FPsource_format.rda")
-    check_format(national_FPsource_format, subnat_FPsource_data) # Check if user input data is suitable for inclusion
+    check_format(national_FPsource_format, national_FPsource_data) # Check if user input data is suitable for inclusion
   }
 
   SE_source_data <- national_FPsource_data %>%

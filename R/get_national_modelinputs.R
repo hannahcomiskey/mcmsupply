@@ -70,7 +70,6 @@ get_national_modelinputs <- function(fp2030=TRUE, local=FALSE, mycountry=NULL, s
   t_seq_2 <- floor(clean_FPsource$index_year) # Time sequence for countries
   country_seq <- clean_FPsource$Country
   n_country <- as.character(unique(country_seq))
-  n_region <- unique(clean_FPsource$Region)
   n_sector <- c("Public", "Commercial_medical", "Other") # Names of categories
   n_obs <- nrow(clean_FPsource) # Total number of observations
   year_seq <- seq(min(t_seq_2),max(t_seq_2), by=1)
