@@ -5,7 +5,8 @@ The 'mcmsupply' R package provides country-specific annual estimates for the pro
 
 > 'mcmsupply' contains all the code required to reproduce the results discussed in the paper "Estimating the Proportion of Modern Contraceptives Supplied by the Public and Private Sectors using a Bayesian Hierarchical Penalized Spline Model", by Hannah Comiskey, Dr. Leontine Alkema & Dr. Niamh Cahill.
 
-Installation
+
+## Installation
 
 The package can be installed by cloning and using devtools::install(). The source code for vignettes can be found in /vignettes. Below is a brief introduction.
 
