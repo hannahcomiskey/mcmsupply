@@ -1,7 +1,7 @@
 #' Plot median, 95% and 80% credible intervals for posterior samples of P from local JAGS model with the relevant survey data
 #' @name plot_subnational_point_estimates
 #' @param Psamps Posterior samples of P for one sector from JAGS model
-#' @param pkg_data Output of the `mcmsupplylocal::get_subnational_modelinputs()` function.
+#' @param pkg_data Output of the `mcmsupply::get_subnational_modelinputs()` function.
 #' @param vis_path String. Path where your visualisations will be saved to.
 #' @return Data frame of labelled posterior samples with median, 95% and 80% credible intervals estimates.
 #' @export

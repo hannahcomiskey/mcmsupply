@@ -2,7 +2,7 @@
 #' @name plot_national_point_estimates
 #' @param main_path String. Path where you have set your model results to be saved to.
 #' @param vis_path String. Path where your visualisations will be saved to.
-#' @param pkg_data Output of the `mcmsupplylocal::get_subnational_modelinputs()` function.
+#' @param pkg_data Output of the `mcmsupply::get_subnational_modelinputs()` function.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @return Data frame of labelled posterior samples with median, 95% and 80% credible intervals estimates.
