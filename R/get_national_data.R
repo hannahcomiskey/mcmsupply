@@ -94,7 +94,8 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::select(Country, Super_region, Method, average_year, Commercial_medical.SE, Public.SE, Other.SE, count_NA)
 
   # Merge SE and proportion data together
-  FP_source_data_wide <- left_join(FP_source_data_wide, SE_source_data_wide)
+  FP_source_data_wide <- left_join(FP_source_data_wide, SE_source_data_wide) %>%
+    dplyr::arrange(Country, Super_region, Method, average_year)
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
     print(paste0("Getting data for ",mycountry))

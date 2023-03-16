@@ -19,8 +19,7 @@ library(dplyr)
 ## Get your data
 
 ```{r, include=TRUE, message=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=FALSE, mycountry=NULL) %>%
-  dplyr::arrange(Country, Region, Method, average_year)
+raw_subnatdata <- mcmsupply::get_subnational_data(local=FALSE, mycountry=NULL) 
 ```
 
 ## Get the JAGS model inputs from the cleaned data

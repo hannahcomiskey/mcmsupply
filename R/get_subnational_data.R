@@ -132,5 +132,6 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, surveydata_filepat
       droplevels() # remove factor levels of other countries
   }
 
+  mydata <- mydata %>% dplyr::arrange(Country, Region, Method, average_year)
   return(mydata)
 }
