@@ -13,7 +13,7 @@ plot_subnational_point_estimates(
 )
 }
 \arguments{
-\item{pkg_data}{Output of the \code{mcmsupplylocal::get_subnational_modelinputs()} function.}
+\item{pkg_data}{Output of the \code{mcmsupply::get_subnational_modelinputs()} function.}
 
 \item{vis_path}{String. Path where your visualisations will be saved to.}
 
