@@ -28,8 +28,6 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   FP_source_data_wide <- national_FPsource_data %>%
     dplyr::ungroup() %>%
-    dplyr::select(Country, Super_region, Method, average_year, sector_category, prop.trans, n) %>%
-    dplyr::rename(proportion = prop.trans) %>%
     dplyr::group_by(Country, Super_region, Method, average_year, sector_category) %>%
     dplyr::distinct() %>%
     tidyr::pivot_wider(names_from = sector_category, values_from = c(proportion,n)) %>%
@@ -65,7 +63,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))
 
   ## Remove SE missing for two sectors ---------------------
-  SE_source_data_wide <- SE_source_data %>% # SE data
+  SE_source_data_wide <- national_FPsource_data %>% # SE data
     dplyr::ungroup() %>%
     dplyr::select(Country, Super_region, Method, average_year, sector_category, SE.proportion) %>%
     tidyr::pivot_wider(names_from = sector_category, values_from = SE.proportion) %>%
