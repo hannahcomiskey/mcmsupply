@@ -49,7 +49,6 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
                            ifelse(local==TRUE & spatial==FALSE,"model/local_subnational_nonspatial_model.txt", # local non spatial model,
                                   "model/local_subnational_spatial_model.txt"))) # local spatial model
   n_chains = 2
-
   foreach(chain=1:n_chains) %dopar% {   ## Do chains separately ------------------------------
     set.seed(chain*1239)
     mod <- R2jags::jags(data = jagsdata,
@@ -86,8 +85,7 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
   if(local==TRUE) { # save local subnational models
     if(spatial==TRUE) { saveRDS(mod, paste0(main_path, "mod_local_subnational_",mycountry,"_spatial.RDS")) } # spatial results
       else { saveRDS(mod, paste0(main_path, "mod_local_subnational_",mycountry,".RDS"))} # non-spatial model
-  }
-  else { # save global subnational models
+  } else { # save global subnational models
     if(spatial==TRUE) { saveRDS(mod, paste0(main_path, "mod_global_subnational_spatial.RDS"))} # spatial results
       else { saveRDS(mod, paste0(main_path, "mod_global_subnational.RDS")) } # non-spatial model
     }
