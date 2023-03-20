@@ -15,7 +15,7 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, spatial=FALSE
       jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
                         se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
                         alpha_cms_hat = local_params$alpha_cms,
-                        tau_alpha_snms_hat = local_params$tau_alphapms,
+                        tau_alpha_pms_hat = local_params$tau_alphapms,
                         natRmat = local_params$natRmat,
                         natdf = length(pkg_data$n_method)+1,
                         kstar = pkg_data$kstar,
@@ -38,7 +38,7 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, spatial=FALSE
       jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
                         se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
                         alpha_cms_hat = local_params$alpha_cms,
-                        tau_alpha_snms_hat = local_params$tau_alphapms,
+                        tau_alpha_pms_hat = local_params$tau_alphapms,
                         natRmat = local_params$natRmat,
                         natdf = length(pkg_data$n_method)+1,
                         kstar = pkg_data$kstar,
