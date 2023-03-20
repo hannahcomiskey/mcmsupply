@@ -25,7 +25,7 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
   # Get JAGS params to monitor
   if(is.null(jagsparams)==TRUE ) {
     if(local==FALSE) { # global
-      jags_pars <- c("alpha_pms",
+      jagsparams <- c("alpha_pms",
                      "alpha_cms",
                      "tau_alpha",
                      "phi", # spatial CAR parameter
@@ -33,7 +33,7 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
                      "sigma_delta",
                      "delta.k")
     } else { # local
-      jags_pars <- c("P",
+      jagsparams <- c("P",
                      "alpha_pms",
                      "phi",
                      "beta.k",
