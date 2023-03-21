@@ -4,7 +4,7 @@
 \alias{get_subnational_local_parameters}
 \title{Get the country-specific median and precision terms for the alpha intercept in local national-level model runs.}
 \usage{
-get_subnational_local_parameters(mycountry)
+get_subnational_local_parameters(mycountry, spatial = FALSE)
 }
 \arguments{
 \item{mycountry}{The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.}

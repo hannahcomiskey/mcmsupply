@@ -4,10 +4,15 @@
 #' @return A list of local parameters to be used to inform the intercept parameter alpha and the global variance-covariance matrix used in the wishart prior of the local_model_run.txt file.
 #' @export
 
-get_subnational_local_parameters <- function(mycountry) {
+get_subnational_local_parameters <- function(mycountry, spatial=FALSE) {
 
+  if(spatial==FALSE) {
+    load("data/nonspatial_sigma_matrix_subnationalmod.rda") # non-spatial variance covariance matrix
+  } else {
+    load("data/spatial_sigma_matrix_subnationalmod.rda") # spatial variance covariance matrix
+    sigma_delta_hat <- spatial_sigma_matrix_subnationalmod
+  }
   # Read in subnational local parameters
-  load("data/sigma_matrix_subnationalmod.rda")
   load("data/median_alphacms_subnationalmod.rda")
   load("data/tau_alphapms_subnationalmod.rda")
 

@@ -7,3 +7,7 @@ mod <- readRDS(paste0(respath,"mod_global_subnational.RDS")) # Read in global mo
 
 sigma_delta_hat <- mod$BUGSoutput$median$sigma_delta
 saveRDS(sigma_delta_hat, file=paste0(respath,"sigma_delta_hat.RDS"))
+
+# Reading in spatial sigma_delta variance covariance matrix from RDS file.
+spatial_sigma_matrix_subnationalmod <- readRDS("data-raw/subnat_spatial_sigma_delta_hat.RDS")
+usethis::use_data(spatial_sigma_matrix_subnationalmod, overwrite=TRUE)
