@@ -23,7 +23,7 @@ devtools::load_all()
 ## Get your custom data
 
 ```{r, include=TRUE, message=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Ethiopia", surveydata_filepath="data-raw/sample_custom_datasets/subnational_user_input_test_correct.xlsx") 
+raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Ethiopia", surveydata_filepath="data-raw/sample_custom_datasets/ethiopia_subnat_customdata.xlsx") 
 ```
 
 ## Get the JAGS model inputs and the cleaned data
