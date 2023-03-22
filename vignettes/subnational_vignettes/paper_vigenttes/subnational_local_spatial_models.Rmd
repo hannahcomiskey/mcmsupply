@@ -16,9 +16,6 @@ library(mcmsupply)
 library(dplyr)
 ```
 
-```{r, include=FALSE}
-devtools::load_all()
-```
 
 ## Get your data
 
