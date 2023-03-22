@@ -10,8 +10,8 @@
 get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, spatial=FALSE,  mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     if(spatial==TRUE) { # local spatial
-      local_params <- mcmsupply::get_subnational_local_parameters(mycountry=mycountry, spatial=spatial) # get local informative prior parameters
-      geo_data <- mcmsupply::get_subnational_local_geodata(mycountry=mycountry) # get geographic neighbourhood adjacency matrix
+      local_params <- get_subnational_local_parameters(mycountry=mycountry, spatial=spatial) # get local informative prior parameters
+      geo_data <- get_subnational_local_geodata(mycountry=mycountry) # get geographic neighbourhood adjacency matrix
       jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
                         se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
                         alpha_cms_hat = local_params$alpha_cms,
@@ -34,7 +34,7 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, spatial=FALSE
                         matchyears = pkg_data$matchyears
       )
     } else { # local nonspatial
-      local_params <- mcmsupply::get_subnational_local_parameters(mycountry = mycountry) # local informative prior parameters
+      local_params <- get_subnational_local_parameters(mycountry = mycountry) # local informative prior parameters
       jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
                         se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
                         alpha_cms_hat = local_params$alpha_cms,
