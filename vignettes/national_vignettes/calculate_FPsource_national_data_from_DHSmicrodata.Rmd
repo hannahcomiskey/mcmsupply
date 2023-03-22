@@ -82,21 +82,100 @@ data$sampleweights <- data$v005/1000000 # As per the DHS data manual. This is th
 
 data <- data %>% filter(is.na(sector_categories)==FALSE & modern_method_source %in% c("Implant", "Injectable", "OC Pills", "Sterilization (F)", "Sterilization (M)", "Condom (M)", "Condom (F)", "IUD","Other Modern Methods", "Emergency contraception"))
 
-data %>% count(sector)
-data %>% count(sector_categories)
-data %>% count(modern_method_source)
+data %>% count(sector) # count the number of observations in the sub-sectors
+data %>% count(sector_categories)  # count the number of observations in the sectors (public, commercial medical and other)
+data %>% count(modern_method_source)  # count the number of observations for each of the methods
 counts <- data %>% group_by(sector_categories) %>% count(modern_method_source) %>% rename(method = modern_method_source)
 
 ```
 
+# Complex sample design parameters - including sample weights
+
+```{r}
+DHSdesign<-svydesign(id=data$v021, strata=NULL, weights=data$sampleweights, data=data, nest=TRUE) # reflect the sample weights when calculating the observations. Some regions are densely populated and sampled, therefore these observations are down-weighted to allow for sparser regions.
+options(survey.lonely.psu="adjust")
+```
 
 
+# Remove any stratum that only have one primary sampling unit (PSU)
+
+```{r}
+one_psu_strata <- data %>% count(v023) %>% filter(n == 1)
+data <- data %>%
+  filter(!(v023 %in% one_psu_strata$v023))
+```
 
 
-## Subnational level data
+# Calculate proprtions and standard errors for each of the three sectors, save the results to an excel file for each country
 
+```{r}
 
+n_methods <- c("Implant", "Injectable", "IUD", "Condom (M)", "Sterilization (F)", "OC Pills", "Emergency contraception", "Other Modern Methods")
 
+my_SEdf_public <- data.frame()
+  for(m in n_methods) {
+    print(m)
+    test_data <- data %>% filter(sector_categories=="Public" & modern_method_source==m)
+    if(nrow(test_data) != 0) {
+      
+      tmp <- as.data.frame(svyby(~I(sector_categories=="Public"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
+      
+      my_tmpDF <- tibble(
+        sector_categories="Public",
+        method = m,
+        proportion = tmp[2,2], # hardcode for now
+        SE.proportion =  tmp[2,3]) 
+      
+      my_SEdf_public <- rbind(my_tmpDF, my_SEdf_public) 
+    } else {
+      next
+    }
+  }
+
+my_SEdf_comm_med <- data.frame()
+  for(m in n_methods) {
+    print(m)
+    test_data <- data %>% filter(sector_categories=="Commercial_medical" & modern_method_source==m)
+    if(nrow(test_data) != 0) { 
+      tmp <- as.data.frame(svyby(~I(sector_categories=="Commercial_medical"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
+      my_tmpDF <- tibble(
+        sector_categories="Commercial_medical",
+        method = m,
+        proportion = tmp[2,2], # hardcode for now
+        SE.proportion =  tmp[2,3])
+      
+      my_SEdf_comm_med <- rbind(my_tmpDF, my_SEdf_comm_med)
+      } else { 
+      next
+      }
+  }
+
+my_SEdf_other <- data.frame()
+for(m in n_methods) {
+  print(m)
+  test_data <- data %>% filter(sector_categories=="Other" & modern_method_source==m)
+  if(nrow(test_data) != 0) { 
+    tmp <- as.data.frame(svyby(~I(sector_categories=="Other"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
+    my_tmpDF <- tibble(
+      sector_categories="Other",
+      method = m,
+      proportion = tmp[2,2], # hardcode for now
+      SE.proportion =  tmp[2,3]) 
+    
+    my_SEdf_other <- rbind(my_tmpDF, my_SEdf_other)
+  } else{ 
+      next }
+}
+
+my_SEdf <- rbind(my_SEdf_comm_med, my_SEdf_other)
+my_SEdf <- rbind(my_SEdf, my_SEdf_public) 
+my_SEdf$country_code <- country_code
+my_SEdf$year <- year
+my_SEdf <- merge(my_SEdf, counts)
+
+write.xlsx(as.data.frame(my_SEdf), paste(folder, "/", country_code,"_", year, "_SEdf.xlsx" , sep=""))
+
+```
 
 ## References
 ICF. 2004-2017. Demographic and Health Surveys (various) [Datasets]. Funded by USAID. Rockville, Maryland: ICF [Distributor].
