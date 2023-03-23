@@ -9,8 +9,10 @@
 
 get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
+    print("Using preloaded data!")
     load("data/national_FPsource_data.rda") # Read in data
   } else {
+    print(paste0("Using file from ", surveydata_filepath))
     national_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
     load("data/national_FPsource_format.rda")
     check_format(national_FPsource_format, national_FPsource_data) # Check if user input data is suitable for inclusion
@@ -30,6 +32,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::ungroup() %>%
     dplyr::group_by(Country, Super_region, Method, average_year, sector_category) %>%
     dplyr::distinct() %>%
+    dplyr::select(Country, Super_region, Method, average_year, sector_category, proportion, n) %>%
     tidyr::pivot_wider(names_from = sector_category, values_from = c(proportion,n)) %>%
     dplyr::rename(Commercial_medical = proportion_Commercial_medical ) %>%
     dplyr::rename(Public = proportion_Public ) %>%
