@@ -31,7 +31,7 @@ national_FPsource_data <- SE_source_data %>%
 national_FPsource_data <- national_FPsource_data %>%
   dplyr::select(!c(Method_collapse, check_sum)) %>%
   dplyr::rename(Super_region = Region) %>%
-  dplyr::select(Country, Super_region, Method, average_year, sector_category, prop.trans, n) %>%
+  dplyr::select(Country, Super_region, Method, average_year, sector_category, prop.trans, SE.proportion, n) %>%
   dplyr::rename(proportion = prop.trans)
 
 usethis::use_data(national_FPsource_data, overwrite=TRUE)

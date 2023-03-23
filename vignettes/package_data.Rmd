@@ -1,0 +1,92 @@
+---
+title: "Package data"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all()
+```
+This vignette covers package data. Central to all vignettes are data inputs in the form of, country classifications, estimated correlations, estimated national and subnational model parameters for one-country runs, and national and subnational family planning source data.
+
+1. [Country and area classification](#div) `Country_and_area_classification_inclFP2020`
+2. [Estimated national correlations](#cu) `estimated_national_correlations`
+3. [Estimated subnational correlations](#cu)  `estimated_global_subnational_correlations` and `estimated_global_spatial_subnational_correlations`
+4. [Estimated model parameters for national one-country runs](#pc) `median_alpha_region_intercepts`, `precision_alpha_country_intercepts` , and `Bspline_sigma_matrix_median`, 
+5. [Estimated model parameters for subnational one-country runs](#pc) `median_alphacms`, `tau_alpha_pms_hat`, `sigma_delta_hat`, `spatial_sigma_delta_hat`, `global_provincial_neighbouradj`, and the country-specific neighbourhood adjacency matrices in the `data/local_neighbours` folder
+6. [Family planning source data](#pc) `national_FPsource_data` and `subnat_FPsource_data`
+
+
+## <a name="div"></a>
+## 1. Country and area classification
+Country and area classification data is used as the a link between low-level divisions (country) and higher-level divisions (sub-regions, regions). After loading the package, enter `Country and area classification` into the console to access this data.
+```{r}
+library(mcmsupply)
+Country_and_area_classification_inclFP2020
+??Country_and_area_classification_inclFP2020
+```
+
+## <a name="cu"></a>
+## 2. Estimated national correlations
+This is the estimated correlations for the rates of change between methods in the global national model. The approach for estimating correlations at the national level is very similar to that at the subnational level. For an example of how to calculate the subnational correlations, please review the `data-raw/estimated_global_subnational_correlations.R` script.
+```{r}
+estimated_national_correlations
+```
+
+## <a name="cu"></a>
+## 3. Estimated subnational correlations
+This is the estimated correlations for the rates of change between methods in the global national model. There is a vignette to describe how we calculated these correlations at the subnational level, please review the `data-raw/estimated_global_subnational_correlations.R` script. The apporach is the same for both the spatial and non-spatial model estimates.
+
+```{r}
+estimated_global_subnational_correlations
+```
+
+```{r}
+estimated_global_spatial_subnational_correlations
+```
+
+## <a name="cu"></a>
+## 4. Estimated model parameters for national one-country runs
+These are the estimated parameters used in a one-country national model run. `median_alpha_region_intercepts` are the regional intercepts used to inform the country-specific intercept of the model, the `precision_alpha_country_intercepts` are the associated variance with these country-specific intercepts. `Bspline_sigma_matrix_median` is the variance-covariance matrix used to inform the Wishart prior on the first-order difference of the spline coefficients. 
+
+```{r}
+median_alpha_region_intercepts
+```
+
+```{r}
+precision_alpha_country_intercepts
+```
+
+```{r}
+Bspline_sigma_matrix_median
+```
+
+## <a name="cu"></a>
+## 5. Estimated model parameters for subnational one-country runs
+These are the estimated parameters used in a one-country national model run. `median_alphacms` are the country-specific intercepts used to inform the subnational province-specific intercepts of the model, the `tau_alpha_pms_hat` are the associated variance with these province-specific intercepts. `sigma_delta_hat` and `spatial_sigma_delta_hat` are the variance-covariance matrices used to inform the Wishart prior on the first-order difference of the spline coefficients for the non-spatial and spatial subnational models respectively. The `global_provincial_neighbouradj` is the global-level neighbourhood adjanency matrix for all subnational provinces in the complete dataset. The country-specific neighbourhood adjacency matrices are found in the `data/local_neighbours` folder. These contain the neighbourhood ajancy matrices for each country individually.
+
+```{r}
+median_alphacms
+```
+
+```{r}
+tau_alpha_pms_hat
+```
+
+```{r}
+sigma_delta_hat
+```
+
+
+## <a name="cu"></a>
+## 6. Family planning source data 
+These are are two family planning commodity source datasets provided in this package - one for the national level observations, `national_FPsource_data` and one for the subnational level data `subnat_FPsource_data`. For the national level data, there is a vignette `calculate_FPsource_national_data_from_DHSmicrodata` that explains how the national level data was calculated using the DHS microdata. A similar apporoach was used for the subnational data using IPUMS data.
+
+```{r}
+national_FPsource_data
+````
+
+
+```{r}
+subnat_FPsource_data
+````

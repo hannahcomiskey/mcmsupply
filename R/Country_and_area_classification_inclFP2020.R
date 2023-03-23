@@ -1,9 +1,9 @@
 #' Track20 Country and area classification according to the United Nations
-#'
 #' A subset of data from the United Nations country classifications
 #'
-#' @format ## `Country_and_area_classification_inclFP2020`
-#' A data frame with 231 rows and 8 columns:
+#' @docType data
+#' @keywords Country_and_area_classification_inclFP2020
+#' @format  A data frame with 231 rows and 8 columns:
 #' \describe{
 #'   \item{Country or area}{Country name}
 #'   \item{ISO Code}{1, 2 & 3 number ISO country codes}

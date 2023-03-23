@@ -1,7 +1,7 @@
 Package: mcmsupply
 Type: Package
 Title: Estimating the Proportion of Modern Contraceptive Methods supplied by the Public & Private Sectors using a Bayesian Hierarchical Penalized Spline Model
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     c(person("Hannah", "Comiskey", email="hannah.comiskey.2015@mumail.ie", role = c("aut", "cre")),
     person("Niamh", "Cahill", role = "aut"),
@@ -13,10 +13,15 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R2jags,
+    doMC, 
+    foreach,
+    geodata,
+    sf,
+    spdep,
     runjags,
     tidyverse,
     tidybayes,
-    R (>= 2.10)
+    R (>= 3.5.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Suggests: 

@@ -3,10 +3,9 @@
 \docType{data}
 \name{Country_and_area_classification_inclFP2020}
 \alias{Country_and_area_classification_inclFP2020}
-\title{Track20 Country and area classification according to the United Nations}
+\title{Track20 Country and area classification according to the United Nations
+A subset of data from the United Nations country classifications}
 \format{
-\subsection{\code{Country_and_area_classification_inclFP2020}}{
-
 A data frame with 231 rows and 8 columns:
 \describe{
 \item{Country or area}{Country name}
@@ -19,7 +18,6 @@ A data frame with 231 rows and 8 columns:
 \item{FP2020}{Binary indicator for FP2020 participation status}
 }
 }
-}
 \source{
 On request from Track20. Contact details found at https://www.track20.org/
 }
@@ -27,6 +25,7 @@ On request from Track20. Contact details found at https://www.track20.org/
 Country_and_area_classification_inclFP2020
 }
 \description{
+Track20 Country and area classification according to the United Nations
 A subset of data from the United Nations country classifications
 }
-\keyword{datasets}
+\keyword{Country_and_area_classification_inclFP2020}

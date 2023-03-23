@@ -1,0 +1,14 @@
+rmarkdown::render('README.Rmd')
+rmarkdown::render('vignettes/package_data.Rmd')
+rmarkdown::render('vignettes/national_vignettes/calculate_FPsource_national_data_from_DHSmicrodata.Rmd')
+rmarkdown::render('vignettes/national_vignettes/global_national_mod.Rmd')
+rmarkdown::render('vignettes/national_vignettes/local_national_customdata_mod.Rmd')
+rmarkdown::render('vignettes/national_vignettes/local_national_mod.Rmd')
+rmarkdown::render('vignettes/country_names.Rmd')
+rmarkdown::render('vignettes/subnational_vignettes/subnational_global_nonspat_models.Rmd')
+rmarkdown::render('vignettes/subnational_vignettes/subnational_global_spat_models.Rmd')
+rmarkdown::render('vignettes/subnational_vignettes/subnational_local_nonspat_models.Rmd')
+rmarkdown::render('vignettes/subnational_vignettes/subnational_local_spatial_customdata_models.Rmd')
+rmarkdown::render('vignettes/subnational_vignettes/subnational_local_spatial_models.Rmd')
+
+

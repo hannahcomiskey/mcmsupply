@@ -45,7 +45,7 @@ country_code <- unique(data$v000) # Unique country code identifier
 
 ```{r, eval=FALSE}
 labelled::val_labels(data$v312) # Numerical codes and names of the contraceptive method used
-data <- data %>% mutate(modern_method_source= case_when(v312==6 ~ "Sterilization (F)",
+data <- data %>% dplyr::mutate(modern_method_source= dplyr::case_when(v312==6 ~ "Sterilization (F)",
                                                         v312==7 ~ "Sterilization (M)",
                                                         v312==2 ~ "IUD",
                                                         v312==11 ~ "Implant",
@@ -59,7 +59,7 @@ data <- data %>% mutate(modern_method_source= case_when(v312==6 ~ "Sterilization
 
 
 labelled::val_labels(data$v327) # Numerical codes and names of the contraceptive method supplier used
-data <- data %>% mutate(sector= case_when(v327==1 | v327==2 ~ "Public",
+data <- data %>% dplyr::mutate(sector= dplyr::case_when(v327==1 | v327==2 ~ "Public",
                                           v327==3 ~ "NGO",
                                           v327==4 ~ "Private Clinic",
                                           v327==5 ~ "Pharmacy",
@@ -67,7 +67,7 @@ data <- data %>% mutate(sector= case_when(v327==1 | v327==2 ~ "Public",
                                           v327==7 ~ "Other",
                                           v327==8 ~  NA_character_))
 
-data <- data %>% mutate(sector_categories= case_when(v327==1 | v327==2 ~ "Public", # Further aggregate the sources into Public, private commercial medical and private other sectors
+data <- data %>% dplyr::mutate(sector_categories= dplyr::case_when(v327==1 | v327==2 ~ "Public", # Further aggregate the sources into Public, private commercial medical and private other sectors
                                           v327==3 ~ "Commercial_medical",
                                           v327==4 ~ "Commercial_medical",
                                           v327==5 ~ "Commercial_medical",
@@ -80,45 +80,45 @@ data <- data %>% mutate(sector_categories= case_when(v327==1 | v327==2 ~ "Public
 data$num <- 1
 data$sampleweights <- data$v005/1000000 # As per the DHS data manual. This is the sample weights for each observation.
 
-data <- data %>% filter(is.na(sector_categories)==FALSE & modern_method_source %in% c("Implant", "Injectable", "OC Pills", "Sterilization (F)", "Sterilization (M)", "Condom (M)", "Condom (F)", "IUD","Other Modern Methods", "Emergency contraception"))
+data <- data %>% dplyr::filter(is.na(sector_categories)==FALSE & modern_method_source %in% c("Implant", "Injectable", "OC Pills", "Sterilization (F)", "Sterilization (M)", "Condom (M)", "Condom (F)", "IUD","Other Modern Methods", "Emergency contraception"))
 
-data %>% count(sector) # count the number of observations in the sub-sectors
-data %>% count(sector_categories)  # count the number of observations in the sectors (public, commercial medical and other)
-data %>% count(modern_method_source)  # count the number of observations for each of the methods
-counts <- data %>% group_by(sector_categories) %>% count(modern_method_source) %>% rename(method = modern_method_source)
+data %>% dplyr::count(sector) # count the number of observations in the sub-sectors
+data %>% dplyr::count(sector_categories)  # count the number of observations in the sectors (public, commercial medical and other)
+data %>% dplyr::count(modern_method_source)  # count the number of observations for each of the methods
+counts <- data %>% dplyr::group_by(sector_categories) %>% dplyr::count(modern_method_source) %>% dplyr::rename(method = modern_method_source)
 
 ```
 
 # Complex sample design parameters - including sample weights
 
-```{r}
-DHSdesign<-svydesign(id=data$v021, strata=NULL, weights=data$sampleweights, data=data, nest=TRUE) # reflect the sample weights when calculating the observations. Some regions are densely populated and sampled, therefore these observations are down-weighted to allow for sparser regions.
+```{r, eval=FALSE}
+DHSdesign<- survey::svydesign(id=data$v021, strata=NULL, weights=data$sampleweights, data=data, nest=TRUE) # reflect the sample weights when calculating the observations. Some regions are densely populated and sampled, therefore these observations are down-weighted to allow for sparser regions.
 options(survey.lonely.psu="adjust")
 ```
 
 
 # Remove any stratum that only have one primary sampling unit (PSU)
 
-```{r}
-one_psu_strata <- data %>% count(v023) %>% filter(n == 1)
+```{r, eval=FALSE}
+one_psu_strata <- data %>% dplyr::count(v023) %>% dplyr::filter(n == 1)
 data <- data %>%
-  filter(!(v023 %in% one_psu_strata$v023))
+  dplyr::filter(!(v023 %in% one_psu_strata$v023))
 ```
 
 
 # Calculate proprtions and standard errors for each of the three sectors, save the results to an excel file for each country
 
-```{r}
+```{r, eval=FALSE}
 
 n_methods <- c("Implant", "Injectable", "IUD", "Condom (M)", "Sterilization (F)", "OC Pills", "Emergency contraception", "Other Modern Methods")
 
 my_SEdf_public <- data.frame()
   for(m in n_methods) {
     print(m)
-    test_data <- data %>% filter(sector_categories=="Public" & modern_method_source==m)
+    test_data <- data %>% dplyr::filter(sector_categories=="Public" & modern_method_source==m)
     if(nrow(test_data) != 0) {
       
-      tmp <- as.data.frame(svyby(~I(sector_categories=="Public"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
+      tmp <- as.data.frame(survey::svyby(~I(sector_categories=="Public"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
       
       my_tmpDF <- tibble(
         sector_categories="Public",
@@ -135,9 +135,9 @@ my_SEdf_public <- data.frame()
 my_SEdf_comm_med <- data.frame()
   for(m in n_methods) {
     print(m)
-    test_data <- data %>% filter(sector_categories=="Commercial_medical" & modern_method_source==m)
+    test_data <- data %>% survey::svybyfilter(sector_categories=="Commercial_medical" & modern_method_source==m)
     if(nrow(test_data) != 0) { 
-      tmp <- as.data.frame(svyby(~I(sector_categories=="Commercial_medical"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
+      tmp <- as.data.frame(survey::svyby(~I(sector_categories=="Commercial_medical"), ~I(modern_method_source==m), design=DHSdesign, svyciprop))
       my_tmpDF <- tibble(
         sector_categories="Commercial_medical",
         method = m,
@@ -173,7 +173,7 @@ my_SEdf$country_code <- country_code
 my_SEdf$year <- year
 my_SEdf <- merge(my_SEdf, counts)
 
-write.xlsx(as.data.frame(my_SEdf), paste(folder, "/", country_code,"_", year, "_SEdf.xlsx" , sep=""))
+xlsx::write.xlsx(as.data.frame(my_SEdf), paste(folder, "/", country_code,"_", year, "_SEdf.xlsx" , sep=""))
 
 ```
 

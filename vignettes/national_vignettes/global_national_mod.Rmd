@@ -17,12 +17,6 @@ library(mcmsupply)
 library(dplyr)
 ```
 
-
-```{r, include=FALSE}
-devtools::load_all()
-```
-
-
 ## Load the data 
 
 ```{r, include=TRUE, message=FALSE}
