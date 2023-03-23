@@ -20,7 +20,7 @@ library(dplyr)
 ## Load the data 
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-cleaned_natdata <- get_national_data(local=TRUE, mycountry="Nepal", fp2030=TRUE)
+cleaned_natdata <- get_national_data(local=TRUE, mycountry="Nepal", fp2030=TRUE, surveydata_filepath=NULL)
 ```
 
 ## Get the JAGS model inputs and the cleaned data
