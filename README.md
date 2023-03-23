@@ -1,10 +1,6 @@
 mcmsupply
 ================
 
-<!-- badges: start -->
-<!--  [![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889) -->
-<!-- badges: end -->
-
 ## Installation
 
 The package can be installed by cloning this repository: git clone
@@ -14,6 +10,11 @@ Then running: devtools::install().
 
 The source code for vignettes can be found in
 /vignettes/paper_vignettes. Below is a brief introduction.
+
+## Zenodo link
+
+https://zenodo.org/badge/latestdoi/473641889
+
 
 ## Introduction
 
