@@ -13,8 +13,7 @@ The source code for vignettes can be found in
 
 ## Zenodo link
 
-https://zenodo.org/badge/latestdoi/473641889
-
+[![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889)
 
 ## Introduction
 

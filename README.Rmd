@@ -13,9 +13,10 @@ options(warn=-1)
 knitr::opts_chunk$set(echo = TRUE)
 library(mcmsupply)
 ```
-<!-- badges: start -->
-<!--  [![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889) -->
-<!-- badges: end -->
+
+## Zenodo link
+
+[![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889)
 
 ## Installation
 The package can be installed by cloning this repository:

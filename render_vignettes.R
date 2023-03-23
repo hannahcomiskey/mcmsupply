@@ -10,5 +10,3 @@ rmarkdown::render('vignettes/subnational_vignettes/subnational_global_spat_model
 rmarkdown::render('vignettes/subnational_vignettes/subnational_local_nonspat_models.Rmd')
 rmarkdown::render('vignettes/subnational_vignettes/subnational_local_spatial_customdata_models.Rmd')
 rmarkdown::render('vignettes/subnational_vignettes/subnational_local_spatial_models.Rmd')
-
-
