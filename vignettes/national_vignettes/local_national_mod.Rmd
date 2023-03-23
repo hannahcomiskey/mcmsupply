@@ -17,20 +17,15 @@ library(mcmsupply)
 library(dplyr)
 ```
 
-
-```{r, include=FALSE}
-devtools::load_all()
-```
-
 ## Load the data 
 
-```{r, include=TRUE, message=FALSE, warning=FALSE}
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 cleaned_natdata <- get_national_data(local=TRUE, mycountry="Nepal", fp2030=TRUE)
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
-```{r, include=TRUE, message=FALSE, warning=FALSE}
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 pkg_data <- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
 
 ```

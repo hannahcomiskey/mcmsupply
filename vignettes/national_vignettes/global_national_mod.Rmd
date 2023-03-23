@@ -19,13 +19,13 @@ library(dplyr)
 
 ## Load the data 
 
-```{r, include=TRUE, message=FALSE}
+```{r, include=TRUE, message=FALSE, eval=FALSE}
 cleaned_natdata <- get_national_data(local=FALSE, mycountry=NULL, fp2030=TRUE)
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
-```{r, include=TRUE, message=FALSE, warning=FALSE}
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 pkg_data <- get_national_modelinputs(fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
 
 ```

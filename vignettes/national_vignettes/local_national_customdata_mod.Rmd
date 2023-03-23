@@ -17,22 +17,17 @@ library(mcmsupply)
 library(dplyr)
 ```
 
-
-```{r, include=FALSE}
-devtools::load_all()
-```
-
 ## Load the custom data 
 
-```{r, include=TRUE, message=FALSE, warning=FALSE}
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 raw_subnatdata <- get_national_data(local=TRUE, mycountry="Afghanistan", surveydata_filepath="data-raw/sample_custom_datasets/national_user_input_test_correct.xlsx")
 
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
-```{r, include=TRUE, message=FALSE, warning=FALSE}
-pkg_data <- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry="Afghanistan", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+pkg_data <- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry="Afghanistan", startyear=1990, endyear=2025.5, nsegments=12, raw_data = raw_subnatdata)
 
 ```
 

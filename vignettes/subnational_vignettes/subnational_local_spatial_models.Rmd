@@ -19,15 +19,15 @@ library(dplyr)
 
 ## Get your data
 
-```{r, include=TRUE, message=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Nepal") %>%
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+raw_subnatdata <- get_subnational_data(local=TRUE, mycountry="Nepal") %>%
   dplyr::arrange(Country, Region, Method, average_year)
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
-```{r, include=TRUE, message=FALSE, warning=FALSE}
-pkg_data <- mcmsupply::get_subnational_modelinputs(fp2030=TRUE, local=TRUE,
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+pkg_data <- get_subnational_modelinputs(fp2030=TRUE, local=TRUE,
                                                           spatial=TRUE, mycountry="Nepal",
                                                           startyear=1990, endyear=2028.5,
                                                           nsegments=12, raw_subnatdata)
