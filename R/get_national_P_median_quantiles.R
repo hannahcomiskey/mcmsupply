@@ -12,7 +12,7 @@
 get_national_P_median_quantiles <- function(country_index_table, method_index_table, sector_index_table, year_index_table, my_model, local=FALSE) { # Median alpha values
   years <- unique(year_index_table$floored_year)
   n_years <- years %>% length() # important when using 6-monthly description
-
+  n_all_years <- nrow(year_index_table)
   if(local==FALSE) {
     P_samp <- my_model$BUGSoutput$sims.list$P
     P_dims <- dim(P_samp)
@@ -122,6 +122,7 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
       dplyr::filter(average_year > floor(average_year)) # only take the mid-years
 
   } else {
+    mycountry <- unique(country_index_table$Country)
     m <- my_model$BUGSoutput$sims.matrix # create an object containing the posterior samples
     sample_draws <- tidy_draws(m)     ## format data for plotting results
     n_iter <- nrow(sample_draws)
