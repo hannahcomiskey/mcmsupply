@@ -17,11 +17,11 @@ When you complete you installation, remember to create folders inside /visualisa
 
 For example, I use the follwoing pathways for national global and local runs: 
 1. Results
-      Global: results/national/global
-      Local : results/national/local
+      - Global: results/national/global
+      - Local : results/national/local
 2. Visualisations
-      Global: visualisation/national/global
-      Local : visualisation/national/local
+      - Global: visualisation/national/global
+      - Local : visualisation/national/local
 
 ## Zenodo link
 
