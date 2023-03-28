@@ -5,10 +5,10 @@
 #' @export
 
 get_subnational_global_P_samps <- function(main_path) {
-  mcmsupplylocal::get_global_P_public(main_path)
+  get_global_P_public(main_path)
   gc()
-  mcmsupplylocal::get_subnational_global_P_CM(main_path)
+  get_subnational_global_P_CM(main_path)
   gc()
-  mcmsupplylocal::get_subnational_global_P_other(main_path)
+  get_subnational_global_P_other(main_path)
   gc()
 }
