@@ -5,7 +5,7 @@
 #' @export
 
 get_subnational_global_P_samps <- function(main_path) {
-  get_global_P_public(main_path)
+  get_subnational_global_P_public(main_path)
   gc()
   get_subnational_global_P_CM(main_path)
   gc()
