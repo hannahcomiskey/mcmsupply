@@ -3,13 +3,25 @@ mcmsupply
 
 ## Installation
 
-The package can be installed by cloning this repository: git clone
+The package can be installed by cloning this repository using the terminal command: git clone
 <https://github.com/hannahcomiskey/mcmsupply.git>
 
-Then running: devtools::install().
+Then running the R command: devtools::install().
 
 The source code for vignettes can be found in
 /vignettes/paper_vignettes. Below is a brief introduction.
+
+## Folders 
+
+When you complete you installation, remember to create folders inside /visualisation and /results to store your subnational/national results. Keeping the results tidy and separate from one another will prevent any overwriting.
+
+For example, I use the follwoing pathways for national global and local runs: 
+1. Results
+      - Global: results/national/global
+      - Local : results/national/local
+2. Visualisations
+      - Global: visualisation/national/global
+      - Local : visualisation/national/local
 
 ## Zenodo link
 
