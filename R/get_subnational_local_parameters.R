@@ -7,17 +7,14 @@
 get_subnational_local_parameters <- function(mycountry, spatial=FALSE) {
 
   if(spatial==FALSE) {
-    load("data/nonspatial_sigma_matrix_subnationalmod.rda") # non-spatial variance covariance matrix
+    sigma_delta_hat <- mcmsupply::sigma_delta_hat # non-spatial variance covariance matrix
   } else {
-    load("data/spatial_sigma_matrix_subnationalmod.rda") # spatial variance covariance matrix
-    sigma_delta_hat <- spatial_sigma_matrix_subnationalmod
+    sigma_delta_hat <- mcmsupply::spatial_sigma_matrix_subnationalmod # spatial variance covariance matrix
   }
   # Read in subnational local parameters
-  load("data/median_alphacms_subnationalmod.rda")
-  load("data/tau_alphapms_subnationalmod.rda")
-
+  median_alphacms <- mcmsupply::median_alphacms # load country-level intercept median estimates
   myalpha_med <- median_alphacms[,,mycountry] # Take out relevant country
-
+  tau_alpha_pms_hat <- mcmsupply::tau_alpha_pms_hat # load subnational-level intercept precision
   return(list(alpha_cms = myalpha_med,
               tau_alphapms = tau_alpha_pms_hat,
               natRmat = sigma_delta_hat))

@@ -57,7 +57,7 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, spatial=FALSE
     }
   } else {
     if(spatial==TRUE) { # global spatial
-      load("data/estimated_global_subnational_correlations.rda") # load global subnational correlations
+      estimated_global_subnational_correlations <- mcmsupply::estimated_global_spatial_subnational_correlations # load global subnational correlations
       estimated_rho_matrix <- estimated_global_subnational_correlations %>%
         dplyr::select(row, column, public_cor, private_cor)
       my_SE_rho_matrix <- estimated_rho_matrix %>%
@@ -85,7 +85,7 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, spatial=FALSE
                         matchyears = pkg_data$matchyears
       )
     } else { # global nonspatial
-      load("data/estimated_global_subnational_correlations.rda") # load global subnational correlations
+      estimated_global_subnational_correlations <- mcmsupply::estimated_global_subnational_correlations  # load global subnational correlations
       estimated_rho_matrix <- estimated_global_subnational_correlations %>%
         dplyr::select(row, column, public_cor, private_cor)
       my_SE_rho_matrix <- estimated_rho_matrix %>%

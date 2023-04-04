@@ -10,10 +10,10 @@
 
 get_subnational_data <- function(local=FALSE, mycountry=NULL, surveydata_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
-    load("data/subnat_FPsource_data.rda")   # Read in SE data
+    subnat_FPsource_data <- mcmsupply::subnat_FPsource_data  # Read subnational in SE data
   } else {
     subnat_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
-    load("data/subnat_FPsource_format.rda")
+    subnat_FPsource_format <- mcmsupply::subnat_FPsource_format
     check_format(subnat_FPsource_format, subnat_FPsource_data) # Check if user input data is suitable for inclusion
   }
   subnatSE_source_data <- subnat_FPsource_data %>%

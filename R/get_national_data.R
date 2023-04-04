@@ -10,11 +10,11 @@
 get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
     print("Using preloaded data!")
-    load("data/national_FPsource_data.rda") # Read in data
+    national_FPsource_data <- mcmsupply::national_FPsource_data # Read in data
   } else {
     print(paste0("Using file from ", surveydata_filepath))
-    national_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
-    load("data/national_FPsource_format.rda")
+    national_FPsource_data <- readxl::read_xlsx(surveydata_filepath) # read in custom data
+    national_FPsource_format <- mcmsupply::national_FPsource_format # Load format checker
     check_format(national_FPsource_format, national_FPsource_data) # Check if user input data is suitable for inclusion
   }
 

@@ -42,14 +42,14 @@ get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE,
     dplyr::mutate(Commercial_medical.SE = ifelse(Commercial_medical.SE < 0.01, 0.01, Commercial_medical.SE))
 
   if(spatial==TRUE){
-    load("data/global_provincial_neighbouradj.rda")   # Filter for spatial countries: Not all countries have GPS data
+    global_provincial_neighbouradj <- mcmsupply::global_provincial_neighbouradj
     W = global_provincial_neighbouradj * 1L
     roworder <- rownames(global_provincial_neighbouradj)
     colnames(W) <- roworder # Arrange W in the order of the subnational indexing
     clean_FPsource <- clean_FPsource %>%
       dplyr::rowwise() %>%
       dplyr::mutate(Country_region = paste0(Country, "_", Region)) %>%
-      dplyr::filter(Country_region %in% roworder)
+      dplyr::filter(Country_region %in% roworder) # Filter for spatial countries: Not all countries have GPS data
     }
 
   clean_FPsource <- standard_method_names(clean_FPsource) # Standardizing method names

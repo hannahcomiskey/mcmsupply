@@ -8,7 +8,7 @@
 
 get_subnational_local_geodata <- function(mycountry) {
 
-  tmp_nb1 <- get(load(paste0("data/local_neighbours/", mycountry, "_neighbouradj.rda")))
+  tmp_nb1 <- get(paste0(mycountry, "_neighbouradj")) # Read in local neighbour adjacency matrices
   D <- diag(rowSums(tmp_nb1))
 
   return(list(D = D,

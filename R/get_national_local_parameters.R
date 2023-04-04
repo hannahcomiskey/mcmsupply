@@ -6,11 +6,11 @@
 #' @export
 
 get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
-  # Read in national alpha estimates ---------------------------------
-  load("data/median_alpharms_nationalmod.rda")
-  load("data/tau_alphacms_nationalmod.rda")
-  load("data/sigma_matrix_nationalmod.rda")
 
+  # Read in national alpha estimates ---------------------------------
+  median_alpha_region_intercepts <- mcmsupply::median_alpha_region_intercepts # read in regional-level (alpha_rms) median estimates
+  precision_alpha_country_intercepts <- mcmsupply::precision_alpha_country_intercepts # read in country-level (alpha_cms) precision estimates
+  Bspline_sigma_matrix_median <- mcmsupply::Bspline_sigma_matrix_median # read in national level correlations
   mydata <- get_national_data(fp2030=fp2030) # Read complete data set in without filtering for any country
 
   # Match regional intercepts to country names  ------------------------
