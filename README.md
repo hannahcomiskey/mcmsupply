@@ -3,10 +3,20 @@ mcmsupply
 
 ## Installation
 
+### Using termal GIT commands
+
+This installation approach will give you access to the source code and data, downloading the folders and files as you see on this repo.
 The package can be installed by cloning this repository using the terminal command: git clone
 <https://github.com/hannahcomiskey/mcmsupply.git>
 
 Then running the R command: devtools::install().
+
+### Using devtools
+This approach does not let you see the files and folders as you see on github.
+
+You can install the package using this R command:
+devtools::install_github("hannahcomiskey/mcmsupply")
+
 
 The source code for vignettes can be found in
 /vignettes/paper_vignettes. Below is a brief introduction.
@@ -15,7 +25,7 @@ The source code for vignettes can be found in
 
 When you complete you installation, remember to create folders inside /visualisation and /results to store your subnational/national results. Keeping the results tidy and separate from one another will prevent any overwriting.
 
-For example, I use the follwoing pathways for national global and local runs: 
+For example, I use the following pathways for national global and local runs: 
 1. Results
       - Global: results/national/global
       - Local : results/national/local
