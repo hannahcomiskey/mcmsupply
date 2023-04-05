@@ -2,7 +2,7 @@
 #' @name write_jags_model
 #' @param model_type String. Two options, "subnational" for subnational-level JAGS code or "national" for national-level JAGS code.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
-#' @param spatial TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.
+#' @param spatial TRUE/FALSE. Default is FALSE. Only applies to subnational data. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.
 #' @return returns a list ready for input into the JAGS model
 #' @export
 
