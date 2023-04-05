@@ -22,7 +22,7 @@ The source code for vignettes can be found in
 /vignettes/paper_vignettes. Below is a brief introduction.
 
 # JAGS 
-You need JAGS to run these models. to install JAGs please follow the below link:
+You need JAGS to run these models. to install JAGs please follow the link:
 https://mcmc-jags.sourceforge.io/
 
 # Folders 
