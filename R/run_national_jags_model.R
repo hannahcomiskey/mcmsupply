@@ -36,11 +36,13 @@ run_national_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, ma
                      "inv.sigma_delta")
     }
   }
+  # write JAGS model
+  write_jags_model(model_type = "national", local=local, spatial=FALSE)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
     mod <- jags.parallel(data=jagsdata,
                          parameters.to.save=jagsparams,
-                         model.file = "model/local_national_model.txt",
+                         model.file = "model.txt",
                          n.burnin = n_burnin,
                          n.iter = n_iter,
                          n.thin = n_thin)
@@ -48,7 +50,7 @@ run_national_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, ma
   } else {
     mod <- jags.parallel(data=jagsdata,
                          parameters.to.save=jagsparams,
-                         model.file = "model/global_national_model.txt",
+                         model.file = "model.txt",
                          n.burnin = n_burnin,
                          n.iter = n_iter,
                          n.thin = n_thin)

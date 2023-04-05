@@ -43,17 +43,16 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
 
   doMC::registerDoMC() # start parallel runs, save results in steps
 
-  # get model file
-  modfile <- ifelse(local==FALSE & spatial==FALSE, "model/global_subnational_nonspatial_model.txt", # global non-spatial model
-                    ifelse(local==FALSE & spatial==TRUE, "model/global_subnational_spatial_model.txt", # global spatial model
-                           ifelse(local==TRUE & spatial==FALSE,"model/local_subnational_nonspatial_model.txt", # local non spatial model,
-                                  "model/local_subnational_spatial_model.txt"))) # local spatial model
+  # write JAGS model
+  write_jags_model(model_type = "subnational", local=local, spatial=spatial)
+
+  # run JAGS model
   n_chains = 2
   foreach(chain=1:n_chains) %dopar% {   ## Do chains separately ------------------------------
     set.seed(chain*1239)
     mod <- R2jags::jags(data = jagsdata,
                         parameters.to.save = jagsparams,
-                        model.file = modfile,
+                        model.file = "model.txt",
                         n.chains = 1,
                         n.burnin = n_burnin,
                         n.iter = n_iter,

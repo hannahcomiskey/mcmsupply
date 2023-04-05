@@ -7,3 +7,4 @@ devtools::install()
 
 devtools::load_all()
 ?mcmsupply::national_FPsource_data
+mcmsupply::Afghanistan_neighbouradj

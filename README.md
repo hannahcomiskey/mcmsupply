@@ -15,7 +15,7 @@ The source code for vignettes can be found in
 
 When you complete you installation, remember to create folders inside /visualisation and /results to store your subnational/national results. Keeping the results tidy and separate from one another will prevent any overwriting.
 
-For example, I use the follwoing pathways for national global and local runs: 
+For example, I use the following pathways for national global and local runs: 
 1. Results
       - Global: results/national/global
       - Local : results/national/local
