@@ -177,7 +177,7 @@ for(m in 1:M_count){ # method loop
   for(g in 1:2) { # Sector (public,private) loop for rho
     for(i in 1:M_count){ # Method loop i
       mu_delta[g,i] <- 0
-      sd_delta[g,i] ~ dt(0,1,1)T(0,)
+      sd_delta[g,i] ~ dt(0,1/25,1)T(0,)
       sigma_delta[i,i,g] <- pow(sd_delta[g,i],2)
     }
 

@@ -11,7 +11,7 @@ write_jags_model(model_type, local = FALSE, spatial = FALSE)
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
-\item{spatial}{TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.}
+\item{spatial}{TRUE/FALSE. Default is FALSE. Only applies to subnational data. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.}
 }
 \value{
 returns a list ready for input into the JAGS model
