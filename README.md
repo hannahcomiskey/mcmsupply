@@ -21,6 +21,10 @@ devtools::install_github("hannahcomiskey/mcmsupply")
 The source code for vignettes can be found in
 /vignettes/paper_vignettes. Below is a brief introduction.
 
+# JAGS 
+You need JAGS to run these models. to install JAGs please follow the link:
+https://mcmc-jags.sourceforge.io/
+
 # Folders 
 
 When you complete you installation, remember to create folders inside /visualisation and /results to store your subnational/national results. Keeping the results tidy and separate from one another will prevent any overwriting.
