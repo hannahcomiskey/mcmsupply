@@ -7,7 +7,6 @@
 get_subnational_modelinputs(
   fp2030 = TRUE,
   local = FALSE,
-  spatial = FALSE,
   mycountry = NULL,
   startyear = 1990,
   endyear = 2030.5,
@@ -19,8 +18,6 @@ get_subnational_modelinputs(
 \item{fp2030}{TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{spatial}{TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.}
 
 \item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
 

@@ -13,16 +13,13 @@ get_subnational_r_z_samples(
   n_all_years,
   K,
   B.ik,
-  local = FALSE,
-  spatial = FALSE
+  local = FALSE
 )
 }
 \arguments{
 \item{main_path}{String. Path where you have set your model results to be saved to.}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{spatial}{TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.}
 
 \item{pkg_data}{Output of the \code{mcmsupply::get_subnational_modelinputs()} function.}
 

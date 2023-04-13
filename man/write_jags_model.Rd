@@ -4,14 +4,12 @@
 \alias{write_jags_model}
 \title{Writes the JAGS code for the national and subnational models}
 \usage{
-write_jags_model(model_type, local = FALSE, spatial = FALSE)
+write_jags_model(model_type, local = FALSE)
 }
 \arguments{
 \item{model_type}{String. Two options, "subnational" for subnational-level JAGS code or "national" for national-level JAGS code.}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{spatial}{TRUE/FALSE. Default is FALSE. Only applies to subnational data. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.}
 }
 \value{
 returns a list ready for input into the JAGS model
