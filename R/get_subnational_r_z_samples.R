@@ -4,13 +4,12 @@
 #' @param main_path String. Path where you have set your model results to be saved to.
 #' @param pkg_data Output of the `mcmsupply::get_subnational_modelinputs()` function.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
-#' @param spatial TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @return returns the point estimates for the jags model object
 #' @import R2jags runjags tidyverse tidybayes foreach doMC sf spdep geodata
 #' @export
 
-get_subnational_r_z_samples <- function(main_path,  n_subnat, n_method, n_sector, n_all_years, K, B.ik, local=FALSE, spatial=FALSE) {
+get_subnational_r_z_samples <- function(main_path,  n_subnat, n_method, n_sector, n_all_years, K, B.ik, local=FALSE) {
 
   chain1 <- readRDS(paste0(main_path,"1chain.rds"))
   chain1 <- chain1$BUGSoutput$sims.matrix %>% as_tibble()
@@ -50,24 +49,11 @@ get_subnational_r_z_samples <- function(main_path,  n_subnat, n_method, n_sector
         beta_sampspub2 <- chain2[,which(colnames(chain2) %in% betakpub_param)] %>% as.matrix()
         alpha_sampspriv2 <- chain2[,which(colnames(chain2)==alphapriv_param)] %>% unlist() %>% as.vector()
         beta_sampspriv2 <- chain2[,which(colnames(chain2) %in% betakpriv_param)] %>% as.matrix()
-
-        if(spatial==TRUE) {
-          phi_sampspub1 <- chain1[,which(colnames(chain1) %in% phipub_param)] %>% as.matrix() # spatial parameter
-          phi_sampspriv1 <- chain1[,which(colnames(chain1) %in% phipriv_param)] %>% as.matrix()
-          phi_sampspub2 <- chain2[,which(colnames(chain2) %in% phipub_param)] %>% as.matrix()
-          phi_sampspriv2 <- chain2[,which(colnames(chain2) %in% phipriv_param)] %>% as.matrix()
-          z[1:n_samps,m,p,t] <- alpha_sampspub1 + (B.ik[p,t,] %*% t(beta_sampspub1)) + t(phi_sampspub1) # public sector
-          z[(n_samps+1):(2*n_samps),m,p,t] <- alpha_sampspub2 + (B.ik[p,t,] %*% t(beta_sampspub2)) + t(phi_sampspub2)
-          r[1:n_samps,m,p,t] <- alpha_sampspriv1 + (B.ik[p,t,] %*% t(beta_sampspriv1)) + t(phi_sampspriv1) # private sector
-          r[(n_samps+1):(2*n_samps),m,p,t] <- alpha_sampspriv2 + (B.ik[p,t,] %*% t(beta_sampspriv2)) + t(phi_sampspriv2)
-          }
-        else {
-            z[1:n_samps,m,p,t] <- alpha_sampspub1 + (B.ik[p,t,] %*% t(beta_sampspub1))
-            z[(n_samps+1):(2*n_samps),m,p,t] <- alpha_sampspub2 + (B.ik[p,t,] %*% t(beta_sampspub2))
-            # private sector
-            r[1:n_samps,m,p,t] <- alpha_sampspriv1 + (B.ik[p,t,] %*% t(beta_sampspriv1))
-            r[(n_samps+1):(2*n_samps),m,p,t] <- alpha_sampspriv2 + (B.ik[p,t,] %*% t(beta_sampspriv2))
-        }
+        z[1:n_samps,m,p,t] <- alpha_sampspub1 + (B.ik[p,t,] %*% t(beta_sampspub1))
+        z[(n_samps+1):(2*n_samps),m,p,t] <- alpha_sampspub2 + (B.ik[p,t,] %*% t(beta_sampspub2))
+        # private sector
+        r[1:n_samps,m,p,t] <- alpha_sampspriv1 + (B.ik[p,t,] %*% t(beta_sampspriv1))
+        r[(n_samps+1):(2*n_samps),m,p,t] <- alpha_sampspriv2 + (B.ik[p,t,] %*% t(beta_sampspriv2))
       } # end time loop
     } # end M loop
   } # end P loop

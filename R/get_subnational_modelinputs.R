@@ -2,7 +2,6 @@
 #' @name get_subnational_modelinputs
 #' @param fp2030 TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
-#' @param spatial TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @param startyear The year you wish to begin your predictions from. Default is 1990.
 #' @param endyear The year you wish to finish your predictions. Default is 2030.5.
@@ -26,7 +25,7 @@
 #' @export
 #'
 #' @examples jagsdata <- get_modelinputs("Nepal", startyear=1990, endyear=2030.5, nsegments=12, mydata)
-get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_subnatdata) {
+get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_subnatdata) {
 
   clean_FPsource <- clean_subnat_names(fp2030=fp2030, raw_subnatdata) # Clean subnational region names for Rwanda, Nigeria, Cote d'Ivoire
 
@@ -40,17 +39,6 @@ get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE,
     dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE)) %>%
     dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%
     dplyr::mutate(Commercial_medical.SE = ifelse(Commercial_medical.SE < 0.01, 0.01, Commercial_medical.SE))
-
-  if(spatial==TRUE){
-    global_provincial_neighbouradj <- mcmsupply::global_provincial_neighbouradj
-    W = global_provincial_neighbouradj * 1L
-    roworder <- rownames(global_provincial_neighbouradj)
-    colnames(W) <- roworder # Arrange W in the order of the subnational indexing
-    clean_FPsource <- clean_FPsource %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(Country_region = paste0(Country, "_", Region)) %>%
-      dplyr::filter(Country_region %in% roworder) # Filter for spatial countries: Not all countries have GPS data
-    }
 
   clean_FPsource <- standard_method_names(clean_FPsource) # Standardizing method names
   country_subnat_tbl <- clean_FPsource %>%
@@ -132,17 +120,7 @@ get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE,
   K <- dim(res$B.ik)[2]
   H <- K-1
 
-  if(spatial==TRUE & local==FALSE) {
-    country_region_order <- paste0(index_country_subnat_tbl$Country, "_", index_country_subnat_tbl$Region) # Keep cols that we have data for in both GPS and FP source
-
-    W1 <- as_tibble(W) %>%
-      mutate(Country_province = roworder) %>%
-      dplyr::filter(Country_province %in% country_region_order) %>%
-      dplyr::arrange(Country_province, by=country_region_order) %>%
-      dplyr::select(all_of(country_region_order))
-
-    D = diag(rowSums(W1)) # Neighbour count
-
+  if(local==FALSE) {
     mylist = list(data = clean_FPsource,
                   tstar = T_star$index_year,
                   kstar = Kstar,
@@ -151,8 +129,6 @@ get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, spatial=FALSE,
                   n_obs = n_obs,
                   K = K,
                   H = H,
-                  W = W1,
-                  D = D,
                   P_zeroes = rep(0, length(n_subnat)),
                   C_count = length(n_country),
                   P_count = length(n_subnat),

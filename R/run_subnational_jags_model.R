@@ -3,7 +3,6 @@
 #' @param jagsdata The inputs for the JAGS model
 #' @param jagsparams The parameters of the JAGS model you wish to review
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
-#' @param spatial TRUE/FALSE. Default is FALSE. spatial=FALSE retrieves the data for all subnational provinces across all countries without GPS information. spatial=TRUE retrieves for data for countries with GPS information as well as FP source data.
 #' @param main_path Default is "results/". String to indicate where to save results.
 #' @param n_iter Default is 80000. Number of itterations to do in JAGS model.
 #' @param n_burnin Default is 10000. Number of samples to burn-in in JAGS model.
@@ -14,13 +13,13 @@
 #' @import R2jags runjags tidyverse tidybayes foreach doMC sf spdep geodata
 #' @export
 
-run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, spatial=FALSE, main_path,
+run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, main_path,
                                        n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
 
   print(paste0("Saving results to the following pathway: ", main_path))
 
   # Get JAGS input data list
-  jagsdata <- get_subnational_JAGSinput_list(pkg_data, local= local, spatial=spatial,  mycountry=mycountry)
+  jagsdata <- get_subnational_JAGSinput_list(pkg_data, local=local, mycountry=mycountry)
 
   # Get JAGS params to monitor
   if(is.null(jagsparams)==TRUE ) {
@@ -28,14 +27,12 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
       jagsparams <- c("alpha_pms",
                      "alpha_cms",
                      "tau_alpha",
-                     "phi", # spatial CAR parameter
                      "beta.k",
                      "sigma_delta",
                      "delta.k")
     } else { # local
       jagsparams <- c("P",
                      "alpha_pms",
-                     "phi",
                      "beta.k",
                      "inv.sigma_delta")
     }
@@ -44,7 +41,7 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
   doMC::registerDoMC() # start parallel runs, save results in steps
 
   # write JAGS model
-  write_jags_model(model_type = "subnational", local=local, spatial=spatial)
+  write_jags_model(model_type = "subnational", local=local)
 
   # run JAGS model
   n_chains = 2
@@ -82,11 +79,9 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
   mod$BUGSoutput$n.chains <- n_chains
 
   if(local==TRUE) { # save local subnational models
-    if(spatial==TRUE) { saveRDS(mod, paste0(main_path, "mod_local_subnational_",mycountry,"_spatial.RDS")) } # spatial results
-      else { saveRDS(mod, paste0(main_path, "mod_local_subnational_",mycountry,".RDS"))} # non-spatial model
+    saveRDS(mod, paste0(main_path, "mod_local_subnational_",mycountry,".RDS")) # non-spatial local model
   } else { # save global subnational models
-    if(spatial==TRUE) { saveRDS(mod, paste0(main_path, "mod_global_subnational_spatial.RDS"))} # spatial results
-      else { saveRDS(mod, paste0(main_path, "mod_global_subnational.RDS")) } # non-spatial model
+    saveRDS(mod, paste0(main_path, "mod_global_subnational.RDS")) # non-spatial global model
     }
   return(mod)
 }
