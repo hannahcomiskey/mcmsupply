@@ -6,7 +6,7 @@
 #' @return Data frame of labelled posterior samples with median, 95% and 80% credible intervals estimates.
 #' @export
 
-plot_subnational_point_estimates <- function(main_path, pkg_data, vis_path, local=FALSE, mycountry=NULL) {
+plot_subnational_point_estimates <- function(main_path, vis_path, pkg_data, local=FALSE, mycountry=NULL) {
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
     P_samps <- readRDS(paste0(main_path, mycountry,"_P_point_estimates.RDS"))

@@ -13,13 +13,13 @@
 #' @import R2jags runjags tidyverse tidybayes foreach doMC sf spdep geodata
 #' @export
 
-run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, main_path,
+run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE, main_path,
                                        n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
 
   print(paste0("Saving results to the following pathway: ", main_path))
 
   # Get JAGS input data list
-  jagsdata <- get_subnational_JAGSinput_list(pkg_data, local=local, mycountry=mycountry)
+  myjagsdata <- get_subnational_JAGSinput_list(jagsdata, local=local, mycountry=mycountry)
 
   # Get JAGS params to monitor
   if(is.null(jagsparams)==TRUE ) {
@@ -52,7 +52,7 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
   n_chains = 2
   foreach(chain=1:n_chains) %dopar% {   ## Do chains separately ------------------------------
     set.seed(chain*1239)
-    mod <- R2jags::jags(data = jagsdata,
+    mod <- R2jags::jags(data = myjagsdata,
                         parameters.to.save = jagsparams,
                         model.file = "model.txt",
                         n.chains = 1,

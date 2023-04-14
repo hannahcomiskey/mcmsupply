@@ -6,16 +6,16 @@
 \usage{
 plot_subnational_point_estimates(
   main_path,
-  pkg_data,
   vis_path,
+  pkg_data,
   local = FALSE,
   mycountry = NULL
 )
 }
 \arguments{
-\item{pkg_data}{Output of the \code{mcmsupply::get_subnational_modelinputs()} function.}
-
 \item{vis_path}{String. Path where your visualisations will be saved to.}
+
+\item{pkg_data}{Output of the \code{mcmsupply::get_subnational_modelinputs()} function.}
 
 \item{Psamps}{Posterior samples of P for one sector from JAGS model}
 }

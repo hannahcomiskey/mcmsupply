@@ -1,6 +1,5 @@
 #' Get JAGS model inputs
 #' @name get_national_modelinputs
-#' @param fp2030 TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @param startyear The year you wish to begin your predictions from. Default is 1990.
@@ -23,7 +22,7 @@
 #' @export
 #'
 #' @examples jagsdata <- get_modelinputs("Nepal", startyear=1990, endyear=2030.5, nsegments=12, mydata)
-get_national_modelinputs <- function(fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
+get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
 
   clean_FPsource <- standard_method_names(raw_data) # Standardizing method names
 

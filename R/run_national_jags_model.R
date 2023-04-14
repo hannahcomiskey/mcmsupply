@@ -13,13 +13,13 @@
 #' @import R2jags runjags tidyverse tidybayes
 #' @export
 
-run_national_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, main_path,
+run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE, main_path,
                                     n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL) {
 
   print(paste0("Saving results to the following pathway: ", main_path))
 
   # Get default data input list for JAGS
-  jagsdata <- get_national_JAGSinput_list(pkg_data, local= local,  mycountry=mycountry)
+  myjagsdata <- get_national_JAGSinput_list(jagsdata, local= local,  mycountry=mycountry)
 
   # Get default parameters to monitor
   if(is.null(jagsparams)==TRUE ) {
@@ -40,7 +40,7 @@ run_national_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, ma
   write_jags_model(model_type = "national", local=local, spatial=FALSE)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    mod <- jags.parallel(data=jagsdata,
+    mod <- jags.parallel(data=myjagsdata,
                          parameters.to.save=jagsparams,
                          model.file = "model.txt",
                          n.burnin = n_burnin,
@@ -48,7 +48,7 @@ run_national_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE, ma
                          n.thin = n_thin)
     saveRDS(mod, paste0(main_path, "mod_",mycountry,"_national_results.RDS"))
   } else {
-    mod <- jags.parallel(data=jagsdata,
+    mod <- jags.parallel(data=myjagsdata,
                          parameters.to.save=jagsparams,
                          model.file = "model.txt",
                          n.burnin = n_burnin,

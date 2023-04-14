@@ -6,7 +6,7 @@
 #' @param startyear The year you wish to begin your predictions from. Default is 1990.
 #' @param endyear The year you wish to finish your predictions. Default is 2030.5.
 #' @param nsegments The number of knots you wish to use in your basis functions. Default is 12.
-#' @param raw_subnatdata The subnational family planning source data from the 'get_subnational_data' function.
+#' @param raw_data The subnational family planning source data from the 'get_subnational_data' function.
 #'
 #' @return A list of modelling inputs for the JAGS model.
 #' 1. Tstar is the year index for the most recent survey in each province.
@@ -25,14 +25,14 @@
 #' @export
 #'
 #' @examples jagsdata <- get_modelinputs("Nepal", startyear=1990, endyear=2030.5, nsegments=12, mydata)
-get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_subnatdata) {
+get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    clean_FPsource <- raw_subnatdata %>% dplyr::filter(Country==mycountry) # Subset data to country of interest
+    clean_FPsource <- raw_data %>% dplyr::filter(Country==mycountry) # Subset data to country of interest
   }
 
   # Remove sample size less than 5, replace SE with max SE for region-method combo --------------------
-  clean_FPsource <- raw_subnatdata %>%
+  clean_FPsource <- raw_data %>%
     dplyr::filter(n_Other >= 5 | n_Public >= 5 | n_Commercial_medical >= 5) %>%
     dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE)) %>%
     dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%
