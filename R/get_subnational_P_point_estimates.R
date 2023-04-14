@@ -48,10 +48,10 @@ get_subnational_P_point_estimates <- function(main_path, pkg_data, local=FALSE, 
     all_p <- rbind(all_p, all_p_other)
   } else {
     # Read in chains results
-    chain1 <- readRDS(paste0(main_path,"1chain.rds"))
+    chain1 <- readRDS(paste0(main_path,"/output/1chain.rds"))
     chain1 <- chain1$BUGSoutput$sims.matrix %>% as_tibble()
 
-    chain2 <- readRDS(paste0(main_path,"2chain.rds"))
+    chain2 <- readRDS(paste0(main_path,"/output/2chain.rds"))
     chain2 <- chain2$BUGSoutput$sims.matrix %>% as_tibble()
 
     # Pull out P posterior samples for each of the three sectors
