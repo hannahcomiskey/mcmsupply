@@ -11,10 +11,10 @@
 
 get_subnational_r_z_samples <- function(main_path,  n_subnat, n_method, n_sector, n_all_years, K, B.ik, local=FALSE) {
 
-  chain1 <- readRDS(paste0(main_path,"1chain.rds"))
+  chain1 <- readRDS(paste0(main_path,"/output/1chain.rds"))
   chain1 <- chain1$BUGSoutput$sims.matrix %>% as_tibble()
 
-  chain2 <- readRDS(paste0(main_path,"2chain.rds"))
+  chain2 <- readRDS(paste0(main_path,"/output/2chain.rds"))
   chain2 <- chain2$BUGSoutput$sims.matrix %>% as_tibble()
 
   # Create P estimates --------------------------------------
@@ -34,9 +34,6 @@ get_subnational_r_z_samples <- function(main_path,  n_subnat, n_method, n_sector
 
         betakpub_param <- paste0("beta.k[",1,",",m,",",p,",",paste0(1:K,"]"))
         betakpriv_param <- paste0("beta.k[",2,",",m,",",p,",",paste0(1:K,"]"))
-
-        phipub_param <- paste0("phi[1,",p,"]")
-        phipriv_param <- paste0("phi[2,",p,"]")
 
         # chain 1 public and private
         alpha_sampspub1 <- chain1[,which(colnames(chain1)==alphapub_param)] %>% unlist() %>% as.vector()
@@ -58,8 +55,8 @@ get_subnational_r_z_samples <- function(main_path,  n_subnat, n_method, n_sector
     } # end M loop
   } # end P loop
 
-  saveRDS(z, paste0(main_path,"zsamps.RDS"))
-  saveRDS(r, paste0(main_path,"rsamps.RDS"))
+  saveRDS(z, paste0(main_path,"/output/zsamps.RDS"))
+  saveRDS(r, paste0(main_path,"/output/rsamps.RDS"))
 
   return(list(r = r,
               z = z))

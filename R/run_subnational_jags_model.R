@@ -43,6 +43,11 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
   # write JAGS model
   write_jags_model(model_type = "subnational", local=local)
 
+  # Create an output directory for individual chains
+  if("output" %in% list.files(main_path)){
+    print("Output folder is already created")
+    } else { dir.create(paste0(main_path, "output"))  }
+
   # run JAGS model
   n_chains = 2
   foreach(chain=1:n_chains) %dopar% {   ## Do chains separately ------------------------------
@@ -63,13 +68,13 @@ run_subnational_jags_model <- function(pkg_data, jagsparams = NULL, local=FALSE,
                                                 "summary",
                                                 "mean",
                                                 "sd")] <- NA
-    saveRDS(mod, paste0(main_path,chain, "chain.rds"))
+    saveRDS(mod, paste0(main_path,"/output/",chain, "chain.rds"))
     print(paste("MCMC results for chain ", chain, "complete"))
   } # end chains
 
   gc()
   chain=1
-  mod <- readRDS(paste0(main_path,chain, "chain.rds"))
+  mod <- readRDS(paste0(main_path,"/output/",chain, "chain.rds"))
   for (chain in 2:n_chains) {
     mod_for_one_chain <- readRDS(paste0(main_path,chain, "chain.rds"))
     mod$BUGSoutput$sims.array <- mod$BUGSoutput$sims.array %>% abind::abind(mod_for_one_chain$BUGSoutput$sims.array, along = 2)

@@ -30,19 +30,19 @@ pkg_data <- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry="Nepal",
 
 ```
 
-## Fit the model 
+## Run JAGS model 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 run_national_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/national/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Nepal")
 ```
 
-## Review the  model output
+## Get posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 get_national_P_point_estimates(main_path="results/national/local/", pkg_data, local=TRUE, mycountry="Nepal")
 ```
 
-## Plot the results
+## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plot_national_point_estimates(main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Nepal") 
