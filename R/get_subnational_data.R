@@ -8,7 +8,7 @@
 #' @examples For an all-country-province dataset : mydata <- get_subnational_data(local=FALSE, mycountry=NULL)
 #' For a one-country-province dataset: mydata <- get_subnational_data(local=TRUE, mycountry="Nepal")
 
-get_subnational_data <- function(local=FALSE, mycountry=NULL, surveydata_filepath=NULL) {
+get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
     subnat_FPsource_data <- mcmsupply::subnat_FPsource_data  # Read subnational in SE data
   } else {
@@ -132,6 +132,8 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, surveydata_filepat
       droplevels() # remove factor levels of other countries
   }
 
+  mydata <- clean_subnat_names(fp2030=fp2030, mydata) # Clean subnational region names for Rwanda, Nigeria, Cote d'Ivoire
   mydata <- mydata %>% dplyr::arrange(Country, Region, Method, average_year)
+
   return(mydata)
 }

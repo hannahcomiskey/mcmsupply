@@ -25,16 +25,14 @@
 #' @export
 #'
 #' @examples jagsdata <- get_modelinputs("Nepal", startyear=1990, endyear=2030.5, nsegments=12, mydata)
-get_subnational_modelinputs <- function(fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_subnatdata) {
-
-  clean_FPsource <- clean_subnat_names(fp2030=fp2030, raw_subnatdata) # Clean subnational region names for Rwanda, Nigeria, Cote d'Ivoire
+get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_subnatdata) {
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    clean_FPsource <- clean_FPsource %>% dplyr::filter(Country==mycountry) # Subset data to country of interest
+    clean_FPsource <- raw_subnatdata %>% dplyr::filter(Country==mycountry) # Subset data to country of interest
   }
 
   # Remove sample size less than 5, replace SE with max SE for region-method combo --------------------
-  clean_FPsource <- clean_FPsource %>%
+  clean_FPsource <- raw_subnatdata %>%
     dplyr::filter(n_Other >= 5 | n_Public >= 5 | n_Commercial_medical >= 5) %>%
     dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE)) %>%
     dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%

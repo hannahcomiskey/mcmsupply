@@ -1,5 +1,5 @@
 ---
-title: "How to run a local subnational model with a spatial component"
+title: "How to run a single-country subnational estimation model with custom data"
 author: "Hannah Comiskey"
 date: "`r Sys.Date()`"
 output: html_document
@@ -19,16 +19,14 @@ library(dplyr)
 ## Get your custom data
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Ethiopia", surveydata_filepath="data-raw/sample_custom_datasets/ethiopia_subnat_customdata.xlsx") 
+raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Ethiopia", fp2030 = TRUE, surveydata_filepath="data-raw/sample_custom_datasets/ethiopia_subnat_customdata.xlsx") 
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-pkg_data <- mcmsupply::get_subnational_modelinputs(fp2030=TRUE, local=TRUE,
-                                                          spatial=TRUE, mycountry="Ethiopia",
-                                                          startyear=1990, endyear=2028.5,
-                                                          nsegments=12, raw_subnatdata)
+pkg_data <- mcmsupply::get_subnational_modelinputs(local=TRUE, spatial=TRUE, mycountry="Ethiopia",
+                                                   startyear=1990, endyear=2028.5, nsegments=12, raw_subnatdata)
 
 ```
 

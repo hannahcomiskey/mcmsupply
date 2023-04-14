@@ -5,7 +5,6 @@
 \title{Get JAGS model inputs}
 \usage{
 get_subnational_modelinputs(
-  fp2030 = TRUE,
   local = FALSE,
   mycountry = NULL,
   startyear = 1990,
@@ -15,8 +14,6 @@ get_subnational_modelinputs(
 )
 }
 \arguments{
-\item{fp2030}{TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.}
-
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
 \item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
@@ -28,6 +25,8 @@ get_subnational_modelinputs(
 \item{nsegments}{The number of knots you wish to use in your basis functions. Default is 12.}
 
 \item{raw_subnatdata}{The subnational family planning source data from the 'get_subnational_data' function.}
+
+\item{fp2030}{TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.}
 }
 \value{
 A list of modelling inputs for the JAGS model.

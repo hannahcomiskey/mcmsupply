@@ -7,6 +7,7 @@
 get_subnational_data(
   local = FALSE,
   mycountry = NULL,
+  fp2030 = TRUE,
   surveydata_filepath = NULL
 )
 }
