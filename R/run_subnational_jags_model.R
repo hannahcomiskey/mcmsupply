@@ -76,7 +76,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
   chain=1
   mod <- readRDS(paste0(main_path,"/output/",chain, "chain.rds"))
   for (chain in 2:n_chains) {
-    mod_for_one_chain <- readRDS(paste0(main_path,chain, "chain.rds"))
+    mod_for_one_chain <- readRDS(paste0(main_path,"/output/",chain, "chain.rds"))
     mod$BUGSoutput$sims.array <- mod$BUGSoutput$sims.array %>% abind::abind(mod_for_one_chain$BUGSoutput$sims.array, along = 2)
   }
 

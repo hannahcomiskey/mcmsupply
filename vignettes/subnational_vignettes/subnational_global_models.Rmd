@@ -1,7 +1,6 @@
 ---
-title: "How to run a subnational multi-country model"
+title: "How to run a subnational level model for a multiple countries"
 author: "Hannah Comiskey"
-date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -19,35 +18,32 @@ library(dplyr)
 ## Get your data
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=FALSE, mycountry=NULL, fp2030=TRUE) 
+cleaned_subnatdata <- get_data(national=FALSE, local=FALSE, mycountry=NULL, fp2030=TRUE)
 ```
 
 ## Get the JAGS model inputs from the cleaned data
 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-pkg_data <- mcmsupply::get_subnational_modelinputs(local=FALSE, mycountry=NULL,
-                                                          startyear=1990, endyear=2028.5,
-                                                          nsegments=12, raw_subnatdata)
-
+pkg_data <- get_modelinputs(national=FALSE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_subnatdata)
 ```
 
 ## Run JAGS model
 
 ```{r message=FALSE, eval=FALSE}
-run_subnational_jags_model(pkg_data = pkg_data, local=FALSE, main_path = "results/global/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL)
+run_jags_model(national=FALSE, jagsdata = pkg_data, jagsparams = NULL, local=FALSE, main_path = "results/subnational/global/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL)
 
 ```
 
 ## Get posterior point estimates
 
 ```{r, message=FALSE, eval=FALSE}
-get_subnational_P_point_estimates(main_path = "results/subnational/global/", pkg_data, local=FALSE, mycountry=NULL)
+get_point_estimates(national=FALSE, main_path="results/subnational/global/", pkg_data, local=FALSE, mycountry=NULL)
 ```
 
 
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_subnational_point_estimates(main_path = "results/subnational/", pkg_data = pkg_data, vis_path = "visualisation/subnational/global", local=FALSE, mycountry=NULL)
+plot_point_estimates(national=TRUE, main_path="results/subnational/global/", vis_path="visualisation/subnational/global/", pkg_data, local=FALSE, mycountry=NULL) 
 ```

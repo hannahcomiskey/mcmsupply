@@ -9,7 +9,7 @@ get_point_estimates(
   local = FALSE,
   mycountry = NULL,
   main_path,
-  pkg_data
+  jagsdata
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ get_point_estimates(
 
 \item{main_path}{Default is "results/". String to indicate where to save results.}
 
-\item{pkg_data}{Output of the \code{mcmsupply::get_modelinputs()} function.}
+\item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
 }
 \value{
 returns the point estimates (median, 80\% and 95\% credible intervals) from the JAGS output
@@ -32,15 +32,15 @@ Wrapper function to run the jags model for estimating the proportion of modern c
 }
 \examples{
 National single-country example:
-get_point_estimates(national=TRUE, local=TRUE, mycountry="Nepal", main_path = "results/test", pkg_data)
+get_point_estimates(national=TRUE, local=TRUE, mycountry="Nepal", main_path = "results/test", jagsdata)
 
 National multi-country example:
-get_point_estimates(national=TRUE, local=FALSE, mycountry=NULL, main_path = "results/test", pkg_data)
+get_point_estimates(national=TRUE, local=FALSE, mycountry=NULL, main_path = "results/test", jagsdata)
 
 Subnational single-country example:
-get_point_estimates(national=FALSE, local=TRUE, mycountry="Nepal", main_path = "results/test", pkg_data)
+get_point_estimates(national=FALSE, local=TRUE, mycountry="Nepal", main_path = "results/test", jagsdata)
 
 Subnational multi-country example:
-get_point_estimates(national=FALSE, local=FALSE, mycountry=NULL, main_path = "results/test", pkg_data)
+get_point_estimates(national=FALSE, local=FALSE, mycountry=NULL, main_path = "results/test", jagsdata)
 
 }

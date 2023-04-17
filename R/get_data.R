@@ -21,9 +21,9 @@
 
 get_data <- function(national=TRUE, local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(national==TRUE) {
-    mydata <- get_national_data(national=national, local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
+    mydata <- get_national_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
   } else {
-    mydata <- get_subnational_data(national=national, local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
+    mydata <- get_subnational_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
   }
   return(mydata)
 }

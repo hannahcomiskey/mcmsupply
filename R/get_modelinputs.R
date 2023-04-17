@@ -1,7 +1,6 @@
 #' Get JAGS model inputs
 #' @name get_subnational_modelinputs
 #' @param national TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.
-#' @param fp2030 TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @param startyear The year you wish to begin your predictions from. Default is 1990.
@@ -24,23 +23,23 @@
 #' 12. matchmethod is the method indexing to match the observed data to the predictions.
 #' 13. matchyears is the year indexing to match the observed data to the predictions.
 #' @examples National single-country example:
-#' jagsdata <- get_modelinputs(national=TRUE, fp2030=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+#' jagsdata <- get_modelinputs(national=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2030.5, nsegments=12, raw_data)
 #'
 #' National multi-country example:
-#' jagsdata <- get_modelinputs(national=TRUE, fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+#' jagsdata <- get_modelinputs(national=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data)
 #'
 #' Subnational single-country example:
-#' jagsdata <- get_modelinputs(national=FALSE, fp2030=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+#' jagsdata <- get_modelinputs(national=FALSE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2030.5, nsegments=12, raw_data)
 #'
 #' Subnational multi-country example:
-#' jagsdata <- get_modelinputs(national=FALSE, fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+#' jagsdata <- get_modelinputs(national=FALSE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data)
 #' @export
 
-get_modelinputs <- function(national=TRUE, fp2030=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
+get_modelinputs <- function(national=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
   if(national==TRUE) {
-    modelinputs <- get_national_modelinputs(fp2030=fp2030, local=local, mycountry=mycountry, startyear=startyear, endyear=endyear, nsegments=nsegments, raw_data)
+    modelinputs <- get_national_modelinputs(local=local, mycountry=mycountry, startyear=startyear, endyear=endyear, nsegments=nsegments, raw_data)
   } else {
-    modelinputs <- get_subnational_modelinputs(fp2030=fp2030, local=local, mycountry=mycountry, startyear=startyear, endyear=endyear, nsegments=nsegments, raw_data)
+    modelinputs <- get_subnational_modelinputs(local=local, mycountry=mycountry, startyear=startyear, endyear=endyear, nsegments=nsegments, raw_data)
   }
   return(modelinputs)
 }

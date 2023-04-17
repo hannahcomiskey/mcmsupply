@@ -1,7 +1,6 @@
 ---
 title: "How to run a national level model for a single country"
 author: "Hannah Comiskey"
-date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -20,30 +19,30 @@ library(dplyr)
 ## Load the data 
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-cleaned_natdata <- get_national_data(local=TRUE, mycountry="Nepal", fp2030=TRUE, surveydata_filepath=NULL)
+cleaned_natdata <- get_data(national=TRUE, local=TRUE, mycountry="Nepal", fp2030=TRUE, surveydata_filepath=NULL)
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-pkg_data <- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+pkg_data <- get_modelinputs(national=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
 
 ```
 
 ## Run JAGS model 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-run_national_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/national/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Nepal")
+run_jags_model(national=TRUE, jagsdata = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/national/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Nepal")
 ```
 
 ## Get posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-get_national_P_point_estimates(main_path="results/national/local/", pkg_data, local=TRUE, mycountry="Nepal")
+get_point_estimates(national=TRUE, main_path="results/national/local/", pkg_data, local=TRUE, mycountry="Nepal")
 ```
 
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_national_point_estimates(main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Nepal") 
+plot_point_estimates(national=TRUE, main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Nepal") 
 ```

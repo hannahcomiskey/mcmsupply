@@ -1,7 +1,6 @@
 ---
-title: "How to run a subnational single-country model"
+title: "How to run a subnational level model for a single country"
 author: "Hannah Comiskey"
-date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -16,37 +15,33 @@ library(mcmsupply)
 library(dplyr)
 ```
 
+## Load the data 
 
-## Get your data
-
-```{r, include=TRUE, message=FALSE, eval=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Cameroon", fp2030=TRUE) 
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+cleaned_natdata <- get_data(national=FALSE, local=TRUE, mycountry="Nepal", fp2030=TRUE, surveydata_filepath=NULL)
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+pkg_data <- get_modelinputs(national=FALSE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+
+```
+
+## Run JAGS model 
+
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-pkg_data <- mcmsupply::get_subnational_modelinputs(local=TRUE, mycountry="Cameroon", startyear=1990, endyear=2028.5, nsegments=12, raw_subnatdata)
-
+run_jags_model(national=FALSE, jagsdata = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/subnational/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Nepal")
 ```
-
-## Run JAGS model
-
-```{r message=FALSE, eval=FALSE}
-run_subnational_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/subnational/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Cameroon")
-
-```
-
 
 ## Get posterior point estimates
 
-```{r, message=FALSE, eval=FALSE}
-get_subnational_P_point_estimates(main_path = "results/subnational/local/", pkg_data, local=TRUE, mycountry="Cameroon")
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+get_point_estimates(national=FALSE, main_path="results/subnational/local/", pkg_data, local=TRUE, mycountry="Nepal")
 ```
-
 
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_subnational_point_estimates(main_path = "results/subnational/local/", pkg_data = pkg_data, vis_path = "visualisation/subnational/local/", local=TRUE, mycountry="Cameroon")
+plot_point_estimates(national=FALSE, main_path="results/subnational/local/", vis_path="visualisation/subnational/local/", pkg_data, local=TRUE, mycountry="Nepal") 
 ```

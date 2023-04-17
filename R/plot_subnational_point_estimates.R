@@ -71,6 +71,8 @@ plot_subnational_point_estimates <- function(main_path, vis_path, pkg_data, loca
       ggplot2::theme_bw() +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90), strip.text.x = ggplot2::element_text(size = 9)) +
       ggplot2::theme(legend.position = "bottom")+
+      ggplot2::scale_colour_manual(values=safe_colorblind_palette) +
+      ggplot2::scale_fill_manual(values=safe_colorblind_palette) +
       ggplot2::labs(fill = "Sector") +
       ggplot2::guides(color="none") +
       ggplot2::facet_wrap(~Method)

@@ -1,7 +1,6 @@
 ---
-title: "How to run a single-country subnational estimation model with custom data"
+title: "How to run a subnational level model for a single country with custom data"
 author: "Hannah Comiskey"
-date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -16,36 +15,33 @@ library(mcmsupply)
 library(dplyr)
 ```
 
-## Get your custom data
+## Load the data 
 
-```{r, include=TRUE, message=FALSE, eval=FALSE}
-raw_subnatdata <- mcmsupply::get_subnational_data(local=TRUE, mycountry="Ethiopia", fp2030 = TRUE, surveydata_filepath="data-raw/sample_custom_datasets/ethiopia_subnat_customdata.xlsx") 
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+cleaned_natdata <- get_data(national=FALSE, local=TRUE, mycountry="Ethiopia", fp2030=TRUE, surveydata_filepath="data-raw/sample_custom_datasets/ethiopia_subnat_customdata.xlsx")
 ```
 
 ## Get the JAGS model inputs and the cleaned data
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-pkg_data <- mcmsupply::get_subnational_modelinputs(local=TRUE, spatial=TRUE, mycountry="Ethiopia",
-                                                   startyear=1990, endyear=2028.5, nsegments=12, raw_subnatdata)
+pkg_data <- get_modelinputs(national=FALSE, local=TRUE, mycountry="Ethiopia", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
 
 ```
 
-## Run JAGS model
+## Run JAGS model 
 
-```{r message=FALSE, eval=FALSE}
-run_subnational_jags_model(pkg_data = pkg_data, local=TRUE, spatial=TRUE, main_path = "results/local_custom_spatial/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Ethiopia")
-
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+run_jags_model(national=FALSE, jagsdata = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/subnational/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Ethiopia")
 ```
 
 ## Get posterior point estimates
 
-```{r, message=FALSE, eval=FALSE}
-get_subnational_P_point_estimates(main_path = "results/local_custom_spatial/", pkg_data, local=TRUE, spatial=TRUE, mycountry="Ethiopia")
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+get_point_estimates(national=FALSE, main_path="results/subnational/local/", pkg_data, local=TRUE, mycountry="Ethiopia")
 ```
-
 
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_subnational_point_estimates(main_path = "results/local_custom_spatial/", pkg_data = pkg_data, vis_path = "visualisations/local_custom_spatial/", local=TRUE, mycountry="Ethiopia")
+plot_point_estimates(national=FALSE, main_path="results/subnational/local/", vis_path="visualisation/subnational/local/", pkg_data, local=TRUE, mycountry="Ethiopia") 
 ```

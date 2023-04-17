@@ -37,7 +37,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE, ma
     }
   }
   # write JAGS model
-  write_jags_model(model_type = "national", local=local, spatial=FALSE)
+  write_jags_model(model_type = "national", local=local)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
     mod <- jags.parallel(data=myjagsdata,
