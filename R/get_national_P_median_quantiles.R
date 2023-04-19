@@ -47,7 +47,7 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
       index_year = as.numeric(index_year)
     )
 
-    upper_P_s_med <- lower_P_s_med <- array(dim=c(P_dims[4],n_years,P_dims[3],P_dims[2])) # 30x5 matrix for CountryxMethod then 5 into an array for each sector
+    upper80_P_s_med <- lower80_P_s_med <- upper95_P_s_med <- lower95_P_s_med <- array(dim=c(P_dims[4],n_years,P_dims[3],P_dims[2])) # 30x5 matrix for CountryxMethod then 5 into an array for each sector
 
     # Create a table for storing individual true country public data
     for(t in 1:n_years) { # time loop
@@ -61,14 +61,17 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
       for(j in 1:P_dims[4]) {
         for (r in 1:P_dims[3]) { # Create a table for storing individual true country public data
           for (i in 1:P_dims[2]) {
-            upper_P_s_med[j,t,r,i] <- quantile(P_samp[,i,r,j,time_index], probs = 0.975, na.rm=TRUE) # upper quantile using the whole year
+            upper95_P_s_med[j,t,r,i] <- quantile(P_samp[,i,r,j,time_index], probs = 0.975, na.rm=TRUE) # upper quantile using the whole year
+            upper80_P_s_med[j,t,r,i] <- quantile(P_samp[,i,r,j,time_index], probs = 0.9, na.rm=TRUE) # upper quantile using the whole year
           }
         }
       }
     }
 
-    upper_P_s_med <- plyr::adply(upper_P_s_med, c(1,2,3,4))
-    colnames(upper_P_s_med) <- c("index_country", "index_year", "index_method", "index_sector", "upper_95")
+    upper95_P_s_med <- plyr::adply(upper95_P_s_med, c(1,2,3,4))
+    colnames(upper95_P_s_med) <- c("index_country", "index_year", "index_method", "index_sector", "upper_95")
+    upper80_P_s_med <- plyr::adply(upper80_P_s_med, c(1,2,3,4))
+    colnames(upper80_P_s_med) <- c("index_country", "index_year", "index_method", "index_sector", "upper_80")
 
     for(t in 1:n_years) { # time loop
       year <- years[t]
@@ -80,19 +83,24 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
       for(j in 1:P_dims[4]) { # country loop
         for (r in 1:P_dims[3]) { # method loop
           for (i in 1:P_dims[2]) { # sector loop
-            lower_P_s_med[j,t,r,i] <- quantile(P_samp[,i,r,j,time_index], probs = 0.025) # lower quantile using the whole year
+            lower95_P_s_med[j,t,r,i] <- quantile(P_samp[,i,r,j,time_index], probs = 0.025) # lower quantile using the whole year
+            lower80_P_s_med[j,t,r,i] <- quantile(P_samp[,i,r,j,time_index], probs = 0.1) # lower quantile using the whole year
           }
         }
       }
     }
 
-    lower_P_s_med <- plyr::adply(lower_P_s_med, c(1,2,3,4)) # changes shape of array to matrix
-    colnames(lower_P_s_med) <- c("index_country", "index_year", "index_method", "index_sector", "lower_95")
+    lower95_P_s_med <- plyr::adply(lower95_P_s_med, c(1,2,3,4)) # changes shape of array to matrix
+    colnames(lower95_P_s_med) <- c("index_country", "index_year", "index_method", "index_sector", "lower_95")
+    lower80_P_s_med <- plyr::adply(lower80_P_s_med, c(1,2,3,4)) # changes shape of array to matrix
+    colnames(lower80_P_s_med) <- c("index_country", "index_year", "index_method", "index_sector", "lower_80")
 
-    P_s_Q <- merge(lower_P_s_med, upper_P_s_med)
+    P_s_Q <- merge(lower80_P_s_med, upper80_P_s_med)
+    P_s_Q <- merge(P_s_Q,lower95_P_s_med)
+    P_s_Q <- merge(P_s_Q,upper95_P_s_med)
 
-    P_s_Q <- P_s_Q %>% mutate(
-      index_country = as.numeric(index_country),
+    P_s_Q <- P_s_Q %>%
+      mutate( index_country = as.numeric(index_country),
       index_method = as.numeric(index_method),
       index_sector = as.numeric(index_sector),
       index_year = as.numeric(index_year)
@@ -116,7 +124,7 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
       dplyr::left_join(method_index_table) %>%
       dplyr::left_join(sector_index_table) %>%
       dplyr::group_by(Country, Method, Sector, average_year) %>%
-      dplyr::select(Country, Method, Sector, average_year, median_p, lower_95, upper_95) %>%
+      dplyr::select(Country, Method, Sector, average_year, median_p, lower_80, upper_80, lower_95, upper_95) %>%
       dplyr::distinct() %>%
       dplyr::rowwise() %>%
       dplyr::filter(average_year > floor(average_year)) # only take the mid-years
@@ -145,10 +153,12 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
       dplyr::select(mu_pred, average_year, Method, Sector) %>%
       dplyr::group_by(Method, Sector, average_year) %>%
       dplyr::mutate(median_p = median(mu_pred),
+                    lower_80 = quantile(mu_pred, prob = 0.01),
+                    upper_80 = quantile(mu_pred, prob = 0.9),
                     lower_95 = quantile(mu_pred, prob = 0.025),
                     upper_95 = quantile(mu_pred, prob = 0.975))%>%
       dplyr::mutate(Country = mycountry) %>%
-      dplyr::select(Country, Method, Sector, average_year, median_p, lower_95, upper_95) %>%
+      dplyr::select(Country, Method, Sector, average_year, median_p, lower_80, upper_80, lower_95, upper_95) %>%
       dplyr::distinct()
     }
   return(P_s_med)

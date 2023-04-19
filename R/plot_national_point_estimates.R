@@ -63,6 +63,7 @@ plot_national_point_estimates <- function(main_path, vis_path, pkg_data, local=F
       ggplot2::geom_point(data=country_data, ggplot2::aes(x=average_year, y=proportion, colour=Sector))+
       ggplot2::geom_errorbar(data=country_data, ggplot2::aes(ymin = prop_min, ymax = prop_max, x=average_year, colour=Sector), width = 1.5) +
       ggplot2::geom_ribbon(data=country_calc, ggplot2::aes(ymin = lower_95, ymax = upper_95, x=average_year, fill=Sector), alpha=0.2) +
+      ggplot2::geom_ribbon(data=country_calc, ggplot2::aes(ymin = lower_80, ymax = upper_80, x=average_year, fill=Sector), alpha=0.26) +
       ggplot2::labs(y="Proportion of contraceptives supplied", x = "Year", title = i) +
       ggplot2::scale_y_continuous(limits=c(0,1))+
       ggplot2::theme_bw() +

@@ -44,5 +44,5 @@ get_point_estimates(national=TRUE, main_path="results/national/local/", pkg_data
 ## Plot posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_point_estimates(national=TRUE, main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Nepal") 
+plot_estimates(national=TRUE, main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Nepal") 
 ```
