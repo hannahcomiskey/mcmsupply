@@ -5,24 +5,16 @@
 \title{Wrapper function to run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model for the national and subnational administration levels}
 \usage{
 run_jags_model(
-  national = TRUE,
-  local = FALSE,
-  mycountry = NULL,
   jagsdata,
   jagsparams = NULL,
   main_path,
   n_iter = 80000,
   n_burnin = 10000,
-  n_thin = 35
+  n_thin = 35,
+  ...
 )
 }
 \arguments{
-\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
-
-\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
-
 \item{jagsdata}{The inputs for the JAGS model}
 
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
@@ -34,6 +26,12 @@ run_jags_model(
 \item{n_burnin}{Default is 10000. Number of samples to burn-in in JAGS model.}
 
 \item{n_thin}{Default is 35. Number of samples to thin by in JAGS model.}
+
+\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
+
+\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
+
+\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
 }
 \value{
 returns the jags model object
@@ -44,18 +42,18 @@ Wrapper function to run the jags model for estimating the proportion of modern c
 }
 \examples{
 National single-country example:
-run_jags_model(national=TRUE, local=TRUE, mycountry="Nepal", jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 
 National multi-country example:
-run_jags_model(national=TRUE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 
 Subnational single-country example:
-run_jags_model(national=FALSE, local=TRUE, mycountry="Nepal", jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 
 Subnational multi-country example:
-run_jags_model(national=FALSE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 
 To change from the default parameters monitored in the JAGS model:
 myjagsparams <-c("P","alpha_pms")
-run_jags_model(national=FALSE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+run_jags_model(jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 }

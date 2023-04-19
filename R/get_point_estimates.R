@@ -22,11 +22,13 @@
 #'
 #' @export
 
-get_point_estimates <- function(national=TRUE, local=FALSE, mycountry=NULL, main_path, jagsdata) {
+get_point_estimates <- function(main_path, jagsdata, ...) {
+  args <- jagsdata$args
+  national <- args$national
   if(national==TRUE) {
-    get_national_P_point_estimates(main_path, pkg_data = jagsdata, local=local, mycountry=mycountry)
+    get_national_P_point_estimates(main_path, pkg_data = jagsdata$modelinputs, local=args$local, mycountry=args$mycountry)
   } else {
-    get_subnational_P_point_estimates(main_path, pkg_data = jagsdata, local=local, mycountry=mycountry)
+    get_subnational_P_point_estimates(main_path, pkg_data = jagsdata$modelinputs, local=args$local, mycountry=args$mycountry)
   }
   print("Results complete!")
 }

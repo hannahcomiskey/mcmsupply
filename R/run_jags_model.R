@@ -13,27 +13,29 @@
 #' importFrom("stats", "cor", "filter", "lag")
 #' @import R2jags runjags tidyverse tidybayes
 #' @examples National single-country example:
-#' run_jags_model(national=TRUE, local=TRUE, mycountry="Nepal", jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 #'
 #' National multi-country example:
-#' run_jags_model(national=TRUE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 #'
 #' Subnational single-country example:
-#' run_jags_model(national=FALSE, local=TRUE, mycountry="Nepal", jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 #'
 #' Subnational multi-country example:
-#' run_jags_model(national=FALSE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 #'
 #' To change from the default parameters monitored in the JAGS model:
 #' myjagsparams <-c("P","alpha_pms")
-#' run_jags_model(national=FALSE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+#' run_jags_model(jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 #' @export
 
-run_jags_model <- function(national=TRUE, local=FALSE, mycountry=NULL, jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35) {
+run_jags_model <- function(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...) {
+  args <- jagsdata$args
+  national <- args$national
   if(national==TRUE) {
-    mod <- run_national_jags_model(jagsdata=jagsdata, jagsparams = jagsparams, local=local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=mycountry)
+    mod <- run_national_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams, local=args$local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=args$mycountry)
   } else {
-    mod <- run_subnational_jags_model(jagsdata=jagsdata, jagsparams = jagsparams, local=local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=mycountry)
+    mod <- run_subnational_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams, local=args$local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=args$mycountry)
   }
   return(mod)
 }

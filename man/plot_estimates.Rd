@@ -4,23 +4,16 @@
 \alias{plot_estimates}
 \title{Wrapper function to plot the JAGS estimates}
 \usage{
-plot_estimates(
-  national = TRUE,
-  main_path,
-  vis_path,
-  pkg_data,
-  local = FALSE,
-  mycountry = NULL
-)
+plot_estimates(main_path, vis_path, jagsdata, ...)
 }
 \arguments{
-\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
-
 \item{main_path}{String. Path where you have set your model results to be saved to.}
 
 \item{vis_path}{String. Path where your visualisations will be saved to.}
 
-\item{pkg_data}{Output of the \code{mcmsupply::get_subnational_modelinputs()} function.}
+\item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
+
+\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
@@ -31,15 +24,15 @@ Wrapper function to plot the JAGS estimates
 }
 \examples{
 National single-country example:
-plot_estimates(national=TRUE, main_path = "results/test", vis_path  = "visualisations/test", pkg_data, local=TRUE, mycountry="Nepal")
+plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
 
 National multi-country example:
-plot_estimates(national=TRUE,  main_path = "results/test", vis_path  = "visualisations/test", pkg_data, local=FALSE, mycountry=NULL)
+plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
 
 Subnational single-country example:
-plot_estimates(national=FALSE, main_path = "results/test", vis_path  = "visualisations/test", pkg_data, local=TRUE, mycountry="Nepal")
+plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
 
 Subnational multi-country example:
-plot_estimates(national=FALSE, main_path = "results/test", vis_path  = "visualisations/test", pkg_data, local=FALSE, mycountry=NULL)
+plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
 
 }

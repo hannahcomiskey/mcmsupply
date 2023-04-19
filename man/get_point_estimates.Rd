@@ -4,24 +4,18 @@
 \alias{get_point_estimates}
 \title{Wrapper function to run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model for the national and subnational administration levels}
 \usage{
-get_point_estimates(
-  national = TRUE,
-  local = FALSE,
-  mycountry = NULL,
-  main_path,
-  jagsdata
-)
+get_point_estimates(main_path, jagsdata, ...)
 }
 \arguments{
+\item{main_path}{Default is "results/". String to indicate where to save results.}
+
+\item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
+
 \item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
 \item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
-
-\item{main_path}{Default is "results/". String to indicate where to save results.}
-
-\item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
 }
 \value{
 returns the point estimates (median, 80\% and 95\% credible intervals) from the JAGS output

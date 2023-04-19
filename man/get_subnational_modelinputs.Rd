@@ -7,13 +7,11 @@
 \title{Get JAGS model inputs}
 \usage{
 get_modelinputs(
-  national = TRUE,
-  local = FALSE,
-  mycountry = NULL,
   startyear = 1990,
   endyear = 2030.5,
   nsegments = 12,
-  raw_data
+  raw_data,
+  ...
 )
 
 get_subnational_modelinputs(
@@ -26,12 +24,6 @@ get_subnational_modelinputs(
 )
 }
 \arguments{
-\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
-
-\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
-
 \item{startyear}{The year you wish to begin your predictions from. Default is 1990.}
 
 \item{endyear}{The year you wish to finish your predictions. Default is 2030.5.}
@@ -39,6 +31,10 @@ get_subnational_modelinputs(
 \item{nsegments}{The number of knots you wish to use in your basis functions. Default is 12.}
 
 \item{raw_data}{The subnational family planning source data from the 'get_subnational_data' function.}
+
+\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
+
+\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
 
 \item{fp2030}{TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.}
 }
@@ -84,15 +80,15 @@ Get JAGS model inputs
 }
 \examples{
 National single-country example:
-jagsdata <- get_modelinputs(national=TRUE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data, ...)
 
 National multi-country example:
-jagsdata <- get_modelinputs(national=TRUE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data, ...)
 
 Subnational single-country example:
-jagsdata <- get_modelinputs(national=FALSE, local=TRUE, mycountry="Nepal", startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data, ...)
 
 Subnational multi-country example:
-jagsdata <- get_modelinputs(national=FALSE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data, ...)
 jagsdata <- get_modelinputs("Nepal", startyear=1990, endyear=2030.5, nsegments=12, mydata)
 }

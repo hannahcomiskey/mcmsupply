@@ -25,5 +25,7 @@ get_data <- function(national=TRUE, local=FALSE, mycountry=NULL, fp2030=TRUE, su
   } else {
     mydata <- get_subnational_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
   }
-  return(mydata)
+  args <- list(national=national, local=local, mycountry=mycountry, fp2030=fp2030) # inherit arguments for next steps
+  return(list(mydata = mydata,
+              args = args))
 }
