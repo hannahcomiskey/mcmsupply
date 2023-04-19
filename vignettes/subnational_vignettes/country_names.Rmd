@@ -16,37 +16,37 @@ This vignette lists the country names in the supplied data that local and/or spa
 ## Country names
 
 ```{r table1, tidy=FALSE, echo = FALSE}
-data1 <- tibble::tribble(
-  ~"Country names", ~"Included in spatial modelling",
-  "Afghanistan",     "Yes",
-"Benin",             "Yes",
-"Burkina Faso",      "Yes",
-"Cameroon",          "Yes",
-"Democratic Republic of Congo",    "No",
-"Cote d’Ivoire",     "No",
-"Ethiopia",          "Yes",
-"Ghana",             "Yes",
-"Guinea",            "Yes",
-"India",             "Yes",
-"Kenya",             "Yes",
-"Liberia",           "Yes",
-"Madagascar",        "Yes",
-"Malawi",            "Yes",
-"Mali",              "Yes",
-"Mozambique",       "Yes",
-"Nepal",            "Yes",
-"Niger",            "Yes",
-"Nigeria",          "Yes",
-"Pakistan",         "Yes",
-"Rwanda",           "Yes",
-"Senegal",          "Yes",
-"Tanzania",         "Yes",
-"Uganda",           "Yes",
-"Zimbabwe",         "Yes"
+country_names <- tibble::tribble(
+  ~"Country names",
+  "Afghanistan",
+"Benin",        
+"Burkina Faso", 
+"Cameroon",     
+"Democratic Republic of Congo",
+"Cote d’Ivoire",
+"Ethiopia",     
+"Ghana",        
+"Guinea",       
+"India",        
+"Kenya",        
+"Liberia",      
+"Madagascar",   
+"Malawi",       
+"Mali",         
+"Mozambique",  
+"Nepal",       
+"Niger",       
+"Nigeria",     
+"Pakistan",    
+"Rwanda",      
+"Senegal",     
+"Tanzania",    
+"Uganda",      
+"Zimbabwe"
 )
 
-knitr::kable((data1), booktabs = TRUE,
-caption = 'A table listed the countries available for local modelling. \n The `included in spatial modelling` column indicates whether or not a country has GPS data for including a spatial component. \n Not all countries have data availaible for this.')
+knitr::kable((country_names), booktabs = TRUE,
+caption = 'A table listed the countries available for local modelling.')
 ```
 
 
