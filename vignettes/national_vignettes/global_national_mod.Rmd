@@ -1,5 +1,5 @@
 ---
-title: "How to run a national level model for a multiple countries"
+title: "How to run a national level model for multiple countries"
 author: "Hannah Comiskey"
 output: html_document
 ---
