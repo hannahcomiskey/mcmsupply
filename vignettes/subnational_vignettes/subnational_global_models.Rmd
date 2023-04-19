@@ -42,7 +42,7 @@ get_point_estimates(national=FALSE, main_path="results/subnational/global/", pkg
 ```
 
 
-## Plot posterior point estimates
+## Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plot_estimates(national=TRUE, main_path="results/subnational/global/", vis_path="visualisation/subnational/global/", pkg_data, local=FALSE, mycountry=NULL) 

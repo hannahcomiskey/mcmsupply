@@ -40,7 +40,7 @@ run_jags_model(national=FALSE, jagsdata = pkg_data, jagsparams = NULL, local=TRU
 get_point_estimates(national=FALSE, main_path="results/subnational/local/", pkg_data, local=TRUE, mycountry="Nepal")
 ```
 
-## Plot posterior point estimates
+## Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plot_estimates(national=FALSE, main_path="results/subnational/local/", vis_path="visualisation/subnational/local/", pkg_data, local=TRUE, mycountry="Nepal") 
