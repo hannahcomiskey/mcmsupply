@@ -7,7 +7,7 @@
 run_jags_model(
   jagsdata,
   jagsparams = NULL,
-  main_path,
+  main_path = NULL,
   n_iter = 80000,
   n_burnin = 10000,
   n_thin = 35,
@@ -19,7 +19,7 @@ run_jags_model(
 
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
 
-\item{main_path}{Default is "results/". String to indicate where to save results.}
+\item{main_path}{Default is "/results". String to indicate the pathway of where to save results.}
 
 \item{n_iter}{Default is 80000. Number of itterations to do in JAGS model.}
 

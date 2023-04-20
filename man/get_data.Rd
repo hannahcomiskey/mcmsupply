@@ -24,7 +24,7 @@ get_data(
 \item{fp2030=TRUE}{Filter raw data to only include the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.}
 }
 \value{
-returns the DHS data set used for inputs into the model
+returns a list containing the DHS data set used for inputs into the model and the arguments that specify the data set up.
 }
 \description{
 Wrapper function that retrieves the DHS data used for modelling the proportion of modern contraceptives supplied by the public and private sectors at the national and subnational administration levels.

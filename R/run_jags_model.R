@@ -2,7 +2,7 @@
 #' @name run_jags_model
 #' @param jagsdata The inputs for the JAGS model
 #' @param jagsparams The parameters of the JAGS model you wish to review
-#' @param main_path Default is "results/". String to indicate where to save results.
+#' @param main_path Default is "/results". String to indicate the pathway of where to save results.
 #' @param n_iter Default is 80000. Number of itterations to do in JAGS model.
 #' @param n_burnin Default is 10000. Number of samples to burn-in in JAGS model.
 #' @param n_thin Default is 35. Number of samples to thin by in JAGS model.
@@ -27,7 +27,10 @@
 #' run_jags_model(jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
 #' @export
 
-run_jags_model <- function(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...) {
+run_jags_model <- function(jagsdata, jagsparams = NULL, main_path=NULL, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...) {
+  if(is.null(main_path)==TRUE) {
+    main_path = "results/" # set default location for results
+  }
   args <- jagsdata$args
   national <- args$national
   if(national==TRUE) {

@@ -3,7 +3,7 @@
 #' @param jagsdata The inputs for the JAGS model
 #' @param jagsparams The parameters of the JAGS model you wish to review
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
-#' @param main_path Default is "results/". String to indicate where to save results.
+#' @param main_path String to indicate the pathway of where to save results.
 #' @param n_iter Default is 80000. Number of itterations to do in JAGS model.
 #' @param n_burnin Default is 10000. Number of samples to burn-in in JAGS model.
 #' @param n_thin Default is 35. Number of samples to thin by in JAGS model.

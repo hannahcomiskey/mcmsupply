@@ -4,12 +4,12 @@
 \alias{plot_estimates}
 \title{Wrapper function to plot the JAGS estimates}
 \usage{
-plot_estimates(main_path, vis_path, jagsdata, ...)
+plot_estimates(main_path = NULL, vis_path = NULL, jagsdata, ...)
 }
 \arguments{
-\item{main_path}{String. Path where you have set your model results to be saved to.}
+\item{main_path}{String. Default is "results/". Path where you have set your model results to be saved to.}
 
-\item{vis_path}{String. Path where your visualisations will be saved to.}
+\item{vis_path}{String. Default is "visualisation/". Path where your visualisations will be saved to.}
 
 \item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
 

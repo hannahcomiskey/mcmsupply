@@ -22,7 +22,7 @@ run_subnational_jags_model(
 
 \item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
 
-\item{main_path}{Default is "results/". String to indicate where to save results.}
+\item{main_path}{String to indicate the pathway of where to save results.}
 
 \item{n_iter}{Default is 80000. Number of itterations to do in JAGS model.}
 

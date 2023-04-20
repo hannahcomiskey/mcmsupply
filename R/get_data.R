@@ -5,7 +5,7 @@
 #' @param mycountry The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.
 #' @param fp2030=TRUE Filter raw data to only include the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{national_FPsource_data}}.
-#' @return returns the DHS data set used for inputs into the model
+#' @return returns a list containing the DHS data set used for inputs into the model and the arguments that specify the data set up.
 #' @examples National single-country example:
 #' jagsdata <- get_data(national=TRUE, local=TRUE, mycountry="Nepal", fp2030=TRUE, surveydata_filepath=NULL)
 #'
