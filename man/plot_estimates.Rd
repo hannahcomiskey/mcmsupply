@@ -13,11 +13,7 @@ plot_estimates(main_path, vis_path, jagsdata, ...)
 
 \item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
 
-\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
-
-\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
+\item{...}{Arguments from the \code{mcmsupply::get_modelinputs()} function.}
 }
 \description{
 Wrapper function to plot the JAGS estimates

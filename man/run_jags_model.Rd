@@ -27,11 +27,7 @@ run_jags_model(
 
 \item{n_thin}{Default is 35. Number of samples to thin by in JAGS model.}
 
-\item{national}{TRUE/FALSE. Default is TRUE for national administration level data. FALSE retrieves subnational level data.}
-
-\item{local}{TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.}
-
-\item{mycountry}{The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.}
+\item{...}{Argumentsfrom the \code{mcmsupply::get_modelinputs()} function.}
 }
 \value{
 returns the jags model object
