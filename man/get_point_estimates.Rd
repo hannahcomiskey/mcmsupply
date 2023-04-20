@@ -4,7 +4,7 @@
 \alias{get_point_estimates}
 \title{Wrapper function to run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model for the national and subnational administration levels}
 \usage{
-get_point_estimates(main_path, jagsdata, ...)
+get_point_estimates(main_path = NULL, jagsdata, ...)
 }
 \arguments{
 \item{main_path}{Default is "results/". String to indicate where to save results.}

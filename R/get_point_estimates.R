@@ -20,7 +20,10 @@
 #'
 #' @export
 
-get_point_estimates <- function(main_path, jagsdata, ...) {
+get_point_estimates <- function(main_path=NULL, jagsdata, ...) {
+  if(is.null(main_path)==TRUE) {
+    main_path = "results/" # set default location for results
+  }
   args <- jagsdata$args
   national <- args$national
   if(national==TRUE) {
