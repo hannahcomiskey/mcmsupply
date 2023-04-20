@@ -41,7 +41,7 @@ run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = "results/nati
 get_point_estimates(main_path="results/national/local/", pkg_data)
 ```
 
-## Plot posterior point estimates
+## Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plot_estimates(main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data) 
