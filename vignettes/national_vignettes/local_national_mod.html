@@ -11,7 +11,6 @@
 
 <meta name="author" content="Hannah Comiskey" />
 
-<meta name="date" content="2023-03-23" />
 
 <title>How to run a national level model for a single country</title>
 
@@ -359,7 +358,6 @@ pre code {
 <h1 class="title toc-ignore">How to run a national level model for a
 single country</h1>
 <h4 class="author">Hannah Comiskey</h4>
-<h4 class="date">2023-03-23</h4>
 
 </div>
 
@@ -371,23 +369,23 @@ library(dplyr)</code></pre>
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the data</h2>
-<pre class="r"><code>cleaned_natdata &lt;- get_national_data(local=TRUE, mycountry=&quot;Nepal&quot;, fp2030=TRUE)</code></pre>
+<pre class="r"><code>cleaned_natdata &lt;- get_data(national=TRUE, local=TRUE, mycountry=&quot;Nepal&quot;, fp2030=TRUE, surveydata_filepath=NULL)</code></pre>
 </div>
 <div id="get-the-jags-model-inputs-and-the-cleaned-data" class="section level2">
 <h2>Get the JAGS model inputs and the cleaned data</h2>
-<pre class="r"><code>pkg_data &lt;- get_national_modelinputs(fp2030=TRUE, local=TRUE, mycountry=&quot;Nepal&quot;, startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)</code></pre>
+<pre class="r"><code>pkg_data &lt;- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)</code></pre>
 </div>
-<div id="fit-the-model" class="section level2">
-<h2>Fit the model</h2>
-<pre class="r"><code>run_national_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=TRUE, main_path = &quot;results/national/local/&quot;, n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=&quot;Nepal&quot;)</code></pre>
+<div id="run-jags-model" class="section level2">
+<h2>Run JAGS model</h2>
+<pre class="r"><code>run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = &quot;results/national/local/&quot;, n_iter = 80000, n_burnin = 10000, n_thin = 35)</code></pre>
 </div>
-<div id="review-the-model-output" class="section level2">
-<h2>Review the model output</h2>
-<pre class="r"><code>get_national_P_point_estimates(main_path=&quot;results/national/local/&quot;, pkg_data, local=TRUE, mycountry=&quot;Nepal&quot;)</code></pre>
+<div id="get-posterior-point-estimates" class="section level2">
+<h2>Get posterior point estimates</h2>
+<pre class="r"><code>get_point_estimates(main_path=&quot;results/national/local/&quot;, pkg_data)</code></pre>
 </div>
-<div id="plot-the-results" class="section level2">
-<h2>Plot the results</h2>
-<pre class="r"><code>plot_national_point_estimates(main_path=&quot;results/national/local/&quot;, vis_path=&quot;visualisation/national/local/&quot;, pkg_data, local=TRUE, mycountry=&quot;Nepal&quot;) </code></pre>
+<div id="plot-posterior-point-estimates" class="section level2">
+<h2>Plot posterior point estimates</h2>
+<pre class="r"><code>plot_estimates(main_path=&quot;results/national/local/&quot;, vis_path=&quot;visualisation/national/local/&quot;, pkg_data) </code></pre>
 </div>
 
 

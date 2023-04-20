@@ -8,21 +8,22 @@ runs, and national and subnational family planning source data.
 
 1.  [Country and area classification](#div)
     `Country_and_area_classification_inclFP2020`
-2.  [Estimated national correlations](#cu)
+2.  [Country names](#div) `country_names`
+3.  [Estimated national correlations](#cu)
     `estimated_national_correlations`
-3.  [Estimated subnational correlations](#cu)
+4.  [Estimated subnational correlations](#cu)
     `estimated_global_subnational_correlations` and
     `estimated_global_spatial_subnational_correlations`
-4.  [Estimated model parameters for national one-country runs](#pc)
+5.  [Estimated model parameters for national one-country runs](#pc)
     `median_alpha_region_intercepts`,
     `precision_alpha_country_intercepts` , and
     `Bspline_sigma_matrix_median`,
-5.  [Estimated model parameters for subnational one-country runs](#pc)
+6.  [Estimated model parameters for subnational one-country runs](#pc)
     `median_alphacms`, `tau_alpha_pms_hat`, `sigma_delta_hat`,
     `spatial_sigma_delta_hat`, `global_provincial_neighbouradj`, and the
     country-specific neighbourhood adjacency matrices in the
     `data/local_neighbours` folder
-6.  [Family planning source data](#pc) `national_FPsource_data` and
+7.  [Family planning source data](#pc) `national_FPsource_data` and
     `subnat_FPsource_data`
 
 ## <a name="div"></a>
@@ -40,29 +41,60 @@ Country_and_area_classification_inclFP2020
 ```
 
     ## # A tibble: 231 × 8
-    ##    `Country or area`   `ISO Code` `Major area`    Region `Developed \r\nregion` Least developed\r\nc…¹ Sub-Saharan \r\nAfri…²
-    ##    <chr>                    <dbl> <chr>           <chr>  <chr>                  <chr>                  <chr>                 
-    ##  1 Afghanistan                  4 Asia            South… No                     Yes                    No                    
-    ##  2 Albania                      8 Europe          South… Yes                    No                     No                    
-    ##  3 Algeria                     12 Africa          North… No                     No                     No                    
-    ##  4 American Samoa              16 Oceania         Polyn… No                     No                     No                    
-    ##  5 Andorra                     20 Europe          South… Yes                    No                     No                    
-    ##  6 Angola                      24 Africa          Middl… No                     Yes                    Yes                   
-    ##  7 Anguilla                   660 Latin America … Carib… No                     No                     No                    
-    ##  8 Antigua and Barbuda         28 Latin America … Carib… No                     No                     No                    
-    ##  9 Argentina                   32 Latin America … South… No                     No                     No                    
-    ## 10 Armenia                     51 Asia            Weste… No                     No                     No                    
+    ##    `Country or area`   `ISO Code` `Major area`                 Region `Developed \r\nregion` Least developed\r\nc…¹
+    ##    <chr>                    <dbl> <chr>                        <chr>  <chr>                  <chr>                 
+    ##  1 Afghanistan                  4 Asia                         South… No                     Yes                   
+    ##  2 Albania                      8 Europe                       South… Yes                    No                    
+    ##  3 Algeria                     12 Africa                       North… No                     No                    
+    ##  4 American Samoa              16 Oceania                      Polyn… No                     No                    
+    ##  5 Andorra                     20 Europe                       South… Yes                    No                    
+    ##  6 Angola                      24 Africa                       Middl… No                     Yes                   
+    ##  7 Anguilla                   660 Latin America and the Carib… Carib… No                     No                    
+    ##  8 Antigua and Barbuda         28 Latin America and the Carib… Carib… No                     No                    
+    ##  9 Argentina                   32 Latin America and the Carib… South… No                     No                    
+    ## 10 Armenia                     51 Asia                         Weste… No                     No                    
     ## # ℹ 221 more rows
-    ## # ℹ abbreviated names: ¹​`Least developed\r\ncountry`, ²​`Sub-Saharan \r\nAfrica`
-    ## # ℹ 1 more variable: FP2020 <chr>
+    ## # ℹ abbreviated name: ¹​`Least developed\r\ncountry`
+    ## # ℹ 2 more variables: `Sub-Saharan \r\nAfrica` <chr>, FP2020 <chr>
 
 ``` r
 ??Country_and_area_classification_inclFP2020
 ```
 
+## 1. Country names
+
+Country names is to inform users of what countries are available at the
+national and subnational administrative division in the preloaded data
+of the mcmsupply package. After loading the package, enter
+`country_names` into the console to access this data.
+
+``` r
+library(mcmsupply)
+country_names
+```
+
+    ## # A tibble: 30 × 3
+    ##    `Country names`              `National level data available` `Subnational level data available`
+    ##    <chr>                        <chr>                           <chr>                             
+    ##  1 Afghanistan                  Yes                             Yes                               
+    ##  2 Benin                        Yes                             Yes                               
+    ##  3 Burkina Faso                 Yes                             Yes                               
+    ##  4 Cameroon                     Yes                             Yes                               
+    ##  5 Congo                        Yes                             No                                
+    ##  6 Democratic Republic of Congo Yes                             Yes                               
+    ##  7 Cote d’Ivoire                Yes                             Yes                               
+    ##  8 Ethiopia                     Yes                             Yes                               
+    ##  9 Ghana                        Yes                             Yes                               
+    ## 10 Guinea                       Yes                             Yes                               
+    ## # ℹ 20 more rows
+
+``` r
+??country_names
+```
+
 ## <a name="cu"></a>
 
-## 2. Estimated national correlations
+## 3. Estimated national correlations
 
 This is the estimated correlations for the rates of change between
 methods in the global national model. The approach for estimating
@@ -91,7 +123,7 @@ estimated_national_correlations
 
 ## <a name="cu"></a>
 
-## 3. Estimated subnational correlations
+## 4. Estimated subnational correlations
 
 This is the estimated correlations for the rates of change between
 methods in the global national model. There is a vignette to describe
@@ -138,7 +170,7 @@ estimated_global_spatial_subnational_correlations
 
 ## <a name="cu"></a>
 
-## 4. Estimated model parameters for national one-country runs
+## 5. Estimated model parameters for national one-country runs
 
 These are the estimated parameters used in a one-country national model
 run. `median_alpha_region_intercepts` are the regional intercepts used
@@ -212,7 +244,7 @@ Bspline_sigma_matrix_median
 
 ## <a name="cu"></a>
 
-## 5. Estimated model parameters for subnational one-country runs
+## 6. Estimated model parameters for subnational one-country runs
 
 These are the estimated parameters used in a one-country national model
 run. `median_alphacms` are the country-specific intercepts used to
@@ -412,7 +444,7 @@ sigma_delta_hat
 
 ## <a name="cu"></a>
 
-## 6. Family planning source data
+## 7. Family planning source data
 
 These are are two family planning commodity source datasets provided in
 this package - one for the national level observations,
@@ -426,20 +458,20 @@ similar apporoach was used for the subnational data using IPUMS data.
 national_FPsource_data
 ```
 
-    ## # A tibble: 2,448 × 8
+    ## # A tibble: 2,448 × 9
     ## # Groups:   year, Method, Country [903]
-    ##     year Country      Super_region   Method      average_year sector_category    proportion     n
-    ##    <dbl> <chr>        <chr>          <chr>              <dbl> <chr>                   <dbl> <dbl>
-    ##  1  2008 Sierra Leone Western Africa Injectables        2008. Commercial_medical    0.265      68
-    ##  2  2008 Sierra Leone Western Africa Injectables        2008. Other                 0.00540     1
-    ##  3  2008 Sierra Leone Western Africa Injectables        2008. Public                0.730     178
-    ##  4  2008 Sierra Leone Western Africa OC Pills           2008. Commercial_medical    0.587     140
-    ##  5  2008 Sierra Leone Western Africa OC Pills           2008. Other                 0.0224      7
-    ##  6  2008 Sierra Leone Western Africa OC Pills           2008. Public                0.390      98
-    ##  7  2013 Sierra Leone Western Africa Implants           2014. Commercial_medical    0.240     166
-    ##  8  2013 Sierra Leone Western Africa Implants           2014. Other                 0.00567     8
-    ##  9  2013 Sierra Leone Western Africa Implants           2014. Public                0.755     542
-    ## 10  2013 Sierra Leone Western Africa Injectables        2014. Commercial_medical    0.198     336
+    ##     year Country      Super_region   Method      average_year sector_category    proportion SE.proportion     n
+    ##    <dbl> <chr>        <chr>          <chr>              <dbl> <chr>                   <dbl>         <dbl> <dbl>
+    ##  1  2008 Sierra Leone Western Africa Injectables        2008. Commercial_medical    0.265         0.0297     68
+    ##  2  2008 Sierra Leone Western Africa Injectables        2008. Other                 0.00540       0.00535     1
+    ##  3  2008 Sierra Leone Western Africa Injectables        2008. Public                0.730         0.0310    178
+    ##  4  2008 Sierra Leone Western Africa OC Pills           2008. Commercial_medical    0.587         0.0375    140
+    ##  5  2008 Sierra Leone Western Africa OC Pills           2008. Other                 0.0224        0.00969     7
+    ##  6  2008 Sierra Leone Western Africa OC Pills           2008. Public                0.390         0.0368     98
+    ##  7  2013 Sierra Leone Western Africa Implants           2014. Commercial_medical    0.240         0.0246    166
+    ##  8  2013 Sierra Leone Western Africa Implants           2014. Other                 0.00567       0.00322     8
+    ##  9  2013 Sierra Leone Western Africa Implants           2014. Public                0.755         0.0248    542
+    ## 10  2013 Sierra Leone Western Africa Injectables        2014. Commercial_medical    0.198         0.0160    336
     ## # ℹ 2,438 more rows
 
 ``` r

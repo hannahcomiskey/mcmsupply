@@ -24,24 +24,24 @@ cleaned_natdata <- get_data(national=FALSE, local=TRUE, mycountry="Ethiopia", fp
 ## Get the JAGS model inputs and the cleaned data
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-pkg_data <- get_modelinputs(national=FALSE, local=TRUE, mycountry="Ethiopia", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
+pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)
 
 ```
 
 ## Run JAGS model 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-run_jags_model(national=FALSE, jagsdata = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/subnational/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Ethiopia")
+run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = "results/subnational/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35)
 ```
 
 ## Get posterior point estimates
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-get_point_estimates(national=FALSE, main_path="results/subnational/local/", pkg_data, local=TRUE, mycountry="Ethiopia")
+get_point_estimates(main_path="results/subnational/local/", pkg_data)
 ```
 
 ## Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_estimates(national=FALSE, main_path="results/subnational/local/", vis_path="visualisation/subnational/local/", pkg_data, local=TRUE, mycountry="Ethiopia") 
+plot_estimates(main_path="results/subnational/local/", vis_path="visualisation/subnational/local/", pkg_data) 
 ```

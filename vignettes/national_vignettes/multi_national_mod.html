@@ -11,9 +11,8 @@
 
 <meta name="author" content="Hannah Comiskey" />
 
-<meta name="date" content="2023-04-20" />
 
-<title>Country names</title>
+<title>How to run a national level model for multiple countries</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -356,135 +355,37 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Country names</h1>
+<h1 class="title toc-ignore">How to run a national level model for
+multiple countries</h1>
 <h4 class="author">Hannah Comiskey</h4>
-<h4 class="date">2023-04-20</h4>
 
 </div>
 
 
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-<p>This vignette lists the country names in the supplied data that
-national/subnational local and/or subnational spatial modelling is
-possible for.</p>
+<div id="load-your-library" class="section level2">
+<h2>Load your library</h2>
+<pre class="r"><code>library(mcmsupply)
+library(dplyr)</code></pre>
 </div>
-<div id="country-names" class="section level2">
-<h2>Country names</h2>
-<table>
-<caption>A table listed the countries available for local modelling. The
-<code>included in spatial modelling</code> column indicates whether or
-not a country has GPS data for including a spatial component. Not all
-countries have data availaible for this.</caption>
-<thead>
-<tr class="header">
-<th align="left">Country names</th>
-<th align="left">Included in spatial modelling</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Afghanistan</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Benin</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Burkina Faso</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Cameroon</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Democratic Republic of Congo</td>
-<td align="left">No</td>
-</tr>
-<tr class="even">
-<td align="left">Cote d’Ivoire</td>
-<td align="left">No</td>
-</tr>
-<tr class="odd">
-<td align="left">Ethiopia</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Ghana</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Guinea</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">India</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Kenya</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Liberia</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Madagascar</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Malawi</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Mali</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Mozambique</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Nepal</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Niger</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Nigeria</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Pakistan</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Rwanda</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Senegal</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Tanzania</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="even">
-<td align="left">Uganda</td>
-<td align="left">Yes</td>
-</tr>
-<tr class="odd">
-<td align="left">Zimbabwe</td>
-<td align="left">Yes</td>
-</tr>
-</tbody>
-</table>
+<div id="load-the-data" class="section level2">
+<h2>Load the data</h2>
+<pre class="r"><code>cleaned_natdata &lt;- get_data(national=TRUE, local=FALSE, mycountry=NULL, fp2030=TRUE)</code></pre>
+</div>
+<div id="get-the-jags-model-inputs-and-the-cleaned-data" class="section level2">
+<h2>Get the JAGS model inputs and the cleaned data</h2>
+<pre class="r"><code>pkg_data &lt;- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)</code></pre>
+</div>
+<div id="run-jags-model" class="section level2">
+<h2>Run JAGS model</h2>
+<pre class="r"><code>run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = &quot;results/national/&quot;, n_iter = 80000, n_burnin = 10000, n_thin = 35)</code></pre>
+</div>
+<div id="get-posterior-point-estimates-with-uncertainty" class="section level2">
+<h2>Get posterior point estimates with uncertainty</h2>
+<pre class="r"><code>get_point_estimates(main_path=&quot;results/national/&quot;, pkg_data)</code></pre>
+</div>
+<div id="plot-estimates-with-uncertainty" class="section level2">
+<h2>Plot estimates with uncertainty</h2>
+<pre class="r"><code>plot_estimates(main_path=&quot;results/national/&quot;, vis_path=&quot;visualisation/national/global/&quot;, pkg_data) </code></pre>
 </div>
 
 

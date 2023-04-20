@@ -26,24 +26,24 @@ cleaned_customdata <- get_data(national=TRUE, local=TRUE, mycountry="Afghanistan
 ## Get the JAGS model inputs and the cleaned data
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-pkg_data <- get_modelinputs(national=TRUE, local=TRUE, mycountry="Afghanistan", startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_customdata)
+pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_customdata)
 
 ```
 
 ## Fit the model 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-run_jags_model(national=TRUE, jagsdata = pkg_data, jagsparams = NULL, local=TRUE, main_path = "results/national/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry="Afghanistan")
+run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = "results/national/local/", n_iter = 80000, n_burnin = 10000, n_thin = 35)
 ```
 
 ## Review the  model output
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-get_point_estimates(national=TRUE, main_path="results/national/local/", pkg_data, local=TRUE, mycountry="Afghanistan")
+get_point_estimates(main_path="results/national/local/", pkg_data)
 ```
 
 ## Plot the results
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_estimates(national=TRUE, main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data, local=TRUE, mycountry="Afghanistan")
+plot_estimates(main_path="results/national/local/", vis_path="visualisation/national/local/", pkg_data)
 ```

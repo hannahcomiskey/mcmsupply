@@ -11,9 +11,8 @@
 
 <meta name="author" content="Hannah Comiskey" />
 
-<meta name="date" content="2023-03-23" />
 
-<title>How to run a local subnational model without a spatial component</title>
+<title>How to run a subnational level model for a single country</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -356,10 +355,9 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">How to run a local subnational model
-without a spatial component</h1>
+<h1 class="title toc-ignore">How to run a subnational level model for a
+single country</h1>
 <h4 class="author">Hannah Comiskey</h4>
-<h4 class="date">2023-03-23</h4>
 
 </div>
 
@@ -369,29 +367,25 @@ without a spatial component</h1>
 <pre class="r"><code>library(mcmsupply)
 library(dplyr)</code></pre>
 </div>
-<div id="get-your-data" class="section level2">
-<h2>Get your data</h2>
-<pre class="r"><code>raw_subnatdata &lt;- mcmsupply::get_subnational_data(local=TRUE, mycountry=&quot;Nepal&quot;) %&gt;%
-  dplyr::arrange(Country, Region, Method, average_year)</code></pre>
+<div id="load-the-data" class="section level2">
+<h2>Load the data</h2>
+<pre class="r"><code>cleaned_natdata &lt;- get_data(national=FALSE, local=TRUE, mycountry=&quot;Nepal&quot;, fp2030=TRUE, surveydata_filepath=NULL)</code></pre>
 </div>
 <div id="get-the-jags-model-inputs-and-the-cleaned-data" class="section level2">
 <h2>Get the JAGS model inputs and the cleaned data</h2>
-<pre class="r"><code>pkg_data &lt;- mcmsupply::get_subnational_modelinputs(fp2030=TRUE, local=TRUE,
-                                                          spatial=FALSE, mycountry=&quot;Nepal&quot;,
-                                                          startyear=1990, endyear=2028.5,
-                                                          nsegments=12, raw_subnatdata)</code></pre>
+<pre class="r"><code>pkg_data &lt;- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_natdata)</code></pre>
 </div>
 <div id="run-jags-model" class="section level2">
 <h2>Run JAGS model</h2>
-<pre class="r"><code>run_subnational_jags_model(pkg_data = pkg_data, jagsparams = NULL, local=TRUE, spatial=FALSE, main_path = &quot;results/subnational/local_nonspatial/&quot;, n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=&quot;Nepal&quot;)</code></pre>
+<pre class="r"><code>run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = &quot;results/subnational/local/&quot;, n_iter = 80000, n_burnin = 10000, n_thin = 35)</code></pre>
 </div>
 <div id="get-posterior-point-estimates" class="section level2">
 <h2>Get posterior point estimates</h2>
-<pre class="r"><code>get_subnational_P_point_estimates(main_path = &quot;results/subnational/local_nonspatial/&quot;, pkg_data, local=TRUE, spatial=FALSE, mycountry=&quot;Nepal&quot;)</code></pre>
+<pre class="r"><code>get_point_estimates(main_path=&quot;results/subnational/local/&quot;, pkg_data)</code></pre>
 </div>
-<div id="plot-posterior-point-estimates" class="section level2">
-<h2>Plot posterior point estimates</h2>
-<pre class="r"><code>plot_subnational_point_estimates(main_path = &quot;results/subnational/local_nonspatial/&quot;, pkg_data = pkg_data, vis_path = &quot;visualisation/subnational/local_nonspatial/&quot;, local=TRUE, mycountry=&quot;Nepal&quot;)</code></pre>
+<div id="plot-posterior-point-estimates-with-uncertainty" class="section level2">
+<h2>Plot posterior point estimates with uncertainty</h2>
+<pre class="r"><code>plot_estimates(main_path=&quot;results/subnational/local/&quot;, vis_path=&quot;visualisation/subnational/local/&quot;, pkg_data) </code></pre>
 </div>
 
 

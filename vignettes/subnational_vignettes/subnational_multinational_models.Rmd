@@ -25,25 +25,25 @@ cleaned_subnatdata <- get_data(national=FALSE, local=FALSE, mycountry=NULL, fp20
 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-pkg_data <- get_modelinputs(national=FALSE, local=FALSE, mycountry=NULL, startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_subnatdata)
+pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_subnatdata)
 ```
 
 ## Run JAGS model
 
 ```{r message=FALSE, eval=FALSE}
-run_jags_model(national=FALSE, jagsdata = pkg_data, jagsparams = NULL, local=FALSE, main_path = "results/subnational/global/", n_iter = 80000, n_burnin = 10000, n_thin = 35, mycountry=NULL)
+run_jags_model(jagsdata = pkg_data, jagsparams = NULL, main_path = "results/subnational/global/", n_iter = 80000, n_burnin = 10000, n_thin = 35)
 
 ```
 
 ## Get posterior point estimates
 
 ```{r, message=FALSE, eval=FALSE}
-get_point_estimates(national=FALSE, main_path="results/subnational/global/", pkg_data, local=FALSE, mycountry=NULL)
+get_point_estimates(main_path="results/subnational/global/", pkg_data)
 ```
 
 
 ## Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot_estimates(national=TRUE, main_path="results/subnational/global/", vis_path="visualisation/subnational/global/", pkg_data, local=FALSE, mycountry=NULL) 
+plot_estimates(main_path="results/subnational/global/", vis_path="visualisation/subnational/global/", pkg_data) 
 ```

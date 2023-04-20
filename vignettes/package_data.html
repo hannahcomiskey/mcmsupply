@@ -609,6 +609,7 @@ runs, and national and subnational family planning source data.</p>
 <ol style="list-style-type: decimal">
 <li><a href="#div">Country and area classification</a>
 <code>Country_and_area_classification_inclFP2020</code></li>
+<li><a href="#div">Country names</a> <code>country_names</code></li>
 <li><a href="#cu">Estimated national correlations</a>
 <code>estimated_national_correlations</code></li>
 <li><a href="#cu">Estimated subnational correlations</a>
@@ -639,24 +640,46 @@ this data.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mcmsupply)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Country_and_area_classification_inclFP2020</span></code></pre></div>
 <pre><code>## # A tibble: 231 × 8
-##    `Country or area`   `ISO Code` `Major area`    Region `Developed \r\nregion` Least developed\r\nc…¹ Sub-Saharan \r\nAfri…²
-##    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;  &lt;chr&gt;                  &lt;chr&gt;                  &lt;chr&gt;                 
-##  1 Afghanistan                  4 Asia            South… No                     Yes                    No                    
-##  2 Albania                      8 Europe          South… Yes                    No                     No                    
-##  3 Algeria                     12 Africa          North… No                     No                     No                    
-##  4 American Samoa              16 Oceania         Polyn… No                     No                     No                    
-##  5 Andorra                     20 Europe          South… Yes                    No                     No                    
-##  6 Angola                      24 Africa          Middl… No                     Yes                    Yes                   
-##  7 Anguilla                   660 Latin America … Carib… No                     No                     No                    
-##  8 Antigua and Barbuda         28 Latin America … Carib… No                     No                     No                    
-##  9 Argentina                   32 Latin America … South… No                     No                     No                    
-## 10 Armenia                     51 Asia            Weste… No                     No                     No                    
+##    `Country or area`   `ISO Code` `Major area`                 Region `Developed \r\nregion` Least developed\r\nc…¹
+##    &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                        &lt;chr&gt;  &lt;chr&gt;                  &lt;chr&gt;                 
+##  1 Afghanistan                  4 Asia                         South… No                     Yes                   
+##  2 Albania                      8 Europe                       South… Yes                    No                    
+##  3 Algeria                     12 Africa                       North… No                     No                    
+##  4 American Samoa              16 Oceania                      Polyn… No                     No                    
+##  5 Andorra                     20 Europe                       South… Yes                    No                    
+##  6 Angola                      24 Africa                       Middl… No                     Yes                   
+##  7 Anguilla                   660 Latin America and the Carib… Carib… No                     No                    
+##  8 Antigua and Barbuda         28 Latin America and the Carib… Carib… No                     No                    
+##  9 Argentina                   32 Latin America and the Carib… South… No                     No                    
+## 10 Armenia                     51 Asia                         Weste… No                     No                    
 ## # ℹ 221 more rows
-## # ℹ abbreviated names: ¹​`Least developed\r\ncountry`, ²​`Sub-Saharan \r\nAfrica`
-## # ℹ 1 more variable: FP2020 &lt;chr&gt;</code></pre>
+## # ℹ abbreviated name: ¹​`Least developed\r\ncountry`
+## # ℹ 2 more variables: `Sub-Saharan \r\nAfrica` &lt;chr&gt;, FP2020 &lt;chr&gt;</code></pre>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>??Country_and_area_classification_inclFP2020</span></code></pre></div>
+<h2 id="1-country-names">1. Country names</h2>
+<p>Country names is to inform users of what countries are available at
+the national and subnational administrative division in the preloaded
+data of the mcmsupply package. After loading the package, enter
+<code>country_names</code> into the console to access this data.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mcmsupply)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>country_names</span></code></pre></div>
+<pre><code>## # A tibble: 30 × 3
+##    `Country names`              `National level data available` `Subnational level data available`
+##    &lt;chr&gt;                        &lt;chr&gt;                           &lt;chr&gt;                             
+##  1 Afghanistan                  Yes                             Yes                               
+##  2 Benin                        Yes                             Yes                               
+##  3 Burkina Faso                 Yes                             Yes                               
+##  4 Cameroon                     Yes                             Yes                               
+##  5 Congo                        Yes                             No                                
+##  6 Democratic Republic of Congo Yes                             Yes                               
+##  7 Cote d’Ivoire                Yes                             Yes                               
+##  8 Ethiopia                     Yes                             Yes                               
+##  9 Ghana                        Yes                             Yes                               
+## 10 Guinea                       Yes                             Yes                               
+## # ℹ 20 more rows</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>??country_names</span></code></pre></div>
 <h2 id="-1"><a name="cu"></a></h2>
-<h2 id="2-estimated-national-correlations">2. Estimated national
+<h2 id="3-estimated-national-correlations">3. Estimated national
 correlations</h2>
 <p>This is the estimated correlations for the rates of change between
 methods in the global national model. The approach for estimating
@@ -665,7 +688,7 @@ subnational level. For an example of how to calculate the subnational
 correlations, please review the
 <code>data-raw/estimated_global_subnational_correlations.R</code>
 script.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>estimated_national_correlations</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>estimated_national_correlations</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 4
 ##    row         column               public_cor private_cor
 ##    &lt;chr&gt;       &lt;chr&gt;                     &lt;dbl&gt;       &lt;dbl&gt;
@@ -680,7 +703,7 @@ script.</p>
 ##  9 OC Pills    Injectables                 0.5         0.8
 ## 10 OC Pills    IUD                         0.1         0.1</code></pre>
 <h2 id="-2"><a name="cu"></a></h2>
-<h2 id="3-estimated-subnational-correlations">3. Estimated subnational
+<h2 id="4-estimated-subnational-correlations">4. Estimated subnational
 correlations</h2>
 <p>This is the estimated correlations for the rates of change between
 methods in the global national model. There is a vignette to describe
@@ -689,7 +712,7 @@ review the
 <code>data-raw/estimated_global_subnational_correlations.R</code>
 script. The apporach is the same for both the spatial and non-spatial
 model estimates.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>estimated_global_subnational_correlations</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>estimated_global_subnational_correlations</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 4
 ##    row         column               public_cor private_cor
 ##    &lt;chr&gt;       &lt;chr&gt;                     &lt;dbl&gt;       &lt;dbl&gt;
@@ -703,7 +726,7 @@ model estimates.</p>
 ##  8 IUD         Injectables                 0.1           0
 ##  9 OC Pills    Injectables                 0.3           0
 ## 10 OC Pills    IUD                         0.2           0</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>estimated_global_spatial_subnational_correlations</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>estimated_global_spatial_subnational_correlations</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 4
 ##    row         column               public_cor private_cor
 ##    &lt;chr&gt;       &lt;chr&gt;                     &lt;dbl&gt;       &lt;dbl&gt;
@@ -718,7 +741,7 @@ model estimates.</p>
 ##  9 OC Pills    Injectables                 0.3           0
 ## 10 OC Pills    IUD                         0.2           0</code></pre>
 <h2 id="-3"><a name="cu"></a></h2>
-<h2 id="4-estimated-model-parameters-for-national-one-country-runs">4.
+<h2 id="5-estimated-model-parameters-for-national-one-country-runs">5.
 Estimated model parameters for national one-country runs</h2>
 <p>These are the estimated parameters used in a one-country national
 model run. <code>median_alpha_region_intercepts</code> are the regional
@@ -728,7 +751,7 @@ variance with these country-specific intercepts.
 <code>Bspline_sigma_matrix_median</code> is the variance-covariance
 matrix used to inform the Wishart prior on the first-order difference of
 the spline coefficients.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>median_alpha_region_intercepts</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>median_alpha_region_intercepts</span></code></pre></div>
 <pre><code>## , , 1
 ## 
 ##          [,1]     [,2]      [,3]      [,4]       [,5]
@@ -758,9 +781,9 @@ the spline coefficients.</p>
 ##          [,1]     [,2]     [,3]     [,4]       [,5]
 ## [1,] 1.517680 1.195353 1.517616 1.065101 -0.7044244
 ## [2,] 3.727607 4.780151 3.036655 4.557675  1.6806916</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>precision_alpha_country_intercepts</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>precision_alpha_country_intercepts</span></code></pre></div>
 <pre><code>## [1] 1.0338134 0.5713761</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Bspline_sigma_matrix_median</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Bspline_sigma_matrix_median</span></code></pre></div>
 <pre><code>## , , 1
 ## 
 ##            [,1]       [,2]       [,3]       [,4]       [,5]
@@ -779,7 +802,7 @@ the spline coefficients.</p>
 ## [4,] 0.03290151 0.000000000 0.01539978 0.02854580 0.015767092
 ## [5,] 0.65025495 0.004367744 0.69343184 0.01576709 0.903939091</code></pre>
 <h2 id="-4"><a name="cu"></a></h2>
-<h2 id="5-estimated-model-parameters-for-subnational-one-country-runs">5.
+<h2 id="6-estimated-model-parameters-for-subnational-one-country-runs">6.
 Estimated model parameters for subnational one-country runs</h2>
 <p>These are the estimated parameters used in a one-country national
 model run. <code>median_alphacms</code> are the country-specific
@@ -796,7 +819,7 @@ complete dataset. The country-specific neighbourhood adjacency matrices
 are found in the <code>data/local_neighbours</code> folder. These
 contain the neighbourhood ajancy matrices for each country
 individually.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>median_alphacms</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>median_alphacms</span></code></pre></div>
 <pre><code>## , , Afghanistan
 ## 
 ##           [,1]     [,2]      [,3]      [,4]        [,5]
@@ -946,9 +969,9 @@ individually.</p>
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
 ## [1,] 1.283054 1.874936 2.181961 1.102948 1.017927
 ## [2,] 3.556670 5.059976 3.233320 5.161617 1.947115</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tau_alpha_pms_hat</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>tau_alpha_pms_hat</span></code></pre></div>
 <pre><code>## [1] 1.386594 1.057686</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sigma_delta_hat</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sigma_delta_hat</span></code></pre></div>
 <pre><code>## , , 1
 ## 
 ##              [,1]         [,2]       [,3]       [,4]       [,5]
@@ -967,7 +990,7 @@ individually.</p>
 ## [4,] 0.000000000 0.0000000000 0.0000000000 0.0003940897 0.00000000
 ## [5,] 0.000000000 0.0000000000 0.0000000000 0.0000000000 0.03802578</code></pre>
 <h2 id="-5"><a name="cu"></a></h2>
-<h2 id="6-family-planning-source-data">6. Family planning source
+<h2 id="7-family-planning-source-data">7. Family planning source
 data</h2>
 <p>These are are two family planning commodity source datasets provided
 in this package - one for the national level observations,
@@ -978,23 +1001,23 @@ there is a vignette
 explains how the national level data was calculated using the DHS
 microdata. A similar apporoach was used for the subnational data using
 IPUMS data.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>national_FPsource_data</span></code></pre></div>
-<pre><code>## # A tibble: 2,448 × 8
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>national_FPsource_data</span></code></pre></div>
+<pre><code>## # A tibble: 2,448 × 9
 ## # Groups:   year, Method, Country [903]
-##     year Country      Super_region   Method      average_year sector_category    proportion     n
-##    &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt; &lt;dbl&gt;
-##  1  2008 Sierra Leone Western Africa Injectables        2008. Commercial_medical    0.265      68
-##  2  2008 Sierra Leone Western Africa Injectables        2008. Other                 0.00540     1
-##  3  2008 Sierra Leone Western Africa Injectables        2008. Public                0.730     178
-##  4  2008 Sierra Leone Western Africa OC Pills           2008. Commercial_medical    0.587     140
-##  5  2008 Sierra Leone Western Africa OC Pills           2008. Other                 0.0224      7
-##  6  2008 Sierra Leone Western Africa OC Pills           2008. Public                0.390      98
-##  7  2013 Sierra Leone Western Africa Implants           2014. Commercial_medical    0.240     166
-##  8  2013 Sierra Leone Western Africa Implants           2014. Other                 0.00567     8
-##  9  2013 Sierra Leone Western Africa Implants           2014. Public                0.755     542
-## 10  2013 Sierra Leone Western Africa Injectables        2014. Commercial_medical    0.198     336
+##     year Country      Super_region   Method      average_year sector_category    proportion SE.proportion     n
+##    &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;          &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;
+##  1  2008 Sierra Leone Western Africa Injectables        2008. Commercial_medical    0.265         0.0297     68
+##  2  2008 Sierra Leone Western Africa Injectables        2008. Other                 0.00540       0.00535     1
+##  3  2008 Sierra Leone Western Africa Injectables        2008. Public                0.730         0.0310    178
+##  4  2008 Sierra Leone Western Africa OC Pills           2008. Commercial_medical    0.587         0.0375    140
+##  5  2008 Sierra Leone Western Africa OC Pills           2008. Other                 0.0224        0.00969     7
+##  6  2008 Sierra Leone Western Africa OC Pills           2008. Public                0.390         0.0368     98
+##  7  2013 Sierra Leone Western Africa Implants           2014. Commercial_medical    0.240         0.0246    166
+##  8  2013 Sierra Leone Western Africa Implants           2014. Other                 0.00567       0.00322     8
+##  9  2013 Sierra Leone Western Africa Implants           2014. Public                0.755         0.0248    542
+## 10  2013 Sierra Leone Western Africa Injectables        2014. Commercial_medical    0.198         0.0160    336
 ## # ℹ 2,438 more rows</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>subnat_FPsource_data</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>subnat_FPsource_data</span></code></pre></div>
 <pre><code>## # A tibble: 13,504 × 8
 ##    Country  Region              Method               average_year sector_categories proportion SE.proportion     n
 ##    &lt;chr&gt;    &lt;chr&gt;               &lt;chr&gt;                       &lt;dbl&gt; &lt;chr&gt;                  &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt;
