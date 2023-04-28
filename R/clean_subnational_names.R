@@ -18,7 +18,7 @@ clean_subnat_names <- function(fp2030=TRUE, raw_subnatdata) {
       dplyr::filter(Country %in% FP_2030_countries)
   }
 
-  area_classification <- mcmsupply::Country_and_area_classification_inclFP2020 %>%
+  area_classification <- mcmsupply::Country_and_area_classification %>%
     dplyr::select(`Country or area`, Region) %>%
     dplyr::rename(Country = `Country or area`) %>%
     dplyr::rename(Super_region = Region)

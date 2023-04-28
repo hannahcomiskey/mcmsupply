@@ -38,5 +38,6 @@ run_jags_model <- function(jagsdata, jagsparams = NULL, main_path=NULL, n_iter =
   } else {
     mod <- run_subnational_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams, local=args$local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=args$mycountry)
   }
+  get_point_estimates(main_path=main_path, jagsdata)  # Get point estimates with uncertainty for model output
   return(mod)
 }
