@@ -2,7 +2,7 @@
 # Read in SE data
 ##############################################
 SE_source_data <- readRDS("data-raw/natSE_source_data_n20.RDS") # n >=20 in at least one sector
-area_classification <- read_csv("data-raw/Country-and-area-classification-inclFP2020.csv")
+area_classification <- read_csv("data-raw/Country-and-area-classification.csv")
 
 FP_2030_countries <- c("Afghanistan","Benin","Burkina Faso","Cameroon",
                        "Congo", "Congo Democratic Republic", "Cote d'Ivoire",
