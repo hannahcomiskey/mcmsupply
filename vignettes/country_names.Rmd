@@ -22,7 +22,7 @@ data1 <- tibble::tribble(
 "Benin",             "Yes",
 "Burkina Faso",      "Yes",
 "Cameroon",          "Yes",
-"Democratic Republic of Congo",    "No",
+"Congo Democratic Republic",    "No",
 "Cote d’Ivoire",     "No",
 "Ethiopia",          "Yes",
 "Ghana",             "Yes",

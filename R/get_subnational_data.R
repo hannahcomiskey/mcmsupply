@@ -18,7 +18,7 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
   }
   subnatSE_source_data <- subnat_FPsource_data %>%
     dplyr::mutate(prop.trans = proportion*((nrow(subnat_FPsource_data)-1)+0.33)/nrow(subnat_FPsource_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
-    dplyr::filter(n>1) %>%
+    dplyr::filter(n>=1) %>%
     dplyr::filter(SE.proportion!=0) %>%
     dplyr::filter(Region!="NA")
 
