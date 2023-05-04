@@ -90,7 +90,7 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
     dplyr::mutate(Commercial_medical = ifelse(Commercial_medical < 0, 0.001, Commercial_medical)) %>%
     dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))
 
-  if(local==TRUE & is.null(mycountry)==FALSE) {
+  if(local==TRUE & is.null(mycountry)==FALSE &is.null(surveydata_filepath)==TRUE) {
     print(paste0("Getting data for ",mycountry))
     mydata <- FP_source_data_wide %>% dplyr::filter(Country==mycountry)
 
@@ -124,7 +124,7 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
     }
 
     mydata <- mydata %>%
-      dplyr::filter(n_Other >= 5 | n_Public >= 5 | n_Commercial_medical >= 5) %>% # Remove sample size less than 5, replace SE with max SE for region-method combo
+     # dplyr::filter(n_Other >= 5 | n_Public >= 5 | n_Commercial_medical >= 5) %>% # Remove sample size less than 5, replace SE with max SE for region-method combo
       dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE)) %>%
       dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%
       dplyr::mutate(Commercial_medical.SE = ifelse(Commercial_medical.SE < 0.01, 0.01, Commercial_medical.SE)) %>%
