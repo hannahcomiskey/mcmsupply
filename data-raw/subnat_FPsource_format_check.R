@@ -10,14 +10,12 @@ subnat_FPsource_format <- list(
     "required" = TRUE
   ),
   "Region" = list(
-    "type" = "value",
-    "valid" = data %>% dplyr::ungroup() %>% dplyr::select(Region) %>% unique() %>% unlist() %>% as.vector(),
+    "basic" = TRUE,
     "missing" = FALSE,
     "required" = TRUE
   ),
   "Method" = list(
-    "type" = "value",
-    "valid" = data %>% dplyr::ungroup() %>% dplyr::select(Method) %>% unique() %>% unlist() %>% as.vector(),
+    "basic" = TRUE,
     "missing" = FALSE,
     "required" = TRUE
   ),
@@ -26,8 +24,7 @@ subnat_FPsource_format <- list(
     "required" = TRUE
   ),
   "sector_categories" = list(
-    "type" = "value",
-    "valid" = data %>% dplyr::ungroup() %>% dplyr::select(sector_categories) %>% unique() %>% unlist() %>% as.vector(),
+    "basic" = TRUE,
     "missing" = FALSE,
     "required" = TRUE
   ),

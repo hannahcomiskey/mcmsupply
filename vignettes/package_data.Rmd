@@ -23,8 +23,8 @@ This vignette covers package data. Central to all vignettes are data inputs in t
 Country and area classification data is used as the a link between low-level divisions (country) and higher-level divisions (sub-regions, regions). After loading the package, enter `Country and area classification` into the console to access this data.
 ```{r}
 library(mcmsupply)
-Country_and_area_classification_inclFP2020
-??Country_and_area_classification_inclFP2020
+Country_and_area_classification
+??Country_and_area_classification
 ```
 
 ## 1. Country names
