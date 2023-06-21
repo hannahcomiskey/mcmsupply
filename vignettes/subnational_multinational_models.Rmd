@@ -22,11 +22,10 @@ library(dplyr)
 ### Get your data
 
 ```{r, include=TRUE, message=FALSE, cache=TRUE}
-cleaned_subnatdata <- get_data(national=FALSE)
+cleaned_subnatdata <- get_data(national=FALSE, trunc = TRUE)
 ```
 
 ### Get the JAGS model inputs from the cleaned data
-
 
 ```{r, include=TRUE, message=FALSE, cache=TRUE}
 pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_subnatdata)
@@ -36,11 +35,10 @@ pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_da
 
 ```{r message=FALSE, cache=TRUE}
 mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, n_iter = 80000, n_burnin = 10000, n_thin = 35)
-
 ```
 
 ### Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, cache=TRUE}
-plots <- plot_estimates(pkg_data) 
+plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
 ```

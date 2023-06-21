@@ -22,7 +22,7 @@ library(dplyr)
 ### Load the data 
 
 ```{r, include=TRUE, message=FALSE, cache=TRUE}
-cleaned_natdata <- get_data(national=TRUE)
+cleaned_natdata <- get_data(national=TRUE, trunc=TRUE)
 ```
 
 ### Get the JAGS model inputs and the cleaned data
@@ -41,5 +41,5 @@ mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, n_iter = 80000, n_
 ### Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, cache=TRUE}
-plots <- plot_estimates(pkg_data) 
+plots <- plot_estimates(jagsdata = pkg_data, model_output = mod) 
 ```

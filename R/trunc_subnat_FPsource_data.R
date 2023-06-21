@@ -1,3 +1,5 @@
+#' A small sample data set of four countries for illustration purposes.
+#' Countries included are Benin, Sierra Leone, Madagascar, and Zimbabwe.
 #' DHS survey observations for the proportion of modern contraceptives
 #' supplied by the public and private sectors at the subnational
 #' administration level.
@@ -19,4 +21,4 @@
 #' Elizabeth Heger Boyle, Miriam King and Matthew Sobek.
 #' IPUMS-Demographic and Health Surveys: Version 9 [dataset].
 #' IPUMS and ICF, 2022. https://doi.org/10.18128/D080.V9
-"subnat_FPsource_data"
+"trunc_subnat_FPsource_data"

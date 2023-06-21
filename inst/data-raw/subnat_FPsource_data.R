@@ -10,10 +10,10 @@ subnat_FPsource_data <- subnatSE_source_data %>%
   dplyr::ungroup() %>%
   dplyr::select(all_of(colnames(kenya_data))) %>%
   dplyr::bind_rows(kenya_data) %>%
-  dplyr::filter(Country %in% c("Benin","Burkina Faso","Cameroon",
-                        "Congo Democratic Republic", "Cote d'Ivoire", "Ethiopia",
-                        "Ghana", "Guinea", "India", "Kenya", "Liberia", "Nepal",
-                        "Philippines", "Rwanda", "Senegal", "Sierra Leone", "Zimbabwe")   # Using only a few countries for sample
-  )
+  dplyr::filter(Country %in% c("Afghanistan","Benin","Burkina Faso","Cameroon",
+                               "Congo", "Congo Democratic Republic", "Cote d'Ivoire",
+                               "Ethiopia", "Ghana","Guinea","India","Kenya", "Liberia", "Madagascar",
+                               "Malawi","Mali", "Mozambique", "Myanmar", "Nepal", "Niger", "Nigeria", "Pakistan",
+                               "Philippines", "Rwanda", "Senegal", "Sierra Leone", "Togo", "Tanzania", "Uganda", "Zimbabwe"))
 
 usethis::use_data(subnat_FPsource_data, overwrite = TRUE)

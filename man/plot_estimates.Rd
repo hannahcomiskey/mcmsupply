@@ -4,12 +4,12 @@
 \alias{plot_estimates}
 \title{Wrapper function to plot the JAGS estimates}
 \usage{
-plot_estimates(jagsdata, ...)
+plot_estimates(jagsdata, model_output)
 }
 \arguments{
 \item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
 
-\item{...}{Arguments from the \code{mcmsupply::get_modelinputs()} function.}
+\item{model_output}{The output of the \code{mcmsupply::run_jags_model()} function.}
 }
 \description{
 Wrapper function to plot the JAGS estimates

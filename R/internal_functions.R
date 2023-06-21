@@ -239,13 +239,22 @@ flat_cor_mat <- function(cor_r){
 #' @param mycountry Default is NULL. The name of country of interest. For the names of potential countries, review vignette.
 #' @param fp2030 TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{national_FPsource_data}}.
+#' @param trunc Default is FALSE. This argument indicates to function to use a
+#' small 4 country dataset for illustration purposes.
+#' See ?mcmsupply::trunc_subnat_FPsource_data or
+#' ??mcmsupply::trunc_national_FPsource_data for details.
 #' @return returns the DHS data set used for inputs into the model
 #' @noRd
 
-get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
+get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, trunc=FALSE) {
   if(is.null(surveydata_filepath)==TRUE){
-    message("Using preloaded data!")
-    national_FPsource_data <- mcmsupply::national_FPsource_data # Read in data
+    if(trunc==FALSE) {
+      message("Using preloaded dataset!")
+      national_FPsource_data <- mcmsupply::national_FPsource_data # Read in all the data
+    } else {
+      message("Using preloaded truncated dataset!")
+      national_FPsource_data <- mcmsupply::trunc_national_FPsource_data # Read in truncated data
+    }
   } else {
     message(paste0("Using file from ", surveydata_filepath))
     national_FPsource_data <- readxl::read_xlsx(surveydata_filepath) # read in custom data
@@ -777,12 +786,22 @@ get_point_estimates <- function(jagsdata, n_chain, ...) {
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @param fp2030 Default is TRUE. Filter raw data to only include the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{subnat_FPsource_data}}.
+#' @param trunc Default is FALSE. This argument indicates to function to use a
+#' small 4 country dataset for illustration purposes.
+#' See ?mcmsupply::trunc_subnat_FPsource_data or
+#' ??mcmsupply::trunc_national_FPsource_data for details.
 #' @return The input data for your country of interest, used as an input to the mcmsupply model
 #' @noRd
 
-get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
+get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, trunc=FALSE) {
   if(is.null(surveydata_filepath)==TRUE){
-    subnat_FPsource_data <- mcmsupply::subnat_FPsource_data  # Read subnational in SE data
+    if(trunc==FALSE) {
+      message("Using preloaded dataset!")
+      subnat_FPsource_data <- mcmsupply::subnat_FPsource_data  # Read subnational in SE data
+    } else {
+      message("Using preloaded truncated dataset!")
+      subnat_FPsource_data <- mcmsupply::trunc_subnat_FPsource_data  # Read subnational in SE data
+    }
   } else {
     subnat_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
     subnat_FPsource_format <- mcmsupply::subnat_FPsource_format
@@ -790,15 +809,15 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
   }
   subnatSE_source_data <- subnat_FPsource_data %>%
     dplyr::mutate(SE.proportion = ifelse(SE.proportion < 0.01, 0.01, SE.proportion)) %>%
-    #dplyr::mutate(prop.trans = proportion*((nrow(subnat_FPsource_data)-1)+0.33)/nrow(subnat_FPsource_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
+    dplyr::mutate(prop.trans = proportion*((nrow(subnat_FPsource_data)-1)+0.33)/nrow(subnat_FPsource_data)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
     #dplyr::filter(n>1) %>%
     #dplyr::filter(SE.proportion!=0) %>%
     dplyr::filter(Region!="NA")
 
   FP_source_data_wide <- subnatSE_source_data %>% # Proportion data
     dplyr::ungroup() %>%
-    dplyr::select(Country, Region, Method,  average_year, sector_categories, proportion, n) %>%
-    # dplyr::rename(proportion = prop.trans) %>% # USING TRANSFORMED DATA
+    dplyr::select(Country, Region, Method,  average_year, sector_categories, prop.trans, n) %>%
+    dplyr::rename(proportion = prop.trans) %>% # USING TRANSFORMED DATA
     tidyr::pivot_wider(names_from = sector_categories, values_from = c(proportion,n)) %>% # separate data into columns for each sector
     dplyr::rename(Commercial_medical = proportion_Commercial_medical ) %>%
     dplyr::rename(Public = proportion_Public ) %>%
@@ -823,15 +842,6 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
   #   update_remain <- FP_source_data_wide[i,"remainder"]/length(na_col_num)
   #   FP_source_data_wide[i,na_col_num+4] <- update_remain
   # }
-
-  # Adjust exactly 1 and exactly 0 values
-  FP_source_data_wide <- FP_source_data_wide %>%
-    dplyr::mutate(Commercial_medical = ifelse(Commercial_medical>0.99, 0.99, Commercial_medical)) %>%
-    dplyr::mutate(Commercial_medical = ifelse(Commercial_medical<0.01, 0.01, Commercial_medical)) %>%
-    dplyr::mutate(Public = ifelse(Public>0.99, 0.99, Public)) %>%
-    dplyr::mutate(Public = ifelse(Public<0.01, 0.01, Public)) %>%
-    dplyr::mutate(Other = ifelse(Other>0.99, 0.99, Other)) %>%
-    dplyr::mutate(Other = ifelse(Other<0.01, 0.01, Other))
 
   # Clean SE values
   SE_source_data_wide <- subnatSE_source_data %>% #   ## Remove SE missing for two sectors
@@ -871,7 +881,8 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
     dplyr::rowwise() %>%
     dplyr::mutate(Public = ifelse(Public < 0, 0.001, Public)) %>%   # Replace any tiny negative numbers with approximately 0 (safety net)
     dplyr::mutate(Commercial_medical = ifelse(Commercial_medical < 0, 0.001, Commercial_medical)) %>%
-    dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))
+    dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))  %>%
+    dplyr::filter(Commercial_medical.SE > 0 & Public.SE>0) # Remove SE=0 observations.
 
   if(local==TRUE & is.null(mycountry)==FALSE &is.null(surveydata_filepath)==TRUE) {
     message(paste0("Getting data for ",mycountry))
@@ -1586,20 +1597,16 @@ method_index_fun <- function(my_data, my_methods) {
 #' Plot median and 95% credible intervals for posterior samples of P from JAGS model with the relevant survey data
 #' @name plot_national_point_estimates
 #' @param pkg_data Output of the `mcmsupply::get_subnational_modelinputs()` function.
+#' @param model_output The output of the `mcmsupply::run_jags_model()` function.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
-#' @return Data frame of labelled posterior samples with median, 95% and 80% credible intervals estimates.
+#' @return List of ggplot objects arranged by country name.
 #' @noRd
 
-plot_national_point_estimates <- function(pkg_data, local=FALSE, mycountry=NULL) {
+plot_national_point_estimates <- function(pkg_data, model_output, local=FALSE, mycountry=NULL) {
 
-  if(local==TRUE & is.null(mycountry)==FALSE) {
-    f <- file.path(tempdir(), paste0(mycountry,"_P_point_national_estimates.RDS"))
-    P_samps <- readRDS(f)
-  } else{
-    f <- file.path(tempdir(), "P_point_national_estimates.RDS")
-    P_samps <- readRDS(f)
-  }
+  # Get models estimates
+  estimates <- model_output$estimates
 
   # Get model inputs for cross matching to estimates
   n_country <- pkg_data$n_country
@@ -1642,7 +1649,7 @@ plot_national_point_estimates <- function(pkg_data, local=FALSE, mycountry=NULL)
   for(i in n_country) {
     print(i)
     country_data <- FP_source_data_long[which(FP_source_data_long$Country==i), ] #%>% filter(sector_category=="Public")
-    country_calc <- P_samps[which(P_samps$Country==i), ] #%>% filter(sector_category=="Public")
+    country_calc <- estimates[which(estimates$Country==i), ] #%>% filter(sector_category=="Public")
 
     ci_plot = ggplot2::ggplot() +  # plot of true p value vs time using facet wrap
       ggplot2::geom_line(data=country_calc, ggplot2::aes(x=average_year, y=median_p, color=Sector)) +
@@ -1663,7 +1670,7 @@ plot_national_point_estimates <- function(pkg_data, local=FALSE, mycountry=NULL)
 
     country_name <- i
 
-    plot_list[i] <- ci_plot
+    plot_list[[i]] <- ci_plot
   }
   return(plot_list)
 }
@@ -1671,20 +1678,16 @@ plot_national_point_estimates <- function(pkg_data, local=FALSE, mycountry=NULL)
 #' Plot median, 95% and 80% credible intervals for posterior samples of P from local JAGS model with the relevant survey data
 #' @name plot_subnational_point_estimates
 #' @param pkg_data Output of the `mcmsupply::get_subnational_modelinputs()` function.
+#' @param model_output The output of the `mcmsupply::run_jags_model()` function.
 #' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
-#' @return Data frame of labelled posterior samples with median, 95% and 80% credible intervals estimates.
+#' @return List of ggplot objects arranged by country and subnational region name.
 #' @noRd
 
-plot_subnational_point_estimates <- function(pkg_data, local=FALSE, mycountry=NULL) {
+plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE, mycountry=NULL) {
 
-  if(local==TRUE & is.null(mycountry)==FALSE) {
-    f <- file.path(tempdir(), paste0(mycountry,"_P_point_estimates.RDS"))
-    P_samps <- readRDS(f)
-    } else {
-      f <- file.path(tempdir(), "P_point_estimates.RDS")
-      P_samps <- readRDS(f)
-  }
+  # Get models estimates
+  estimates <- model_output$estimates
 
   # Get model inputs for cross matching to estimates
   n_country <- pkg_data$n_country
@@ -1733,7 +1736,7 @@ plot_subnational_point_estimates <- function(pkg_data, local=FALSE, mycountry=NU
     country_data <- FP_source_data_long %>%
       dplyr::filter(Country==subnat_index_table$Country[i] & Region==subnat_index_table$Region[i]) %>%
       dplyr::rename(Sector = Sector)
-    country_calc <- P_samps %>%
+    country_calc <- estimates %>%
       dplyr::filter(Country==subnat_index_table$Country[i] & Region==subnat_index_table$Region[i])
 
     ci_plot = ggplot2::ggplot() +  # plot of true p value vs time using facet wrap
@@ -1757,7 +1760,7 @@ plot_subnational_point_estimates <- function(pkg_data, local=FALSE, mycountry=NU
     country_name <- subnat_index_table$Country[i]
     region_name <- stringr::str_replace_all(subnat_index_table$Region[i], "[[:punct:]]", "_") # remove special characters
     region_name <- stringr::str_replace_all(region_name, " ", "") # remove spaces
-    plot_list[paste0(country_name, "_", region_name)] <- ci_plot
+    plot_list[[paste0(country_name, "_", region_name)]] <- ci_plot
   }
   return(plot_list)
 }
