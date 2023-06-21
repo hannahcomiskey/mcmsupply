@@ -4,13 +4,9 @@
 \alias{plot_estimates}
 \title{Wrapper function to plot the JAGS estimates}
 \usage{
-plot_estimates(main_path = NULL, vis_path = NULL, jagsdata, ...)
+plot_estimates(jagsdata, ...)
 }
 \arguments{
-\item{main_path}{String. Default is "results/". Path where you have set your model results to be saved to.}
-
-\item{vis_path}{String. Default is "visualisation/". Path where your visualisations will be saved to.}
-
 \item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
 
 \item{...}{Arguments from the \code{mcmsupply::get_modelinputs()} function.}
@@ -19,16 +15,10 @@ plot_estimates(main_path = NULL, vis_path = NULL, jagsdata, ...)
 Wrapper function to plot the JAGS estimates
 }
 \examples{
-National single-country example:
-plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
-
-National multi-country example:
-plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
-
-Subnational single-country example:
-plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
-
-Subnational multi-country example:
-plot_estimates(main_path = "results/test", vis_path  = "visualisations/test", jagsdata, ...)
-
+\dontrun{
+raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
+jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+mod <- run_jags_model(jagsdata)
+plots <- plot_estimates(jagsdata)
+}
 }

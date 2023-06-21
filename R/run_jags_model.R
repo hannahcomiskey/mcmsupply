@@ -1,43 +1,42 @@
 #' Wrapper function to run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model for the national and subnational administration levels
 #' @name run_jags_model
-#' @param jagsdata The inputs for the JAGS model
+#' @param jagsdata The object from the `mcmsupply::get_modelinputs()` function.
 #' @param jagsparams The parameters of the JAGS model you wish to review
-#' @param main_path Default is "/results". String to indicate the pathway of where to save results.
 #' @param n_iter Default is 80000. Number of itterations to do in JAGS model.
 #' @param n_burnin Default is 10000. Number of samples to burn-in in JAGS model.
 #' @param n_thin Default is 35. Number of samples to thin by in JAGS model.
-#' @param ... Argumentsfrom the `mcmsupply::get_modelinputs()` function.
+#' @param n_chain Default is 2. Number of chains to run in your MCMC sample.
+#' @param n_cores The number of cores to use for parallel execution in subnational estimation. If not specified, the number of cores is set to the value of options("cores"), if specified, or to approximately half the number of cores detected by the parallel package.
+#' @param ... Arguments from the `mcmsupply::get_modelinputs()` function.
 #' @return returns the jags model object
-#' importFrom("stats", "cor", "filter", "lag")
-#' @import R2jags runjags tidyverse tidybayes
-#' @examples National single-country example:
-#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
+#' @examples
+#' \dontrun{
+#' raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
+#' jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+#' run_jags_model(jagsdata)
 #'
-#' National multi-country example:
-#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
-#'
-#' Subnational single-country example:
-#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
-#'
-#' Subnational multi-country example:
-#' run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
-#'
-#' To change from the default parameters monitored in the JAGS model:
 #' myjagsparams <-c("P","alpha_pms")
-#' run_jags_model(jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
+#' run_jags_model(jagsdata, jagsparams = myjagsparams)
+#' }
 #' @export
 
-run_jags_model <- function(jagsdata, jagsparams = NULL, main_path=NULL, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...) {
-  if(is.null(main_path)==TRUE) {
-    main_path = "results/" # set default location for results
-  }
+run_jags_model <- function(jagsdata, jagsparams = NULL, n_iter = 80000, n_burnin = 10000, n_thin = 35, n_chain=2, n_cores=NULL, ...) {
   args <- jagsdata$args
   national <- args$national
   if(national==TRUE) {
-    mod <- run_national_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams, local=args$local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=args$mycountry)
+    mod <- run_national_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams,
+                                   local=args$local, n_iter = n_iter, n_burnin = n_burnin,
+                                   n_thin = n_thin, n_chain=n_chain, mycountry=args$mycountry)
   } else {
-    mod <- run_subnational_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams, local=args$local, main_path = main_path, n_iter = n_iter, n_burnin = n_burnin, n_thin = n_thin, mycountry=args$mycountry)
+    mod <- run_subnational_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams,
+                                      local=args$local, n_iter = n_iter, n_burnin = n_burnin,
+                                      n_thin = n_thin, n_chain=n_chain, mycountry=args$mycountry, n_cores=n_cores)
   }
-  get_point_estimates(main_path=main_path, jagsdata)  # Get point estimates with uncertainty for model output
-  return(mod)
+  p <- suppressWarnings(get_point_estimates(jagsdata = jagsdata, n_chain=n_chain))  # Get point estimates with uncertainty for model output
+
+  # Remove the temporary file and directory
+  unlink(tempdir(), recursive = TRUE)
+
+  return(list(JAGS = mod,
+                estimates = p))
 }

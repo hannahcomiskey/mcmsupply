@@ -7,19 +7,18 @@
 run_jags_model(
   jagsdata,
   jagsparams = NULL,
-  main_path = NULL,
   n_iter = 80000,
   n_burnin = 10000,
   n_thin = 35,
+  n_chain = 2,
+  n_cores = NULL,
   ...
 )
 }
 \arguments{
-\item{jagsdata}{The inputs for the JAGS model}
+\item{jagsdata}{The object from the \code{mcmsupply::get_modelinputs()} function.}
 
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
-
-\item{main_path}{Default is "/results". String to indicate the pathway of where to save results.}
 
 \item{n_iter}{Default is 80000. Number of itterations to do in JAGS model.}
 
@@ -27,29 +26,25 @@ run_jags_model(
 
 \item{n_thin}{Default is 35. Number of samples to thin by in JAGS model.}
 
-\item{...}{Argumentsfrom the \code{mcmsupply::get_modelinputs()} function.}
+\item{n_chain}{Default is 2. Number of chains to run in your MCMC sample.}
+
+\item{n_cores}{The number of cores to use for parallel execution in subnational estimation. If not specified, the number of cores is set to the value of options("cores"), if specified, or to approximately half the number of cores detected by the parallel package.}
+
+\item{...}{Arguments from the \code{mcmsupply::get_modelinputs()} function.}
 }
 \value{
 returns the jags model object
-importFrom("stats", "cor", "filter", "lag")
 }
 \description{
 Wrapper function to run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model for the national and subnational administration levels
 }
 \examples{
-National single-country example:
-run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
+\dontrun{
+raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
+jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
+run_jags_model(jagsdata)
 
-National multi-country example:
-run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
-
-Subnational single-country example:
-run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
-
-Subnational multi-country example:
-run_jags_model(jagsdata, jagsparams = NULL, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
-
-To change from the default parameters monitored in the JAGS model:
 myjagsparams <-c("P","alpha_pms")
-run_jags_model(jagsdata, jagsparams = myjagsparams, main_path, n_iter = 80000, n_burnin = 10000, n_thin = 35, ...)
+run_jags_model(jagsdata, jagsparams = myjagsparams)
+}
 }
