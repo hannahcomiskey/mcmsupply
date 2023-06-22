@@ -8,3 +8,7 @@
 ^mcmsupply.Rmd
 ^motivation-letter.md
 ^motivation-letter.pdf
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
