@@ -1,4 +1,5 @@
 ---
+title: "Running a subnational level multi-country model"
 output: html_document
 vignette: >
   %\VignetteEngine{knitr::knitr}
@@ -6,39 +7,44 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-### How to run a subnational level model for multiple countries
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### Load your library
+
+## Load your library
 
 ```{r, include=TRUE, message=FALSE}
 library(mcmsupply)
-library(dplyr)
 ```
 
-### Get your data
 
-```{r, include=TRUE, message=FALSE, cache=TRUE}
-cleaned_subnatdata <- get_data(national=FALSE, trunc = TRUE)
+## Get your data
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+cleaned_subnatdata <- get_data(national=FALSE)
 ```
 
-### Get the JAGS model inputs from the cleaned data
 
-```{r, include=TRUE, message=FALSE, cache=TRUE}
-pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data = cleaned_subnatdata)
+## Get the JAGS model inputs from the cleaned data
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, 
+                            raw_data = cleaned_subnatdata)
 ```
 
-### Run JAGS model and get posterior point estimates with uncertainty
 
-```{r message=FALSE, cache=TRUE}
-mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, n_iter = 80000, n_burnin = 10000, n_thin = 35)
+## Run JAGS model and get posterior point estimates with uncertainty
+
+```{r message=FALSE, eval=FALSE}
+mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, 
+                      n_iter = 80000, n_burnin = 10000, n_thin = 35)
 ```
 
-### Plot posterior point estimates with uncertainty
 
-```{r, include=TRUE, message=FALSE, cache=TRUE}
+## Plot posterior point estimates with uncertainty
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
 plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
 ```

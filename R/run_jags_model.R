@@ -1,13 +1,13 @@
 #' Wrapper function to run the jags model for estimating the proportion of modern contraceptive methods supplied by the public & private Sectors using a Bayesian hierarchical penalized spline model for the national and subnational administration levels
 #' @name run_jags_model
-#' @param jagsdata The object from the `mcmsupply::get_modelinputs()` function.
+#' @param jagsdata The object from the mcmsupply::get_modelinputs() function.
 #' @param jagsparams The parameters of the JAGS model you wish to review
 #' @param n_iter Default is 80000. Number of itterations to do in JAGS model.
 #' @param n_burnin Default is 10000. Number of samples to burn-in in JAGS model.
 #' @param n_thin Default is 35. Number of samples to thin by in JAGS model.
 #' @param n_chain Default is 2. Number of chains to run in your MCMC sample.
 #' @param n_cores The number of cores to use for parallel execution in subnational estimation. If not specified, the number of cores is set to the value of options("cores"), if specified, or to approximately half the number of cores detected by the parallel package.
-#' @param ... Arguments from the `mcmsupply::get_modelinputs()` function.
+#' @param ... Arguments from the mcmsupply::get_modelinputs() function.
 #' @return returns the jags model object
 #' @examples
 #' \dontrun{

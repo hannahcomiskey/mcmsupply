@@ -1753,8 +1753,8 @@ plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE
       ggplot2::scale_fill_manual(values=safe_colorblind_palette) +
       ggplot2::labs(fill = "Sector") +
       ggplot2::guides(color="none") +
-      ggplot2::theme(title = ggplot2::element_text(size=20), axis.text = ggplot2::element_text(angle = 90, size = 20), strip.text.x = ggplot2::element_text(size = 18), axis.title.x = ggplot2::element_text(size = 20), axis.title.y = ggplot2::element_text(size = 20)) +
-      ggplot2::theme(legend.title = ggplot2::element_text(size=20), legend.key.size = ggplot2::unit(2.5, 'cm'), legend.text = ggplot2::element_text(size=20)) +
+      ggplot2::theme(axis.text = ggplot2::element_text(angle = 90), strip.text.x = ggplot2::element_text(size = 12)) +
+      #ggplot2::theme(legend.title = ggplot2::element_text(size=20), legend.key.size = ggplot2::unit(2.5, 'cm'), legend.text = ggplot2::element_text(size=20)) +
       ggplot2::facet_wrap(~Method)
 
     country_name <- subnat_index_table$Country[i]
@@ -1883,8 +1883,6 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
                       "inv.sigma_delta")
     }
   }
-
-  #doMC::registerDoMC(cores=n_cores) # start parallel runs, save results in steps
 
   # run JAGS model
   #foreach::foreach(chain=1:n_chain) %dopar% {

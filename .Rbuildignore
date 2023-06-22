@@ -1,0 +1,10 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data/..rd
+^README.Rmd
+^cran-comments\.md$
+^RJournal.sty
+^RJreferences.bib
+^mcmsupply.Rmd
+^motivation-letter.md
+^motivation-letter.pdf

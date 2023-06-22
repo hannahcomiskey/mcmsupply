@@ -32,7 +32,7 @@ trunc_subnat_FPsource_data
 }
 \description{
 Elizabeth Heger Boyle, Miriam King and Matthew Sobek.
-IPUMS-Demographic and Health Surveys: Version 9 \link{dataset}.
+IPUMS-Demographic and Health Surveys: Version 9 (dataset).
 IPUMS and ICF, 2022. https://doi.org/10.18128/D080.V9
 }
 \keyword{datasets}

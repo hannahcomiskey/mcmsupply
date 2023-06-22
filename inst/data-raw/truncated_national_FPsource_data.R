@@ -4,7 +4,7 @@
 SE_source_data <- readRDS("inst/data-raw/natSE_source_data_n20.RDS") # n >=20 in at least one sector
 area_classification <- readr::read_csv("inst/data-raw/Country-and-area-classification.csv")
 
-sample_countries <- c("Benin",  "Sierra Leone", "Madagascar", "Zimbabwe")
+sample_countries <- c("Madagascar",  "Zimbabwe")
 
 area_classification <- area_classification %>%
   dplyr::select(`Country or area`, `Region`) %>%

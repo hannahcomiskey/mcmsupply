@@ -19,7 +19,7 @@
 #' ??mcmsupply::trunc_national_FPsource_data for details.
 #' @return returns a list containing the DHS data set used for inputs into the
 #' model and the arguments that specify the data set up.
-#' @import R2jags runjags tidyverse tidybayes stats doMC foreach rlang
+#' @import R2jags runjags tidyverse tidybayes stats foreach rlang
 #' @importFrom magrittr %>%
 #' @examples
 #' \dontrun{

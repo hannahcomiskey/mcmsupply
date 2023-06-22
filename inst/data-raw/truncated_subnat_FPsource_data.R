@@ -10,6 +10,6 @@ trunc_subnat_FPsource_data <- subnatSE_source_data %>%
   dplyr::ungroup() %>%
   dplyr::select(all_of(colnames(kenya_data))) %>%
   dplyr::bind_rows(kenya_data) %>%
-  dplyr::filter(Country %in% c("Benin",  "Sierra Leone", "Madagascar", "Zimbabwe"))   # Using only a few countries for sample
+  dplyr::filter(Country %in% c("Madagascar",  "Zimbabwe"))   # Using only a few countries for sample
 
 usethis::use_data(trunc_subnat_FPsource_data, overwrite = TRUE)

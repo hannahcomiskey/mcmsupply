@@ -1,7 +1,7 @@
 #' Wrapper function to plot the JAGS estimates
 #' @name plot_estimates
-#' @param jagsdata Output of the `mcmsupply::get_modelinputs()` function.
-#' @param model_output The output of the `mcmsupply::run_jags_model()` function.
+#' @param jagsdata Output of the mcmsupply::get_modelinputs() function.
+#' @param model_output The output of the mcmsupply::run_jags_model() function.
 #' @examples
 #' \dontrun{
 #' raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
