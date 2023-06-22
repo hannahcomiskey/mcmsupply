@@ -17,7 +17,7 @@ Please consider our article titled "mcmsupply: An R package for estimating publi
 
 The manuscript introduces the new package called `mcmsupply` which enables users to estimate and project modern contraceptive supply shares at the national and sub-national administration levels for low- and middle-income countries using either prepared Demographic and Health Survey data or custom user-supplied data. It is the first of its kind to produce annual contraceptive method supply share estimates with uncertainty. The package enables users to use a Bayesian framework to produce these estimates for a variety of countries across the world.
 
-We believe the readers of the R Journal will enjoy and find this article helpful, as it is novel in its subject matter and also provides an accessible framework for a Bayesian approach to estimating proportions over time using flexible penalised-splines, estimating and incorporating cross-method correlations into model parameters and complex hierarchical structures to take advantage of the geographic nature of the data.
+We believe the readers of the R Journal will enjoy and find this article helpful, as it is novel in its subject matter while remaining accessible to subject non-experts. We provide an accessible and well-documented framework for estimating method-supply share proportions over time which incorporates both cross-method correlations and complex hierarchical structures to take advantage of the geographic nature of the data and overcome issues associated with data-sparsity, while using flexible penalised-splines capture the complex shape of the data.
 
 \bigskip
 \bigskip
