@@ -1,19 +1,3 @@
----
-title: "mcmsupply"
-output: github_document
----
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
-options(warn=-1)
-```
-
-
-```{r, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(mcmsupply)
-```
-
 # mcmsupply
 
 `mcmsupply` is a R package that enables users to estimate the public and private sector contributions to the modern contraceptive method market supplies over time in low- and middle-income countries. `mcmsupply` uses Bayesian hierarchical models, combined with cross-method correlations to maximise the precision of model estimates, even in data-sparse settings.
