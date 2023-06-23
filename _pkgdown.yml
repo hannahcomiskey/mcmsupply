@@ -1,4 +1,15 @@
 url: https://hannahcomiskey.github.io/mcmsupply/
 template:
   bootstrap: 5
-
+  bootswatch: minty
+  theme: breeze-light
+  sidebar:
+    structure: [authors, custom, toc, dev]
+    components:
+      custom:
+        title: Funding
+        text: This publication has emanated from research conducted with the
+        financial support of Science Foundation Ireland under Grant number
+        18/CRT/6049. The opinions, findings and conclusions or recommendations
+        expressed in this material are those of the author(s) and do not
+        necessarily reflect the views of the Science Foundation Ireland.

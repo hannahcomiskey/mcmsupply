@@ -2,7 +2,7 @@
 title: "Running a national level multi-country model"
 output: html_document
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Running a national level multi-country model}
   %\usepackage[UTF-8]{inputenc}
 ---

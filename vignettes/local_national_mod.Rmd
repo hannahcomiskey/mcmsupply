@@ -2,7 +2,7 @@
 title: "Running a national level single-country model"
 output: html_document
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{How to run a national level model for a single country}
   %\usepackage[UTF-8]{inputenc}
 ---
