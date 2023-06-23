@@ -26,3 +26,8 @@ Comiskey, Hannah, Alkema, Leontine, and Cahill, Niamh. "Estimating the proportio
 
 https://arxiv.org/abs/2212.03844
 
+ <!-- badges: start -->
+  [![R-CMD-check](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml)
+  <!-- badges: end -->
+  
+  
