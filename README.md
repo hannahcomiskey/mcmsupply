@@ -14,6 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(mcmsupply)
 ```
 
+# mcmsupply
+
+`mcmsupply` is a R package that enables users to estimate the public and private sector contributions to the modern contraceptive method market supplies over time in low- and middle-income countries. `mcmsupply` uses Bayesian hierarchical models, combined with cross-method correlations to maximise the precision of model estimates, even in data-sparse settings.
+
 ## Zenodo link
 
 [![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889)
