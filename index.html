@@ -104,7 +104,8 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="mcmsupply">mcmsupply<a class="anchor" aria-label="anchor" href="#mcmsupply"></a>
 </h1></div>
-<p><code>mcmsupply</code> is a R package that enables users to estimate the public and private sector contributions to the modern contraceptive method market supplies over time in low- and middle-income countries. <code>mcmsupply</code> uses Bayesian hierarchical models, combined with cross-method correlations to maximise the precision of model estimates, even in data-sparse settings. This R package has functionality for users to estimate an individual country’s market supply shares or run more complex multi-country models. The data and JAGS models are available at the national and subnational administration levels. Lastly, there is functionaluty available for users to supply custom datsets if they wish.</p>
+<p><a href="http://hannahcomiskey.github.io/mcmsupply/" class="external-link"><img src="https://raw.githubusercontent.com/hannahcomiskey/mcmsupply/master/badge/mcmsupply_badge.png" height="200" align="right"></a></p>
+<p><code>mcmsupply</code> is a R package that enables users to estimate the public and private sector contributions to the modern contraceptive method market supplies over time in low- and middle-income countries. <code>mcmsupply</code> uses Bayesian hierarchical models, combined with cross-method correlations to maximise the precision of model estimates, even in data-sparse settings. This R package has functionality for users to estimate an individual country’s market supply shares or run more complex multi-country models. The data and JAGS models are available at the national and subnational administration levels. Lastly, there is functionality available for users to supply custom datasets if they wish.</p>
 <div class="section level2">
 <h2 id="zenodo-link">Zenodo link<a class="anchor" aria-label="anchor" href="#zenodo-link"></a>
 </h2>
@@ -115,10 +116,9 @@
 </h2>
 <p>The package can be installed by cloning this repository <code>git clone https://github.com/hannahcomiskey/mcmsupply.git</code> and then running <code>devtools::install()</code></p>
 <p>or using the R command <code>install.packages("mcmsupply")</code></p>
-<p>The source code for vignettes can be found in /vignettes/paper_vignettes. Below is a brief introduction.</p>
 </div>
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
 </h2>
 <p>Quantifying the public/private sector supply of contraceptive methods within countries is vital for effective and sustainable family planning (FP) delivery. In many low and middle-income countries (LMIC), measuring the contraceptive supply source often relies on Demographic Health Surveys (DHS). However, many of these countries carry out the DHS approximately every 3-5 years and do not have recent data beyond 2015/16. Our objective in estimating the set of related contraceptive supply-share outcomes (proportion of modern contraceptive methods supplied by the public/private sectors) is to take advantage of latent attributes present in dataset to produce annual, country-specific estimates and projections with uncertainty. We propose a Bayesian, hierarchical, penalized-spline model with multivariate-normal spline coefficients to capture cross-method correlations. Our approach offers an intuitive way to share information across countries and sub-continents, model the changes in the contraceptive supply share over time, account for survey observational errors and produce probabilistic estimates and projections that are informed by past changes in the contraceptive supply share as well as correlations between rates of change across different methods. These results will provide valuable information for evaluating FP program effectiveness. To the best of our knowledge, it is the first model of its kind to estimate these quantities.</p>
 <p>Keywords: Bayesian, family planning, splines, correlation, hierarchical, time-series</p>
