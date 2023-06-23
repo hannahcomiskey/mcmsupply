@@ -7,11 +7,10 @@
 [![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889)
 
 ## Installation
-The package can be installed by cloning this repository:
-git clone https://github.com/hannahcomiskey/mcmsupply.git
 
-Then running: 
-devtools::install(). 
+The package can be installed by cloning this repository `git clone https://github.com/hannahcomiskey/mcmsupply.git` and then running  `devtools::install()`
+
+or using the R command `install.packages("mcmsupply")`
 
 The source code for vignettes can be found in /vignettes/paper_vignettes. Below is a brief introduction.
 
