@@ -25,11 +25,14 @@ Comiskey, Hannah, Alkema, Leontine, and Cahill, Niamh. "Estimating the proportio
 
 https://arxiv.org/abs/2212.03844
 
+## mcmsupply R package website
+ 
+  <a href="http://hannahcomiskey.github.io/mcmsupply/"><img src="https://raw.githubusercontent.com/hannahcomiskey/mcmsupply/master/badge/mcmsupply_badge.png" height="300" align="centre" /></a>
+  
+
+## R-CMD-Check status
+
  <!-- badges: start -->
   [![R-CMD-check](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml)
   <!-- badges: end -->
-  
-  <a href="http://hannahcomiskey.github.io/mcmsupply/"><img src="https://raw.githubusercontent.com/hannahcomiskey/mcmsupply/master/badge/mcmsupply_badge.png" height="100" align="centre" /></a>
-  
-  
-  
+ 
