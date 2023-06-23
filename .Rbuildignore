@@ -1,7 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data/..rd
-^README.Rmd
+^README.md
 ^cran-comments\.md$
 ^RJournal.sty
 ^RJreferences.bib
@@ -12,3 +12,4 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^badge$
