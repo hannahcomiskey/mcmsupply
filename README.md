@@ -1,6 +1,6 @@
 # mcmsupply
 
-<a href="http://hannahcomiskey.github.io/mcmsupply/"><img src="https://raw.githubusercontent.com/hannahcomiskey/mcmsupply/master/badge/mcmsupply_badge.png" height="200" align="right" /></a>
+<a href="http://hannahcomiskey.github.io/mcmsupply/"><img src="https://raw.githubusercontent.com/hannahcomiskey/mcmsupply/master/badge/mcmsupply_badge.png" height="50" align="right" /></a>
 
 
 `mcmsupply` is a R package that enables users to estimate the public and private sector contributions to the modern contraceptive method market supplies over time in low- and middle-income countries. `mcmsupply` uses Bayesian hierarchical models, combined with cross-method correlations to maximise the precision of model estimates, even in data-sparse settings. This R package has functionality for users to estimate an individual country's market supply shares or run more complex multi-country models. The data and JAGS models are available at the national and subnational administration levels. Lastly, there is functionality available for users to supply custom datasets if they wish. 
