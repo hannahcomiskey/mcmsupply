@@ -8,8 +8,8 @@ model{
   for(p in 1:P_count) { # subnat loop
     for(m in 1:M_count){ # method loop
       for (t in 1:n_years) {
-        z[m,p,t] <- alpha_snms[1,m,p] + inprod(B.ik[p,t,],beta.k[1,m,p,])
-        r[m,p,t] <- alpha_snms[2,m,p] + inprod(B.ik[p,t,],beta.k[2,m,p,])
+        z[m,p,t] <- alpha_pms[1,m,p] + inprod(B.ik[p,t,],beta.k[1,m,p,])
+        r[m,p,t] <- alpha_pms[2,m,p] + inprod(B.ik[p,t,],beta.k[2,m,p,])
       } # end **after tstar** loop
     } # end M loop
   } # end P loop
@@ -18,7 +18,7 @@ model{
   for(s in 1:2){ # sector loop
     for(p in 1:P_count) { # subnat loop
       for(m in 1:M_count){ # method loop
-        alpha_snms[s,m,p] ~ dnorm(alpha_cms_hat[s,m], tau_alpha_snms_hat[s]) # sharing info across methods within a subnat area so each subnat public/private sector has an intercept. Tau-alpha is the cross-method sector variance.
+        alpha_pms[s,m,p] ~ dnorm(alpha_cms_hat[s,m], tau_alpha_pms_hat[s]) # sharing info across methods within a subnat area so each subnat public/private sector has an intercept. Tau-alpha is the cross-method sector variance.
         beta.k[s,m,p,kstar[p]] <- 0 # kstar[p] is the knot at tstar for country c. Just the value of the intercept
         for(j in 1:(kstar[p]-1)){ # before kstar[p]
           beta.k[s,m,p,(kstar[p] - j)] <- beta.k[s,m,p,(kstar[p] - j)+1] - delta.k[s,m,p,(kstar[p] - j)]

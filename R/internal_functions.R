@@ -1826,14 +1826,14 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
   # Get JAGS params to monitor
   if(is.null(jagsparams)==TRUE ) {
     if(local==FALSE) { # global
-      jagsparams <- c("alpha_pms",
-                      "alpha_cms",
-                      "tau_alpha_pms",
-                      "beta.k",
-                      "sigma_delta",
-                      "delta.k")
+      jagsparams <- c("alpha_pms", # province-level intercept
+                      "alpha_cms", # country-level
+                      "tau_alpha_pms", # province-level precision
+                      "beta.k", # spline coefficients
+                      "sigma_delta", # var-covar matrix
+                      "delta.k") # rates of change between spline coefficients
     } else { # local
-      jagsparams <- c("P",
+      jagsparams <- c("P", # estimated proportions
                       "alpha_pms",
                       "beta.k")
     }
