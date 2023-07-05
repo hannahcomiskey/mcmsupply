@@ -9,7 +9,7 @@ administration level.}
 \format{
 \subsection{\code{subnat_FPsource_data}}{
 
-A data frame with 13504 rows and 8 columns:
+A data frame with 6940 rows and 8 columns:
 \describe{
 \item{Country}{Country names}
 \item{Region}{Subnational region names}

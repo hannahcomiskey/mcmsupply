@@ -16,7 +16,7 @@ run_jags_model(
 )
 }
 \arguments{
-\item{jagsdata}{The object from the \code{mcmsupply::get_modelinputs()} function.}
+\item{jagsdata}{The object from the mcmsupply::get_modelinputs() function.}
 
 \item{jagsparams}{The parameters of the JAGS model you wish to review}
 
@@ -30,7 +30,7 @@ run_jags_model(
 
 \item{n_cores}{The number of cores to use for parallel execution in subnational estimation. If not specified, the number of cores is set to the value of options("cores"), if specified, or to approximately half the number of cores detected by the parallel package.}
 
-\item{...}{Arguments from the \code{mcmsupply::get_modelinputs()} function.}
+\item{...}{Arguments from the mcmsupply::get_modelinputs() function.}
 }
 \value{
 returns the jags model object

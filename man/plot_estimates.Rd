@@ -7,9 +7,9 @@
 plot_estimates(jagsdata, model_output)
 }
 \arguments{
-\item{jagsdata}{Output of the \code{mcmsupply::get_modelinputs()} function.}
+\item{jagsdata}{Output of the mcmsupply::get_modelinputs() function.}
 
-\item{model_output}{The output of the \code{mcmsupply::run_jags_model()} function.}
+\item{model_output}{The output of the mcmsupply::run_jags_model() function.}
 }
 \description{
 Wrapper function to plot the JAGS estimates
