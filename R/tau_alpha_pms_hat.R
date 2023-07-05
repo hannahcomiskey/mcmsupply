@@ -2,6 +2,6 @@
 #' This vector is used to inform the precision in the Normal prior of the subnational-level intercept in single-country subnational models.
 #'
 #' @docType data
-#' @keywords tau_alpha_pms_hat
+#' @keywords tau_alphapms_subnationalmod
 #' @format  A vector of two precision estimates
-"tau_alpha_pms_hat"
+"tau_alphapms_subnationalmod"
