@@ -10,6 +10,7 @@
 ^motivation-letter.pdf
 ^_pkgdown\.yml$
 ^docs$
+^doc$
 ^pkgdown$
 ^\.github$
 ^badge$
