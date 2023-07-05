@@ -16,7 +16,7 @@ This vignette covers package data. Central to all vignettes are data inputs in t
 3. [Estimated national correlations](#cu) `estimated_national_correlations`
 4. [Estimated subnational correlations](#cu)  `estimated_global_subnational_correlations` and `estimated_global_spatial_subnational_correlations`
 5. [Estimated model parameters for national one-country runs](#pc) `median_alpha_region_intercepts`, `precision_alpha_country_intercepts` , and `Bspline_sigma_matrix_median`, 
-6. [Estimated model parameters for subnational one-country runs](#pc) `median_alphacms`, `tau_alpha_pms_hat`, `sigma_delta_hat`, `spatial_sigma_delta_hat`, `global_provincial_neighbouradj`, and the country-specific neighbourhood adjacency matrices in the `data/local_neighbours` folder
+6. [Estimated model parameters for subnational one-country runs](#pc) `median_alphacms`, `tau_alphapms_subnationalmod`, and `inv.sigma_delta_hat_subnationalmod`.
 7. [Family planning source data](#pc) `national_FPsource_data` and `subnat_FPsource_data`
 
 ## Load your library
@@ -77,18 +77,18 @@ Bspline_sigma_matrix_median
 
 ## <a name="cu"></a>
 ## 6. Estimated model parameters for subnational one-country runs
-These are the estimated parameters used in a one-country subnational model run. `median_alphacms` are the country-specific intercepts used to inform the subnational province-specific intercepts of the model, the `tau_alpha_pms_hat` are the associated variance with these province-specific intercepts. `sigma_delta_hat` is a variance-covariance matrix used to inform the Wishart prior on the first-order difference of the spline coefficients for the one-country subnational model. 
+These are the estimated parameters used in a one-country subnational model run. `median_alphacms` are the country-specific intercepts used to inform the subnational province-specific intercepts of the model, the `tau_alphapms_subnationalmod` are the associated variance with these province-specific intercepts. `inv.sigma_delta_hat_subnationalmod` is a precision of the variance-covariance matrix used to inform the multi-variate normal prior on first-order differences of the spline coefficients for the one-country subnational model. 
 
 ```{r}
 median_alphacms
 ```
 
 ```{r}
-tau_alpha_pms_hat
+tau_alphapms_subnationalmod
 ```
 
 ```{r}
-sigma_delta_hat
+inv.sigma_delta_hat_subnationalmod
 ```
 
 
