@@ -7,8 +7,7 @@ Authors@R:
     role = c("aut", "cre")),
     person("Niamh", "Cahill", role = "aut"),
     person("Leontine", "Alkema", role ="aut"))
-Description:  mcmsupply: An R package for estimating public and private sector contraceptive market supply shares
-    Family Planning programs and initiatives typically use nationally 
+Description: Family Planning programs and initiatives typically use nationally 
     representative surveys to estimate key indicators of a country’s family 
     planning progress. However, in recent years, routinely collected family 
     planning services data (Service Statistics) have been used as a 
