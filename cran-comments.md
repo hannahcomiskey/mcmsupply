@@ -1,3 +1,11 @@
+## Resubmission 
+- Added refences
+- Addressed issues with line breaks in DESCRIPTION file
+- Added missing Rd-tag  to plot_estimates.Rd: \value
+- Changed \dontrun{} to \dontttest{} for examples
+- Added shorter examples 
+- Addressed issue with print()
+
 ## Test environments
 
 local OS X install, R 4.3.1 GUI 1.79 Big Sur Intel build
