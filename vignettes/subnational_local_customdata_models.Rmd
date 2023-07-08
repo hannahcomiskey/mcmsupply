@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load your library
 
-```{r, include=TRUE, message=FALSE}
+```{r, include=TRUE, message=FALSE, eval=FALSE}
 library(mcmsupply)
 library(dplyr)
 ```

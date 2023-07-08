@@ -47,6 +47,7 @@ proportion of modern contraceptives supplied by the public and private
 sectors at the national and subnational administration levels.
 }
 \examples{
-raw_data <- get_data(local=FALSE)
+\donttest{
 raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
+}
 }

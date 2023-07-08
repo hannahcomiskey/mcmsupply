@@ -1780,9 +1780,10 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
   #write_jags_model(main_path=main_path, model_type = "national", local=local)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
+    jags_file <- system.file("model", "local_national_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
-                        model.file = system.file("model", "local_national_model.txt", package = "mcmsupply"), #system.file(main_path, "/model.txt", package = "mcmsupply"),
+                        model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
                         n.burnin = n_burnin,
                         n.iter = n_iter,
                         n.thin = n_thin,
@@ -1790,9 +1791,10 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
     f <- file.path(tempdir(), paste0("mod_",mycountry,"_national_results.RDS"))
     saveRDS(mod, f)
   } else {
+    jags_file <- system.file("model", "global_national_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
-                        model.file = system.file("model", "global_national_model.txt", package = "mcmsupply"), #system.file(main_path, "/model.txt", package = "mcmsupply"),
+                        model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
                         n.burnin = n_burnin,
                         n.iter = n_iter,
                         n.thin = n_thin,
@@ -1843,17 +1845,19 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
  for(chain in 1:n_chain){ ## Do chains separately ------------------------------
     set.seed(chain*1239)
     if(local==FALSE) { # multi-country subnational
+      jags_file <- system.file("model", "global_subnational_model.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
-                          model.file = system.file("model", "global_subnational_model.txt", package = "mcmsupply"), #system.file(main_path, "/model.txt", package = "mcmsupply"),
+                          model.file = jags_file,
                           n.chains = 1,
                           n.burnin = n_burnin,
                           n.iter = n_iter,
                           n.thin = n_thin)
     } else { # single country subnational
+      jags_file <- system.file("model", "local_subnational_model_fixed.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
-                          model.file = system.file("model", "local_subnational_model_fixed.txt", package = "mcmsupply"), #system.file(main_path, "/model.txt", package = "mcmsupply"),
+                          model.file = jags_file , #system.file(main_path, "/model.txt", package = "mcmsupply"),
                           n.chains = 1,
                           n.burnin = n_burnin,
                           n.iter = n_iter,
