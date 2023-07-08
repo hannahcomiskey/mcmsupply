@@ -9,8 +9,8 @@
 ^motivation-letter.md
 ^motivation-letter.pdf
 ^_pkgdown\.yml$
-^docs$
 ^doc$
+^docs$
 ^pkgdown$
 ^\.github$
 ^badge$

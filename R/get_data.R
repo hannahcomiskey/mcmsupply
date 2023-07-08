@@ -22,12 +22,8 @@
 #' @import R2jags runjags tidyverse tidybayes stats foreach rlang
 #' @importFrom magrittr %>%
 #' @examples
-#' \dontrun{
-#' raw_data <- get_data(local=TRUE, mycountry="Nepal")
 #' raw_data <- get_data(local=FALSE)
 #' raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
-#' raw_data <- get_data(national=FALSE, local=FALSE)
-#' }
 #' @export
 
 get_data <- function(national=TRUE, local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, trunc=FALSE) {

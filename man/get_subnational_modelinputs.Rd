@@ -38,8 +38,6 @@ A list of modelling inputs for the JAGS model.
 Get JAGS model inputs
 }
 \examples{
-\dontrun{
 raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
 jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
-}
 }

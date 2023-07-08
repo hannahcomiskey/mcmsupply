@@ -19,10 +19,8 @@
 #' 12. matchmethod is the method indexing to match the observed data to the predictions.
 #' 13. matchyears is the year indexing to match the observed data to the predictions.
 #' @examples
-#' \dontrun{
 #' raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
 #' jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
-#' }
 #' @export
 
 get_modelinputs <- function(startyear=1990, endyear=2030.5, nsegments=12, raw_data) {

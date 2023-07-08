@@ -561,7 +561,7 @@ get_national_P_median_quantiles <- function(country_index_table, method_index_ta
   if(local==FALSE) {
     P_samp <- my_model$BUGSoutput$sims.list$P
     P_dims <- dim(P_samp)
-    print(P_dims)
+    message(P_dims)
 
     P_s_med <- array(dim=c(P_dims[4],n_years,P_dims[3],P_dims[2])) # 30x5 matrix for CountryxMethod then 5 into an array for each sector
 
@@ -1603,7 +1603,7 @@ plot_national_point_estimates <- function(pkg_data, model_output, local=FALSE, m
   safe_colorblind_palette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
   plot_list<- list()
   for(i in n_country) {
-    print(i)
+    message(i)
     country_data <- FP_source_data_long[which(FP_source_data_long$Country==i), ] #%>% filter(sector_category=="Public")
     country_calc <- estimates[which(estimates$Country==i), ] #%>% filter(sector_category=="Public")
 
