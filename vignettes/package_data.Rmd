@@ -88,7 +88,7 @@ mcmsupply::tau_alphapms_subnationalmod
 ```
 
 ```{r}
-mcmsupply::inv.sigma_delta_hat_subnationalmod
+ mcmsupply::inv.sigma_delta_hat_subnationalmod
 ```
 
 
