@@ -14,3 +14,4 @@
 ^pkgdown$
 ^\.github$
 ^badge$
+^CRAN-SUBMISSION$
