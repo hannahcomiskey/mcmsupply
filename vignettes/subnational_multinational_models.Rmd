@@ -1,6 +1,8 @@
 ---
 title: "Running a subnational level multi-country model"
-output: html_document
+output: 
+  rmarkdown::html_vignette:
+       toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{How to run a subnational level model for multiple countries}

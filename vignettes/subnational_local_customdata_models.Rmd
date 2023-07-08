@@ -1,6 +1,8 @@
 ---
 title: "Running a subnational level single-country model with custom data"
-output: html_document
+output: 
+  rmarkdown::html_vignette:
+       toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Running a subnational level single-country model with custom data}

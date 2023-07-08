@@ -1,6 +1,8 @@
 ---
 title: "Running a national level single-country model"
-output: html_document
+output: 
+  rmarkdown::html_vignette:
+       toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{How to run a national level model for a single country}

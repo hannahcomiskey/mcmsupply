@@ -1,6 +1,8 @@
 ---
 title: "Running a national level multi-country model"
-output: html_document
+output: 
+  rmarkdown::html_vignette:
+       toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Running a national level multi-country model}

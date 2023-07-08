@@ -1,5 +1,8 @@
 ---
 title: "Package data"
+output: 
+  rmarkdown::html_vignette:
+       toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Package data}
