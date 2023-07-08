@@ -3,7 +3,8 @@
 \docType{data}
 \name{tau_alphapms_subnationalmod}
 \alias{tau_alphapms_subnationalmod}
-\title{The median estimates of the precision for the subnational-level country, sector-, method-specific intercepts in the multi-country subnational model.
+\title{tau_alphapms_subnationalmod
+The median estimates of the precision for the subnational-level country, sector-, method-specific intercepts in the multi-country subnational model.
 This vector is used to inform the precision in the Normal prior of the subnational-level intercept in single-country subnational models.}
 \format{
 A vector of two precision estimates
@@ -12,6 +13,7 @@ A vector of two precision estimates
 tau_alphapms_subnationalmod
 }
 \description{
+tau_alphapms_subnationalmod
 The median estimates of the precision for the subnational-level country, sector-, method-specific intercepts in the multi-country subnational model.
 This vector is used to inform the precision in the Normal prior of the subnational-level intercept in single-country subnational models.
 }
