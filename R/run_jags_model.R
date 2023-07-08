@@ -10,7 +10,7 @@
 #' @param ... Arguments from the mcmsupply::get_modelinputs() function.
 #' @return returns the jags model object
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
 #' jagsdata <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data)
 #' run_jags_model(jagsdata, n_iter=5, n_burnin=1, n_thin=1)
@@ -21,13 +21,13 @@ run_jags_model <- function(jagsdata, jagsparams = NULL, n_iter = 80000, n_burnin
   args <- jagsdata$args
   national <- args$national
   if(national==TRUE) {
-    mod <- run_national_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams,
+    mod <- suppressWarnings(run_national_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams,
                                    local=args$local, n_iter = n_iter, n_burnin = n_burnin,
-                                   n_thin = n_thin, n_chain=n_chain, mycountry=args$mycountry)
+                                   n_thin = n_thin, n_chain=n_chain, mycountry=args$mycountry))
   } else {
-    mod <- run_subnational_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams,
+    mod <- suppressWarnings(run_subnational_jags_model(jagsdata=jagsdata$modelinputs, jagsparams = jagsparams,
                                       local=args$local, n_iter = n_iter, n_burnin = n_burnin,
-                                      n_thin = n_thin, n_chain=n_chain, mycountry=args$mycountry, n_cores=n_cores)
+                                      n_thin = n_thin, n_chain=n_chain, mycountry=args$mycountry, n_cores=n_cores))
   }
   p <- suppressWarnings(get_point_estimates(jagsdata = jagsdata, n_chain=n_chain))  # Get point estimates with uncertainty for model output
 
