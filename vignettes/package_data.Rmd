@@ -84,11 +84,11 @@ median_alphacms
 ```
 
 ```{r}
-tau_alphapms_subnationalmod
+mcmsupply::tau_alphapms_subnationalmod
 ```
 
 ```{r}
-inv.sigma_delta_hat_subnationalmod
+mcmsupply::inv.sigma_delta_hat_subnationalmod
 ```
 
 
