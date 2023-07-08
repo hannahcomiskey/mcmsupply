@@ -13,10 +13,10 @@
 #' \donttest{
 #' raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
 #' jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
-#' mod <- run_jags_model(jagsdata)
+#' mod <- run_jags_model(jagsdata,n_iter=5, n_thin=1, n_chain=1)
 #'
 #' myjagsparams <-c("P","alpha_pms")
-#' mod <- run_jags_model(jagsdata, jagsparams = myjagsparams)
+#' mod <- run_jags_model(jagsdata, jagsparams = myjagsparams, n_iter=5,n_thin=1, n_chain=1)
 #' }
 #' @export
 
