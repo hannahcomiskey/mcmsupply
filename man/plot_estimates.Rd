@@ -18,7 +18,7 @@ A list of ggplot objects.
 Wrapper function to plot the JAGS estimates
 }
 \examples{
-\dontrun{
+\donttest{
 raw_data <- get_data(national=TRUE, local=TRUE, mycountry="Nepal")
 jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
 mod <- run_jags_model(jagsdata, n_iter=5, n_burnin=1, n_thin=1)
