@@ -2,7 +2,7 @@ model{
 ## Variance structure
   for(g in 1:2) { # Sector (public,crivate) loop for covariance
     mu_delta[g,1:M_count] <- rep(0,M_count)
-    inv.sigma_delta[1:M_count,1:M_count,g] ~ dwish(natdf*natRmat[1:M_count,1:M_count,g],natdf) # S~dwish(R,c) => E(S) = p * solve(R)
+    inv.sigma_delta[1:M_count,1:M_count,g] <- inverse(natRmat[1:M_count,1:M_count,g])
   }
 
 ## Model Estimates

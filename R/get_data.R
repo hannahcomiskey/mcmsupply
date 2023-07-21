@@ -13,10 +13,6 @@
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data
 #' should be a .xlsx with the following format
 #' \code{\link{national_FPsource_data}}.
-#' @param trunc Default is FALSE. This argument indicates to function to use a
-#' small 4 country dataset for illustration purposes.
-#' See ?mcmsupply::trunc_subnat_FPsource_data or
-#' ??mcmsupply::trunc_national_FPsource_data for details.
 #' @return returns a list containing the DHS data set used for inputs into the
 #' model and the arguments that specify the data set up.
 #' @import R2jags runjags tidyverse tidybayes stats foreach rlang
@@ -27,11 +23,11 @@
 #' }
 #' @export
 
-get_data <- function(national=TRUE, local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, trunc=FALSE) {
+get_data <- function(national=TRUE, local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(national==TRUE) {
-    mydata <- get_national_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath, trunc=trunc)
+    mydata <- get_national_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
   } else {
-    mydata <- get_subnational_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath, trunc=trunc)
+    mydata <- get_subnational_data(local=local, mycountry=mycountry, fp2030=fp2030, surveydata_filepath=surveydata_filepath)
   }
   args <- list(national=national, local=local, mycountry=mycountry, fp2030=fp2030) # inherit arguments for next steps
   return(list(mydata = mydata,

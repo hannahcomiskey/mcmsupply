@@ -11,8 +11,7 @@ get_data(
   local = FALSE,
   mycountry = NULL,
   fp2030 = TRUE,
-  surveydata_filepath = NULL,
-  trunc = FALSE
+  surveydata_filepath = NULL
 )
 }
 \arguments{
@@ -31,11 +30,6 @@ Planning 2030 focus countries discussed in the Comiskey et al. paper.}
 \item{surveydata_filepath}{Path to survey data. Default is NULL. Survey data
 should be a .xlsx with the following format
 \code{\link{national_FPsource_data}}.}
-
-\item{trunc}{Default is FALSE. This argument indicates to function to use a
-small 4 country dataset for illustration purposes.
-See ?mcmsupply::trunc_subnat_FPsource_data or
-??mcmsupply::trunc_national_FPsource_data for details.}
 }
 \value{
 returns a list containing the DHS data set used for inputs into the
