@@ -6,8 +6,13 @@
 - Added shorter examples 
 - Addressed issue with print()
 
-## Rsubmission 2
+## Resubmission 2
 - Update: Changed `\dontrun{}` to `\dontttest{}` for examples, expect for the plot_estimates.R. In this example, if I change the command to `donttest{}` the examples fail as they cannot locate the JAGS model files. However, when I leave it as `dontrun{}` and run_jags_model.R as `donttest{}`, the examples are fine. I cannot get to the bottom of why this is the case. Any advice would be greatly appreciated. The code is passing all tests outside of the examples environment so I am confident that the code works correctly.
+
+# Resubmission 3: Updated package  
+ - I have updated JAGS models stored in the package following reviewers comments. 
+ - I have included a design effect database that is used in the imputation of the standard error terms and updated the get_national_data function to reflect these changes.
+
 
 ## Test environments
 
@@ -24,3 +29,4 @@ Window tests and Mac release tests were successful.
 The R-hub runs failed because it couldn't find JAGS but I think this is a missing dependency on R-hub rather than a problem with the package (or a missing option that I need to add in somehow). This is impacting the building of my vignettes resulting in errors that I cannot fix.
 
 R-CMD-Checks on Github were successful.
+
