@@ -239,22 +239,13 @@ flat_cor_mat <- function(cor_r){
 #' @param mycountry Default is NULL. The name of country of interest. For the names of potential countries, review vignette.
 #' @param fp2030 TRUE/FALSE. Default is TRUE. Filters the data to only include FP2030 countries.
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{national_FPsource_data}}.
-#' @param trunc Default is FALSE. This argument indicates to function to use a
-#' small 4 country dataset for illustration purposes.
-#' See ?mcmsupply::trunc_subnat_FPsource_data or
-#' ??mcmsupply::trunc_national_FPsource_data for details.
 #' @return returns the DHS data set used for inputs into the model
 #' @noRd
 
-get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, trunc=FALSE) {
+get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
-    if(trunc==FALSE) {
-      message("Using preloaded dataset!")
-      national_FPsource_data <- mcmsupply::national_FPsource_data # Read in all the data
-    } else {
-      message("Using preloaded truncated dataset!")
-      national_FPsource_data <- mcmsupply::trunc_national_FPsource_data # Read in truncated data
-    }
+    message("Using preloaded dataset!")
+    national_FPsource_data <- mcmsupply::national_FPsource_data # Read in all the data
   } else {
     message(paste0("Using file from ", surveydata_filepath))
     national_FPsource_data <- readxl::read_xlsx(surveydata_filepath) # read in custom data
@@ -272,83 +263,82 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     national_FPsource_data <- national_FPsource_data %>% dplyr::filter(Country %in% FP_2030_countries)
   }
 
-  FP_source_data_wide <- national_FPsource_data %>%
+  # Filter where the sample size is smaller than 2 people across all three sectors ---------
+  FP_source_data_wide <- national_FPsource_data %>% # Proportion data
     dplyr::ungroup() %>%
-    dplyr::group_by(Country, Super_region, Method, average_year, sector_category) %>%
-    dplyr::distinct() %>%
-    dplyr::select(Country, Super_region, Method, average_year, sector_category, proportion, n) %>%
-    tidyr::pivot_wider(names_from = sector_category, values_from = c(proportion,n)) %>%
-    dplyr::rename(Commercial_medical = proportion_Commercial_medical ) %>%
-    dplyr::rename(Public = proportion_Public ) %>%
-    dplyr::rename(Other = proportion_Other) %>%
+    dplyr::select(Country, Super_region, Method,  average_year, sector_category, proportion, SE.proportion, n) %>%
+    tidyr::pivot_wider(names_from = sector_category, values_from = c(proportion, SE.proportion,n)) %>% # separate data into columns for each sector
+    dplyr::rename(Commercial_medical = proportion_Commercial_medical,
+                  Public = proportion_Public,
+                  Other = proportion_Other,
+                  Public.SE = SE.proportion_Public,
+                  Commercial_medical.SE = SE.proportion_Commercial_medical,
+                  Other.SE = SE.proportion_Other) %>%
     dplyr::arrange(Country)
 
+  # Make sure proportions add to 1 ----------
   FP_source_data_wide <- FP_source_data_wide %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(check_total = sum(Commercial_medical, Other, Public, na.rm = TRUE))
+    dplyr::mutate(check_total = sum(Commercial_medical, Other, Public, na.rm = TRUE)) %>%
+    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical, Other, Public, Commercial_medical.SE, Other.SE, Public.SE, n_Commercial_medical, n_Other, n_Public, check_total)
 
-  # # Fill in single missing NA values with 1-sum(others) -------------------------
-  FP_source_data_wide$count_NA <- rowSums(is.na(FP_source_data_wide[, c("Commercial_medical", "Other","Public")])) # count NAs
-  FP_source_data_wide <- FP_source_data_wide %>%
-    dplyr::filter(count_NA <2) # Remove obs with two missing sectors
-  FP_source_data_wide$remainder <- 1 - rowSums(FP_source_data_wide[, c("Commercial_medical", "Other","Public")], na.rm = TRUE)
-
-  for(i in 1:nrow(FP_source_data_wide)) {
-    if(FP_source_data_wide$count_NA[i]==1) {
-      na_col_num <- which(is.na(FP_source_data_wide[i,c("Commercial_medical", "Other","Public")])) # column number of NA
-      num <- which(colnames(FP_source_data_wide)=="Commercial_medical")
-      FP_source_data_wide[i,na_col_num+(num-1)] <- FP_source_data_wide[i,"remainder"] # replace with remainder
-    } else {
-      next
+  # When check_Total=1, replace missing values with 0 ----------
+  col_index <- which(colnames(FP_source_data_wide)=="Commercial_medical")-1 # column index before CM column, as CM=1
+  for (i in 1:nrow(FP_source_data_wide)) {
+    if(FP_source_data_wide$check_total[i]>0.99) {
+      na_cols <- which(is.na(FP_source_data_wide[i, c("Commercial_medical", "Other", "Public")])==TRUE) # NA values
+      FP_source_data_wide[i, na_cols+col_index] <- as.list(rep(0, length(na_cols)))
     }
   }
 
-  # Sanity check: replace any negative numbers with approximately 0
+  # Transform exactly 1 and 0 values away from boundary using lemon-squeezer approach ---------
   FP_source_data_wide <- FP_source_data_wide %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(Public = ifelse(Public < 0, 0.001, Public)) %>%
-    dplyr::mutate(Commercial_medical = ifelse(Commercial_medical < 0, 0.001, Commercial_medical)) %>%
-    dplyr::mutate(Other = ifelse(Other < 0, 0.001, Other))
+    dplyr::mutate(Commercial_medical = (Commercial_medical*(nrow(FP_source_data_wide)-1)+0.33)/nrow(FP_source_data_wide)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
+    dplyr::mutate(Other = (Other*(nrow(FP_source_data_wide)-1)+0.33)/nrow(FP_source_data_wide)) %>%
+    dplyr::mutate(Public = (Public*(nrow(FP_source_data_wide)-1)+0.33)/nrow(FP_source_data_wide)) %>%
+    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical, Other, Public, Commercial_medical.SE, Other.SE, Public.SE, n_Other, n_Public, n_Commercial_medical, check_total) #, count_NA, remainder)
 
-  ## Remove SE missing for two sectors ---------------------
-  SE_source_data_wide <- national_FPsource_data %>% # SE data
-    dplyr::ungroup() %>%
-    dplyr::select(Country, Super_region, Method, average_year, sector_category, SE.proportion) %>%
-    tidyr::pivot_wider(names_from = sector_category, values_from = SE.proportion) %>%
-    dplyr::arrange(Country) %>%
-    dplyr::rename(Public.SE = Public, Commercial_medical.SE = Commercial_medical, Other.SE = Other)
+  # Clean SE values --------------
+  FP_source_data_wide$count_SE.NA <- rowSums(is.na(FP_source_data_wide %>% dplyr::select(Public.SE, Commercial_medical.SE, Other.SE))) # count NAs
+  SE_source_data_wide_norm <- FP_source_data_wide %>% dplyr::filter(count_SE.NA==0 & Commercial_medical.SE>0 & Public.SE>0) # Normal obs. No action needed.
+  SE_source_data_wide_X <- FP_source_data_wide %>% dplyr::filter(Commercial_medical.SE==0 | Public.SE==0) # Get obs with two missing sectors
 
-  # Readjust any SE <1% to 1%
-  SE_source_data_wide <- SE_source_data_wide %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%
-    dplyr::mutate(Commercial_medical.SE = ifelse(Commercial_medical.SE < 0.01, 0.01, Commercial_medical.SE)) %>%
-    dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE))
+  # Using binomial distribution approximation to estimate variance
+  SE_source_data_wide_X <- SE_source_data_wide_X %>%
+    dplyr::filter(n_Public>=20 | n_Commercial_medical >=20 | n_Other >=20) # Remove small sample sizes (DHS has 10 units sampled per cluster as min., 20 as average)
 
-  # Count NAs to drop observations with too much missing data
-  SE_source_data_wide$count_NA <- rowSums(is.na(SE_source_data_wide)) # count NAs
-  SE_source_data_wide <- SE_source_data_wide %>%
-    dplyr::filter(count_NA <2) # Remove obs with two missing sectors
+  col_index <- which(colnames(SE_source_data_wide_X)=="Commercial_medical.SE")-1 # column index before CM column, as CM=1
 
-  # Max of column SE in country for missing values
-  SE_source_data_wide <- SE_source_data_wide %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(Country) %>%
-    dplyr::mutate(max.Other.SE = max(Other.SE, na.rm=TRUE)) %>%
-    dplyr::mutate(Other.SE = ifelse(is.na(Other.SE)==TRUE, max.Other.SE, Other.SE)) %>%
-    dplyr::mutate(max.Public.SE = max(Public.SE, na.rm=TRUE)) %>%
-    dplyr::mutate(Public.SE = ifelse(is.na(Public.SE)==TRUE, max.Public.SE, Public.SE)) %>%
-    dplyr::mutate(max.Commercial_medical.SE = max(Commercial_medical.SE, na.rm=TRUE)) %>%
-    dplyr::mutate(Commercial_medical.SE = ifelse(is.na(Commercial_medical.SE)==TRUE, max.Commercial_medical.SE, Commercial_medical.SE)) %>%
-    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical.SE, Public.SE, Other.SE, count_NA)
+  if(nrow(SE_source_data_wide_X)>0) {
+    for(i in 1:nrow(SE_source_data_wide_X)) {
+      SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Add DEFT data
+      num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
+      num.SEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
+      num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
+      if(length(num.SE0)==1 & length(num.SEnon0)>0) {
+        mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,col_index+num.SEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
+        SE_source_data_wide_X[i,col_index+num.SE0] <- mean.SE
+      } else{
+        DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
+        N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
+        phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
+        SE.hat <- sqrt((phat*(1-phat))/(N1+1)) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
+        SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
+      }
+    }
+  }
 
-  # Merge SE and proportion data together
-  FP_source_data_wide <- dplyr::left_join(FP_source_data_wide, SE_source_data_wide) %>%
-    dplyr::arrange(Country, Super_region, Method, average_year)
+  FP_source_data_wide <- dplyr::bind_rows(SE_source_data_wide_norm, SE_source_data_wide_X) # Put data back together again
+
+  # Remove proportions with two sectors still missing
+  FP_source_data_wide <- FP_source_data_wide %>%
+    dplyr::filter(is.na(Public)==FALSE & is.na(Other)==FALSE | is.na(Public)==FALSE & is.na(Commercial_medical)==FALSE | is.na(Commercial_medical)==FALSE & is.na(Other)==FALSE)
+
+  FP_source_data_wide <- FP_source_data_wide %>% dplyr::arrange(Country, Super_region, Method, average_year)
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
     message(paste0("Getting data for ",mycountry))
-    FP_source_data_wide <- FP_source_data_wide %>% dplyr::filter(Country==mycountry)
+    FP_source_data_wide <- FP_source_data_wide %>% dplyr::filter(Country==mycountry) %>% dplyr::arrange(Country, Super_region, Method, average_year)
   }
 
   return(FP_source_data_wide)
@@ -786,22 +776,13 @@ get_point_estimates <- function(jagsdata, n_chain, ...) {
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @param fp2030 Default is TRUE. Filter raw data to only include the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data should be a .xlsx with the following format \code{\link{subnat_FPsource_data}}.
-#' @param trunc Default is FALSE. This argument indicates to function to use a
-#' small 4 country dataset for illustration purposes.
-#' See ?mcmsupply::trunc_subnat_FPsource_data or
-#' ??mcmsupply::trunc_national_FPsource_data for details.
 #' @return The input data for your country of interest, used as an input to the mcmsupply model
 #' @noRd
 
-get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, trunc=FALSE) {
+get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
-    if(trunc==FALSE) {
-      message("Using preloaded dataset!")
-      subnat_FPsource_data <- mcmsupply::subnat_FPsource_data  # Read subnational in SE data
-    } else {
-      message("Using preloaded truncated dataset!")
-      subnat_FPsource_data <- mcmsupply::trunc_subnat_FPsource_data  # Read subnational in SE data
-    }
+    message("Using preloaded dataset!")
+    subnat_FPsource_data <- mcmsupply::subnat_FPsource_data  # Read subnational in SE data
   } else {
     subnat_FPsource_data <- readxl::read_xlsx(surveydata_filepath)
     subnat_FPsource_format <- mcmsupply::subnat_FPsource_format
@@ -850,9 +831,10 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
   SE_source_data_wide_X <- FP_source_data_wide %>%
     dplyr::filter(Commercial_medical.SE==0 | Public.SE==0) # Issue observations: Two missing sectors. Action required.
 
-  # Replacing SE=0 and no NAs: Replacing with DHS manual estimate for SE.
+    # Replacing SE=0 and no NAs: Replacing with DHS manual estimate for SE.
   SE_source_data_wide_X <- SE_source_data_wide_X %>%
     dplyr::filter(n_Public>=20 | n_Commercial_medical >=20 | n_Other >=20) # Remove small sample sizes (DHS has 10 units sampled per cluster as min., 20 as average)
+  SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Join DHS design effect database
 
   for(i in 1:nrow(SE_source_data_wide_X)) {
     num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
@@ -861,10 +843,11 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
       mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,7+numSEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
       SE_source_data_wide_X[i,7+num.SE0] <- mean.SE
     } else {
+      DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
       N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
       phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
       SE.hat <- sqrt((phat*(1-phat))/(N1+1))
-      SE_source_data_wide_X[i,7+num.SE0] <- SE.hat
+      SE_source_data_wide_X[i,7+num.SE0] <- SE.hat*DEFT
     }
   }
 
