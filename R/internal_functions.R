@@ -355,8 +355,8 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_parms <- get_national_local_parameters(mycountry=mycountry) # Get parameters for local informative priors for national data
-    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       alphahat_region = local_parms$alphahat_region,
                       tau_alphahat_cms = local_parms$tau_alphahat_cms,
                       natRmat = local_parms$natRmat, # dwish on inverse
@@ -376,8 +376,8 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
-    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       rho = my_SE_rho_matrix,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
@@ -1038,8 +1038,8 @@ get_subnational_global_P_samps <- function() {
 get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_params <- get_subnational_local_parameters(mycountry = mycountry) # local informative prior parameters
-    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       alpha_cms_hat = local_params$alpha_cms,
                       tau_alpha_pms_hat = local_params$tau_alphapms,
                       inv.sigma_delta = local_params$inv.sigma_delta,
@@ -1061,8 +1061,8 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NUL
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
-    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       rho = my_SE_rho_matrix,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,

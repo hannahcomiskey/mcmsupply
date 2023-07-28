@@ -38,15 +38,15 @@ for(m in 1:M_count){ # method loop
       U[m,t] <- 1-P[1,m,t] # this then gives you the total private sector
       P[2,m,t] <- Q[m,t]*U[m,t] # this is assuming that the logit(P[2,m,c,t]/U[m,c,t]) = r[m,c,t] i.e., we are modelling the ratio of private medical to private
       P[3,m,t] <- U[m,t] - P[2,m,t] # other = private - private medical
-      logit.CM[m,c,t] <- logit(P[2,m,c,t]) # For logit-normal data model
-      logit.Public[m,c,t] <- logit(P[1,m,c,t]) # For logit-normal data model
+      logit.CM[m,t] <- logit(P[2,m,t]) # For logit-normal data model
+      logit.Public[m,t] <- logit(P[1,m,t]) # For logit-normal data model
     }
   }
 
 ## Likelihood
   for (k in 1:n_obs) {
-    y[k, 1] ~ dnorm(logit.Public[matchmethod[k],matchcountry[k],matchyears[k]], tau_y[k,1]) # Logit-normal data model
-    y[k, 2] ~ dnorm(logit.CM[matchmethod[k],matchcountry[k],matchyears[k]], tau_y[k,2])
+    y[k, 1] ~ dnorm(logit.Public[matchmethod[k], matchyears[k]], tau_y[k,1]) # Logit-normal data model
+    y[k, 2] ~ dnorm(logit.CM[matchmethod[k], matchyears[k]], tau_y[k,2])
     tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
   }
 }
