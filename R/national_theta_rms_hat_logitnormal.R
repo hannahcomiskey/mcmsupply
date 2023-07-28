@@ -2,6 +2,6 @@
 #' This array is used to inform the Normal prior of the country-level intercept in the single-country national model.
 #'
 #' @docType data
-#' @keywords median_alpha_region_intercepts
+#' @keywords national_theta_rms_hat_logitnormal
 #' @format  A array of 5 matrices with 2 rows and 5 columns
-"median_alpha_region_intercepts"
+"national_theta_rms_hat_logitnormal"

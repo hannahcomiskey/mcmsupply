@@ -2,6 +2,6 @@
 #' This vector is used to inform the precision in the Normal prior of the national-level intercept in single-country national models.
 #'
 #' @docType data
-#' @keywords precision_alpha_country_intercepts
+#' @keywords national_tau_alpha_cms_hat_logitnormal
 #' @format  A vector of two precision estimates
-"precision_alpha_country_intercepts"
+"national_tau_alpha_cms_hat_logitnormal"
