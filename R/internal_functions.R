@@ -372,7 +372,7 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
                       matchyears = pkg_data$matchyears
     )
   } else {
-    estimated_rho_matrix <- mcmsupply::estimated_national_correlations %>% # Get global correlations for national data
+    estimated_rho_matrix <- mcmsupply::estimated_national_correlations_logitnormal %>% # Get global correlations for national data
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
