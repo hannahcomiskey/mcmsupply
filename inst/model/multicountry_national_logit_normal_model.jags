@@ -1,0 +1,109 @@
+model{
+## Variance structure
+  for(g in 1:2) { # Sector (public,private) loop for rho
+    for(i in 1:M_count){ # Method loop i
+      mu_delta[g,i] <- 0
+      sd_delta[g,i] ~ dunif(0,10)
+      sigma_delta[i,i,g] <- pow(sd_delta[g,i],2)
+    }
+
+    sigma_delta[1,2,g] <- rho[1,g]*sd_delta[g,1]*sd_delta[g,2]
+    sigma_delta[1,3,g] <- rho[2,g]*sd_delta[g,1]*sd_delta[g,3]
+    sigma_delta[1,4,g] <- rho[3,g]*sd_delta[g,1]*sd_delta[g,4]
+    sigma_delta[1,5,g] <- rho[4,g]*sd_delta[g,1]*sd_delta[g,5]
+    sigma_delta[2,1,g] <- rho[1,g]*sd_delta[g,1]*sd_delta[g,2]
+    sigma_delta[2,3,g] <- rho[5,g]*sd_delta[g,2]*sd_delta[g,3]
+    sigma_delta[2,4,g] <- rho[6,g]*sd_delta[g,2]*sd_delta[g,4]
+    sigma_delta[2,5,g] <- rho[7,g]*sd_delta[g,2]*sd_delta[g,5]
+    sigma_delta[3,1,g] <- rho[2,g]*sd_delta[g,1]*sd_delta[g,3]
+    sigma_delta[3,2,g] <- rho[5,g]*sd_delta[g,2]*sd_delta[g,3]
+    sigma_delta[3,4,g] <- rho[8,g]*sd_delta[g,3]*sd_delta[g,4]
+    sigma_delta[3,5,g] <- rho[9,g]*sd_delta[g,3]*sd_delta[g,5]
+    sigma_delta[4,1,g] <- rho[3,g]*sd_delta[g,1]*sd_delta[g,4]
+    sigma_delta[4,2,g] <- rho[6,g]*sd_delta[g,2]*sd_delta[g,4]
+    sigma_delta[4,3,g] <- rho[8,g]*sd_delta[g,3]*sd_delta[g,4]
+    sigma_delta[4,5,g] <- rho[10,g]*sd_delta[g,4]*sd_delta[g,5]
+    sigma_delta[5,1,g] <- rho[4,g]*sd_delta[g,1]*sd_delta[g,5]
+    sigma_delta[5,2,g] <- rho[7,g]*sd_delta[g,2]*sd_delta[g,5]
+    sigma_delta[5,3,g] <- rho[9,g]*sd_delta[g,3]*sd_delta[g,5]
+    sigma_delta[5,4,g] <- rho[10,g]*sd_delta[g,4]*sd_delta[g,5]
+  } # end G loop
+
+  inv.sigma_delta[1:M_count,1:M_count,1] <- inverse(sigma_delta[,,1])
+  inv.sigma_delta[1:M_count,1:M_count,2] <- inverse(sigma_delta[,,2])
+
+
+## Model Estimates
+  for(c in 1:C_count) { # country loop
+    for(m in 1:M_count){ # method loop
+      for (t in 1:n_years) {
+        z[m,c,t] <- alpha_cms[1,m,c] + inprod(B.ik[c,t,],beta.k[1,m,c,])
+        r[m,c,t] <- alpha_cms[2,m,c] + inprod(B.ik[c,t,],beta.k[2,m,c,])
+      } # end time loop
+    } # end M loop
+  } # end C loop
+
+## Parameter Estimates
+  for(s in 1:2){ # sector loop
+    for(c in 1:C_count) { # country loop
+      for(m in 1:M_count){ # method loop
+        alpha_cms[s,m,c] ~ dnorm(beta_r[s,m,matchregion[c]],tau_alpha[s]) # sharing info across methods within a country so each country public/private sector has an intercept. Tau-alpha is the cross-method variance.
+        beta.k[s,m,c,kstar[c]] <- 0 # kstar[c] is the knot at tstar for country c. Just the value of the intercept
+        for(j in 1:(kstar[c]-1)){ # before kstar[c]
+          beta.k[s,m,c,(kstar[c] - j)] <- beta.k[s,m,c,(kstar[c] - j)+1] - delta.k[s,m,c,(kstar[c] - j)]
+        } # end K1 loop
+        for(j in (kstar[c]+1):K){ # after kstar[c]
+          beta.k[s,m,c,j] <- beta.k[s,m,c,(j-1)] + delta.k[s,m,c,(j-1)]
+        } # end K2 loop
+      } # end m loop
+
+      for(j in 1:H){
+        delta.k[s,c(1:M_count),c,j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s]) # delta are the slopes for country c and method m
+      } # end H loop
+    } # end C loop
+  } # end S loop
+
+## Estimating all the Categories here (including total private)
+  for(c in 1:C_count){ # country loop
+    for(m in 1:M_count){ # method loop
+      for (t in 1:n_years) { # years loop
+         P[1,m,c,t] <- 1/(1+exp(-(z[m,c,t])))
+
+         Q[m,c,t] <- 1/(1+exp(-(r[m,c,t]))) # logit-inverse of ratio
+
+         U[m,c,t] <- 1-P[1,m,c,t] # this then gives you the total private sector
+
+         P[2,m,c,t] <- Q[m,c,t]*U[m,c,t] # this is assuming that the logit(P[2,m,c,t]/U[m,c,t]) = r[m,c,t] i.e., we are modelling the ratio of private medical to private
+
+         P[3,m,c,t] <- U[m,c,t] - P[2,m,c,t] # other = private - private medical
+
+         logit.CM[m,c,t] <- logit(P[2,m,c,t]) # For logit-normal data model
+         logit.Public[m,c,t] <- logit(P[1,m,c,t]) # For logit-normal data model
+
+      }
+    }
+  }
+
+## Likelihood
+  for (k in 1:n_obs) {
+    y[k, 1] ~ dnorm(logit.Public[matchmethod[k],matchcountry[k],matchyears[k]], tau_y[k,1]) # Logit-normal data model
+    y[k, 2] ~ dnorm(logit.CM[matchmethod[k],matchcountry[k],matchyears[k]], tau_y[k,2])
+    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
+    }
+
+## Priors
+  for(s in 1:2) { # cross method variance (within a country)
+    for(m in 1:M_count){ # method loop
+      for(r in 1:R_count){ # regional
+        beta_r[s,m,r] ~ dnorm(beta_world[s,m],tau_beta[s])
+      }
+       # world intercept
+       beta_world[s,m] ~ dnorm(0,0.1)
+    }
+    tau_alpha[s] <- sigma_alpha[s]^-2
+    sigma_alpha[s] ~ dt(0,1,1)T(0,)
+
+    tau_beta[s] <- sigma_beta[s]^-2
+    sigma_beta[s] ~ dt(0,1,1)T(0,)
+  }
+}

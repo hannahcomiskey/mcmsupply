@@ -355,8 +355,8 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_parms <- get_national_local_parameters(mycountry=mycountry) # Get parameters for local informative priors for national data
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # Combine all data into one list ready for JAGS
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
                       alphahat_region = local_parms$alphahat_region,
                       tau_alphahat_cms = local_parms$tau_alphahat_cms,
                       natRmat = local_parms$natRmat, # dwish on inverse
@@ -376,8 +376,8 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # Combine all data into one list ready for JAGS
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
                       rho = my_SE_rho_matrix,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
@@ -510,6 +510,17 @@ get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990
     dplyr::select(Country, Super_region, index_country, index_superregion) %>%
     dplyr::distinct()
   match_superregion <- region_country$index_superregion
+
+  # Get logit transformed data
+  clean_FPsource <- clean_FPsource %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(logit.Public = log(Public/(1-Public)),
+           logit.CM = log(Commercial_medical/(1-Commercial_medical)),
+           logit.Public.Var = ((1/(Public*(1-Public)))^2)*Public.SE^2,
+           logit.Public.SE = sqrt(logit.Public.Var),
+           logit.CM.Var = ((1/(Commercial_medical*(1-Commercial_medical)))^2)*Commercial_medical.SE^2,
+           logit.CM.SE = sqrt(logit.CM.Var)
+    )
 
   return(list(data = clean_FPsource,
               tstar = T_star$index_year,
@@ -1027,8 +1038,8 @@ get_subnational_global_P_samps <- function() {
 get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_params <- get_subnational_local_parameters(mycountry = mycountry) # local informative prior parameters
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
                       alpha_cms_hat = local_params$alpha_cms,
                       tau_alpha_pms_hat = local_params$tau_alphapms,
                       inv.sigma_delta = local_params$inv.sigma_delta,
@@ -1050,8 +1061,8 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NUL
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.Commercial_medical")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.Commercial_medical.SE")],
                       rho = my_SE_rho_matrix,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
@@ -1196,14 +1207,6 @@ get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1
     clean_FPsource <- raw_data
   }
 
-  # # Remove sample size less than 3, replace tiny SE with 1% --------------------
-  clean_FPsource <- clean_FPsource %>%
-    dplyr::filter(n_Other >= 3 | n_Public >= 3 | n_Commercial_medical >= 3) %>%
-    dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE)) %>%
-    dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%
-    dplyr::mutate(Commercial_medical.SE = ifelse(Commercial_medical.SE < 0.01, 0.01, Commercial_medical.SE))
-
-  clean_FPsource <- standard_method_names(clean_FPsource) # Standardizing method names
   country_subnat_tbl <- clean_FPsource %>%
     dplyr::group_by(Country, Region) %>%
     dplyr::select(Country, Region) %>%
@@ -1282,6 +1285,17 @@ get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1
 
   K <- dim(res$B.ik)[2]
   H <- K-1
+
+  # Get logit transformed data
+  clean_FPsource <- clean_FPsource %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(logit.Public = log(Public/(1-Public)),
+                  logit.CM = log(Commercial_medical/(1-Commercial_medical)),
+                  logit.Public.Var = ((1/(Public*(1-Public)))^2)*Public.SE^2,
+                  logit.Public.SE = sqrt(logit.Public.Var),
+                  logit.CM.Var = ((1/(Commercial_medical*(1-Commercial_medical)))^2)*Commercial_medical.SE^2,
+                  logit.CM.SE = sqrt(logit.CM.Var)
+    )
 
   if(local==FALSE) {
     mylist = list(data = clean_FPsource,
@@ -1763,7 +1777,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
   #write_jags_model(main_path=main_path, model_type = "national", local=local)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    jags_file <- system.file("model", "local_national_model.jags", package = "mcmsupply")
+    jags_file <- system.file("model", "singlecountry_national_logitnormal_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
                         model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1774,7 +1788,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
     f <- file.path(tempdir(), paste0("mod_",mycountry,"_national_results.RDS"))
     saveRDS(mod, f)
   } else {
-    jags_file <- system.file("model", "global_national_model.jags", package = "mcmsupply")
+    jags_file <- system.file("model", "multicountry_national_logit_normal_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
                         model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1828,7 +1842,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
  for(chain in 1:n_chain){ ## Do chains separately ------------------------------
     set.seed(chain*1239)
     if(local==FALSE) { # multi-country subnational
-      jags_file <- system.file("model", "global_subnational_model.jags", package = "mcmsupply")
+      jags_file <- system.file("model", "multicountry_subnational_logit_normal_model.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
                           model.file = jags_file,
@@ -1837,7 +1851,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
                           n.iter = n_iter,
                           n.thin = n_thin)
     } else { # single country subnational
-      jags_file <- system.file("model", "local_subnational_model_fixed.jags", package = "mcmsupply")
+      jags_file <- system.file("model", "singlecountry_subnational_logitnormal_model.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
                           model.file = jags_file , #system.file(main_path, "/model.txt", package = "mcmsupply"),
