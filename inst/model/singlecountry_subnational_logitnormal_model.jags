@@ -1,8 +1,7 @@
 model{
-## Variance structure
+## Expectation of delta.k terms
   for(g in 1:2) { # Sector (public,private) loop for covariance
     mu_delta[g,1:M_count] <- rep(0,M_count)
-    inv.sigma_delta[1:M_count,1:M_count,g] ~ dwish(natdf*natRmat[1:M_count,1:M_count,g],natdf) # S~dwish(R,p) => E(S) = p * solve(R)
   }
 
 ## Model Estimates
