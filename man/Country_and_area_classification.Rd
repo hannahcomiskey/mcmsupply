@@ -3,7 +3,8 @@
 \docType{data}
 \name{Country_and_area_classification}
 \alias{Country_and_area_classification}
-\title{Track20 Country and area classification according to the United Nations
+\title{The Country and area classification according to the United Nations Standaistical Division, Standard country or area codes for statistical use (M49).
+Adapted for use in FP2030 by the Track20 project.
 A subset of data from the United Nations country classifications}
 \format{
 A data frame with 231 rows and 8 columns:
@@ -19,13 +20,14 @@ A data frame with 231 rows and 8 columns:
 }
 }
 \source{
-On request from Track20. Contact details found at https://www.track20.org/
+https://unstats.un.org/unsd/methodology/m49/
 }
 \usage{
 Country_and_area_classification
 }
 \description{
-Track20 Country and area classification according to the United Nations
+The Country and area classification according to the United Nations Standaistical Division, Standard country or area codes for statistical use (M49).
+Adapted for use in FP2030 by the Track20 project.
 A subset of data from the United Nations country classifications
 }
 \keyword{Country_and_area_classification}
