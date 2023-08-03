@@ -372,7 +372,7 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
                       matchyears = pkg_data$matchyears
     )
   } else {
-    estimated_rho_matrix <- mcmsupply::estimated_national_correlations_logitnormal %>% # Get global correlations for national data
+    estimated_rho_matrix <- mcmsupply::national_estimated_correlations_logitnormal %>% # Get global correlations for national data
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
@@ -1616,7 +1616,10 @@ plot_national_point_estimates <- function(pkg_data, model_output, local=FALSE, m
       ggplot2::labs(y="Proportion of contraceptives supplied", x = "Year", title = i) +
       ggplot2::scale_y_continuous(limits=c(0,1))+
       ggplot2::theme_bw() +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90), strip.text.x = ggplot2::element_text(size = 9)) +
+      ggplot2::theme(strip.text.x = ggplot2::element_text(size = 15), axis.text.x = ggplot2::element_text(angle = 90, size = 15), axis.text.y = ggplot2::element_text(size = 15), axis.title.x = ggplot2::element_text(size = 20), axis.title.y = ggplot2::element_text(size = 20)) +
+      ggplot2::theme(legend.position = "bottom", legend.title = ggplot2::element_text(size = 15), legend.text = ggplot2::element_text(size = 15))+
+      ggplot2::scale_colour_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
+      ggplot2::scale_fill_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
       ggplot2::theme(legend.position = "bottom")+
       ggplot2::labs(fill = "Sector") +
       ggplot2::guides(color="none") +
@@ -1704,9 +1707,10 @@ plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE
       ggplot2::labs(y="Proportion of contraceptives supplied", x = "Year", title = paste0(unique(country_calc$Region),", ",unique(country_data$Country))) +
       ggplot2::scale_y_continuous(limits=c(0,1))+
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "bottom")+
-      ggplot2::scale_colour_manual(values=safe_colorblind_palette) +
-      ggplot2::scale_fill_manual(values=safe_colorblind_palette) +
+      ggplot2::theme(strip.text.x = ggplot2::element_text(size = 15), axis.text.x = ggplot2::element_text(angle = 90, size = 15), axis.text.y = ggplot2::element_text(size = 15), axis.title.x = ggplot2::element_text(size = 20), axis.title.y = ggplot2::element_text(size = 20)) +
+      ggplot2::theme(legend.position = "bottom", legend.title = ggplot2::element_text(size = 15), legend.text = ggplot2::element_text(size = 15))+
+      ggplot2::scale_colour_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
+      ggplot2::scale_fill_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
       ggplot2::labs(fill = "Sector") +
       ggplot2::guides(color="none") +
       ggplot2::theme(axis.text = ggplot2::element_text(angle = 90), strip.text.x = ggplot2::element_text(size = 12)) +
