@@ -26,9 +26,10 @@ library(dplyr)
 ## Load the data 
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
 cleaned_data <- get_data(national=FALSE, local=TRUE, 
-                         surveydata_filepath = "my_custom_data.xlsx",
-                         mycountry="Nepal")
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_good.xlsx",
+                         mycountry="Ethiopia")
 ```
 
 
