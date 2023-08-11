@@ -1059,8 +1059,8 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NUL
                       matchyears = pkg_data$matchyears
     )
   } else {
-    estimated_global_subnational_correlations <- mcmsupply::estimated_global_subnational_correlations  # load global subnational correlations
-    estimated_rho_matrix <- estimated_global_subnational_correlations %>%
+    subnational_estimated_correlations <- mcmsupply::subnational_estimated_correlations  # load global subnational correlations
+    estimated_rho_matrix <- subnational_estimated_correlations %>%
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
@@ -1169,10 +1169,10 @@ get_subnational_local_P_estimates <- function(Psamps, param_names, subnat_index_
 #' @noRd
 
 get_subnational_local_parameters <- function(mycountry) {
-  inv.sigma_delta_hat <- mcmsupply::inv.sigma_delta_hat_subnationalmod # multi-country variance covariance matrix
-  median_alphacms <- mcmsupply::median_alphacms # load country-level intercept median estimates
-  myalpha_med <- median_alphacms[,,mycountry] # Take out relevant country
-  tau_alpha_pms_hat <- mcmsupply::tau_alphapms_subnationalmod # load subnational-level intercept precision
+  inv.sigma_delta_hat <- mcmsupply::subnational_inv.sigma_delta_hat # multi-country variance covariance matrix
+  subnational_alpha_cms_hat <- mcmsupply::subnational_alpha_cms_hat # load country-level intercept median estimates
+  myalpha_med <- subnational_alpha_cms_hat[,,mycountry] # Take out relevant country
+  tau_alpha_pms_hat <- mcmsupply::subnational_tau_alpha_pms_hat # load subnational-level intercept precision
   return(list(alpha_cms = myalpha_med,
               tau_alphapms = tau_alpha_pms_hat,
               inv.sigma_delta = inv.sigma_delta_hat))
