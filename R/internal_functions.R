@@ -355,8 +355,8 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_parms <- get_national_local_parameters(mycountry=mycountry) # Get parameters for local informative priors for national data
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # Combine all data into one list ready for JAGS
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       alphahat_region = local_parms$alphahat_region,
                       tau_alphahat_cms = local_parms$tau_alphahat_cms,
                       natRmat = local_parms$natRmat, # dwish on inverse
@@ -372,12 +372,12 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
                       matchyears = pkg_data$matchyears
     )
   } else {
-    estimated_rho_matrix <- mcmsupply::estimated_national_correlations %>% # Get global correlations for national data
+    estimated_rho_matrix <- mcmsupply::national_estimated_correlations_logitnormal %>% # Get global correlations for national data
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # Combine all data into one list ready for JAGS
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       rho = my_SE_rho_matrix,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
@@ -407,9 +407,9 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
 get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
 
   # Read in national alpha estimates ---------------------------------
-  median_alpha_region_intercepts <- mcmsupply::median_alpha_region_intercepts # read in regional-level (alpha_rms) median estimates
-  precision_alpha_country_intercepts <- mcmsupply::precision_alpha_country_intercepts # read in country-level (alpha_cms) precision estimates
-  Bspline_sigma_matrix_median <- mcmsupply::Bspline_sigma_matrix_median # read in national level correlations
+  median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_logitnormal # read in regional-level (alpha_rms) median estimates
+  precision_alpha_country_intercepts <- mcmsupply::national_tau_alpha_cms_hat_logitnormal # read in country-level (alpha_cms) precision estimates
+  Bspline_sigma_matrix_median <- mcmsupply::national_sigma_delta_hat_logitnormal # read in national level correlations
   mydata <- get_national_data(fp2030=fp2030) # Read complete data set in without filtering for any country
 
   # Match regional intercepts to country names  ------------------------
@@ -510,6 +510,17 @@ get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990
     dplyr::select(Country, Super_region, index_country, index_superregion) %>%
     dplyr::distinct()
   match_superregion <- region_country$index_superregion
+
+  # Get logit transformed data
+  clean_FPsource <- clean_FPsource %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(logit.Public = log(Public/(1-Public)),
+           logit.CM = log(Commercial_medical/(1-Commercial_medical)),
+           logit.Public.Var = ((1/(Public*(1-Public)))^2)*Public.SE^2,
+           logit.Public.SE = sqrt(logit.Public.Var),
+           logit.CM.Var = ((1/(Commercial_medical*(1-Commercial_medical)))^2)*Commercial_medical.SE^2,
+           logit.CM.SE = sqrt(logit.CM.Var)
+    )
 
   return(list(data = clean_FPsource,
               tstar = T_star$index_year,
@@ -813,7 +824,9 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
   for (i in 1:nrow(FP_source_data_wide)) {
     if(FP_source_data_wide$check_total[i]>0.99) {
       na_cols <- which(is.na(FP_source_data_wide[i, c("Commercial_medical", "Other", "Public")])==TRUE) # NA values
-      FP_source_data_wide[i, na_cols+4] <- as.list(rep(0, length(na_cols)))
+      if(length(na_cols)>0) {
+        FP_source_data_wide[i, na_cols+4] <- as.list(rep(0, length(na_cols)))
+      }
     }
   }
 
@@ -834,20 +847,21 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
     # Replacing SE=0 and no NAs: Replacing with DHS manual estimate for SE.
   SE_source_data_wide_X <- SE_source_data_wide_X %>%
     dplyr::filter(n_Public>=20 | n_Commercial_medical >=20 | n_Other >=20) # Remove small sample sizes (DHS has 10 units sampled per cluster as min., 20 as average)
-  SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Join DHS design effect database
-
-  for(i in 1:nrow(SE_source_data_wide_X)) {
-    num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
-    numSEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
-    if(length(num.SE0)==1) {
-      mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,7+numSEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
-      SE_source_data_wide_X[i,7+num.SE0] <- mean.SE
-    } else {
-      DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
-      N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
-      phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
-      SE.hat <- sqrt((phat*(1-phat))/(N1+1))
-      SE_source_data_wide_X[i,7+num.SE0] <- SE.hat*DEFT
+  if(nrow(SE_source_data_wide_X) > 0) {
+    SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Join DHS design effect database
+    for(i in 1:nrow(SE_source_data_wide_X)) {
+      num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
+      numSEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
+      if(length(num.SE0)==1) {
+        mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,7+numSEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
+        SE_source_data_wide_X[i,7+num.SE0] <- mean.SE
+      } else {
+        DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
+        N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
+        phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
+        SE.hat <- sqrt((phat*(1-phat))/(N1+1))
+        SE_source_data_wide_X[i,7+num.SE0] <- SE.hat*DEFT
+      }
     }
   }
 
@@ -858,7 +872,7 @@ get_subnational_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surve
     dplyr::filter(is.na(Public)==FALSE & is.na(Other)==FALSE | is.na(Public)==FALSE & is.na(Commercial_medical)==FALSE | is.na(Commercial_medical)==FALSE & is.na(Other)==FALSE)
 
   # Get single country data
-  if(local==TRUE & is.null(mycountry)==FALSE &is.null(surveydata_filepath)==TRUE) {
+  if(local==TRUE & is.null(mycountry)==FALSE & is.null(surveydata_filepath)==TRUE) {
     message(paste0("Getting data for ",mycountry))
     mydata <- mydata %>% dplyr::filter(Country==mycountry)
 
@@ -1027,8 +1041,8 @@ get_subnational_global_P_samps <- function() {
 get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_params <- get_subnational_local_parameters(mycountry = mycountry) # local informative prior parameters
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       alpha_cms_hat = local_params$alpha_cms,
                       tau_alpha_pms_hat = local_params$tau_alphapms,
                       inv.sigma_delta = local_params$inv.sigma_delta,
@@ -1045,13 +1059,13 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NUL
                       matchyears = pkg_data$matchyears
     )
   } else {
-    estimated_global_subnational_correlations <- mcmsupply::estimated_global_subnational_correlations  # load global subnational correlations
-    estimated_rho_matrix <- estimated_global_subnational_correlations %>%
+    subnational_estimated_correlations <- mcmsupply::subnational_estimated_correlations  # load global subnational correlations
+    estimated_rho_matrix <- subnational_estimated_correlations %>%
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
-    jags_data <- list(y = pkg_data$data[,c("Public", "Commercial_medical")], # create JAGS list
-                      se_prop = pkg_data$data[,c("Public.SE", "Commercial_medical.SE")],
+    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
                       rho = my_SE_rho_matrix,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
@@ -1155,10 +1169,10 @@ get_subnational_local_P_estimates <- function(Psamps, param_names, subnat_index_
 #' @noRd
 
 get_subnational_local_parameters <- function(mycountry) {
-  inv.sigma_delta_hat <- mcmsupply::inv.sigma_delta_hat_subnationalmod # multi-country variance covariance matrix
-  median_alphacms <- mcmsupply::median_alphacms # load country-level intercept median estimates
-  myalpha_med <- median_alphacms[,,mycountry] # Take out relevant country
-  tau_alpha_pms_hat <- mcmsupply::tau_alphapms_subnationalmod # load subnational-level intercept precision
+  inv.sigma_delta_hat <- mcmsupply::subnational_inv.sigma_delta_hat # multi-country variance covariance matrix
+  subnational_alpha_cms_hat <- mcmsupply::subnational_alpha_cms_hat # load country-level intercept median estimates
+  myalpha_med <- subnational_alpha_cms_hat[,,mycountry] # Take out relevant country
+  tau_alpha_pms_hat <- mcmsupply::subnational_tau_alpha_pms_hat # load subnational-level intercept precision
   return(list(alpha_cms = myalpha_med,
               tau_alphapms = tau_alpha_pms_hat,
               inv.sigma_delta = inv.sigma_delta_hat))
@@ -1196,14 +1210,6 @@ get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1
     clean_FPsource <- raw_data
   }
 
-  # # Remove sample size less than 3, replace tiny SE with 1% --------------------
-  clean_FPsource <- clean_FPsource %>%
-    dplyr::filter(n_Other >= 3 | n_Public >= 3 | n_Commercial_medical >= 3) %>%
-    dplyr::mutate(Other.SE = ifelse(Other.SE < 0.01, 0.01, Other.SE)) %>%
-    dplyr::mutate(Public.SE = ifelse(Public.SE < 0.01, 0.01, Public.SE)) %>%
-    dplyr::mutate(Commercial_medical.SE = ifelse(Commercial_medical.SE < 0.01, 0.01, Commercial_medical.SE))
-
-  clean_FPsource <- standard_method_names(clean_FPsource) # Standardizing method names
   country_subnat_tbl <- clean_FPsource %>%
     dplyr::group_by(Country, Region) %>%
     dplyr::select(Country, Region) %>%
@@ -1282,6 +1288,17 @@ get_subnational_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1
 
   K <- dim(res$B.ik)[2]
   H <- K-1
+
+  # Get logit transformed data
+  clean_FPsource <- clean_FPsource %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(logit.Public = log(Public/(1-Public)),
+                  logit.CM = log(Commercial_medical/(1-Commercial_medical)),
+                  logit.Public.Var = ((1/(Public*(1-Public)))^2)*Public.SE^2,
+                  logit.Public.SE = sqrt(logit.Public.Var),
+                  logit.CM.Var = ((1/(Commercial_medical*(1-Commercial_medical)))^2)*Commercial_medical.SE^2,
+                  logit.CM.SE = sqrt(logit.CM.Var)
+    )
 
   if(local==FALSE) {
     mylist = list(data = clean_FPsource,
@@ -1599,7 +1616,10 @@ plot_national_point_estimates <- function(pkg_data, model_output, local=FALSE, m
       ggplot2::labs(y="Proportion of contraceptives supplied", x = "Year", title = i) +
       ggplot2::scale_y_continuous(limits=c(0,1))+
       ggplot2::theme_bw() +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90), strip.text.x = ggplot2::element_text(size = 9)) +
+      ggplot2::theme(strip.text.x = ggplot2::element_text(size = 15), axis.text.x = ggplot2::element_text(angle = 90, size = 15), axis.text.y = ggplot2::element_text(size = 15), axis.title.x = ggplot2::element_text(size = 20), axis.title.y = ggplot2::element_text(size = 20)) +
+      ggplot2::theme(legend.position = "bottom", legend.title = ggplot2::element_text(size = 15), legend.text = ggplot2::element_text(size = 15))+
+      ggplot2::scale_colour_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
+      ggplot2::scale_fill_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
       ggplot2::theme(legend.position = "bottom")+
       ggplot2::labs(fill = "Sector") +
       ggplot2::guides(color="none") +
@@ -1687,9 +1707,10 @@ plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE
       ggplot2::labs(y="Proportion of contraceptives supplied", x = "Year", title = paste0(unique(country_calc$Region),", ",unique(country_data$Country))) +
       ggplot2::scale_y_continuous(limits=c(0,1))+
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "bottom")+
-      ggplot2::scale_colour_manual(values=safe_colorblind_palette) +
-      ggplot2::scale_fill_manual(values=safe_colorblind_palette) +
+      ggplot2::theme(strip.text.x = ggplot2::element_text(size = 15), axis.text.x = ggplot2::element_text(angle = 90, size = 15), axis.text.y = ggplot2::element_text(size = 15), axis.title.x = ggplot2::element_text(size = 20), axis.title.y = ggplot2::element_text(size = 20)) +
+      ggplot2::theme(legend.position = "bottom", legend.title = ggplot2::element_text(size = 15), legend.text = ggplot2::element_text(size = 15))+
+      ggplot2::scale_colour_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
+      ggplot2::scale_fill_manual(breaks = c("Public", "Commercial_medical", "Other"), values=safe_colorblind_palette) +
       ggplot2::labs(fill = "Sector") +
       ggplot2::guides(color="none") +
       ggplot2::theme(axis.text = ggplot2::element_text(angle = 90), strip.text.x = ggplot2::element_text(size = 12)) +
@@ -1751,7 +1772,8 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
     if(local==FALSE) { # global
       jagsparams <- c("P",
                       "beta.k",
-                      "alpha_cms")
+                      "alpha_cms",
+                      "delta.k")
     } else { # local
       jagsparams <- c("P",
                       "alpha_cms",
@@ -1763,7 +1785,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
   #write_jags_model(main_path=main_path, model_type = "national", local=local)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    jags_file <- system.file("model", "local_national_model.jags", package = "mcmsupply")
+    jags_file <- system.file("model", "singlecountry_national_logitnormal_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
                         model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1774,7 +1796,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
     f <- file.path(tempdir(), paste0("mod_",mycountry,"_national_results.RDS"))
     saveRDS(mod, f)
   } else {
-    jags_file <- system.file("model", "global_national_model.jags", package = "mcmsupply")
+    jags_file <- system.file("model", "multicountry_national_logit_normal_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
                         model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1815,7 +1837,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
                       "alpha_cms", # country-level
                       "tau_alpha_pms", # province-level precision
                       "beta.k", # spline coefficients
-                      "sigma_delta", # var-covar matrix
+                      "inv.sigma_delta", # precision matrix
                       "delta.k") # rates of change between spline coefficients
     } else { # local
       jagsparams <- c("P", # estimated proportions
@@ -1828,7 +1850,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
  for(chain in 1:n_chain){ ## Do chains separately ------------------------------
     set.seed(chain*1239)
     if(local==FALSE) { # multi-country subnational
-      jags_file <- system.file("model", "global_subnational_model.jags", package = "mcmsupply")
+      jags_file <- system.file("model", "multicountry_subnational_logit_normal_model.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
                           model.file = jags_file,
@@ -1837,7 +1859,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
                           n.iter = n_iter,
                           n.thin = n_thin)
     } else { # single country subnational
-      jags_file <- system.file("model", "local_subnational_model_fixed.jags", package = "mcmsupply")
+      jags_file <- system.file("model", "singlecountry_subnational_logitnormal_model.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
                           model.file = jags_file , #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1973,357 +1995,4 @@ superregion_index_fun <- function(my_data, n_region) {
     }
   }
   return(my_data)
-}
-
-#' @name write_jags_model
-#' @param main_path String. Path where you have set your model results to be saved to.
-#' @param model_type String. Two options, "subnational" for subnational-level JAGS code or "national" for national-level JAGS code.
-#' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
-#' @return returns a list ready for input into the JAGS model
-#' @noRd
-
-write_jags_model <- function(main_path, model_type, local=FALSE) {
-  if(model_type == "national") {
-    if(local==FALSE) { # global national model
-      cat(
-        "model{
-## Variance structure
-  for(g in 1:2) { # Sector (public,private) loop for rho
-    for(i in 1:M_count){ # Method loop i
-      mu_delta[g,i] <- 0
-      sd_delta[g,i] ~ dunif(0,1)
-      sigma_delta[i,i,g] <- pow(sd_delta[g,i],2)
-    }
-
-    sigma_delta[1,2,g] <- rho[1,g]*sd_delta[g,1]*sd_delta[g,2]
-    sigma_delta[1,3,g] <- rho[2,g]*sd_delta[g,1]*sd_delta[g,3]
-    sigma_delta[1,4,g] <- rho[3,g]*sd_delta[g,1]*sd_delta[g,4]
-    sigma_delta[1,5,g] <- rho[4,g]*sd_delta[g,1]*sd_delta[g,5]
-    sigma_delta[2,1,g] <- rho[1,g]*sd_delta[g,1]*sd_delta[g,2]
-    sigma_delta[2,3,g] <- rho[5,g]*sd_delta[g,2]*sd_delta[g,3]
-    sigma_delta[2,4,g] <- rho[6,g]*sd_delta[g,2]*sd_delta[g,4]
-    sigma_delta[2,5,g] <- rho[7,g]*sd_delta[g,2]*sd_delta[g,5]
-    sigma_delta[3,1,g] <- rho[2,g]*sd_delta[g,1]*sd_delta[g,3]
-    sigma_delta[3,2,g] <- rho[5,g]*sd_delta[g,2]*sd_delta[g,3]
-    sigma_delta[3,4,g] <- rho[8,g]*sd_delta[g,3]*sd_delta[g,4]
-    sigma_delta[3,5,g] <- rho[9,g]*sd_delta[g,3]*sd_delta[g,5]
-    sigma_delta[4,1,g] <- rho[3,g]*sd_delta[g,1]*sd_delta[g,4]
-    sigma_delta[4,2,g] <- rho[6,g]*sd_delta[g,2]*sd_delta[g,4]
-    sigma_delta[4,3,g] <- rho[8,g]*sd_delta[g,3]*sd_delta[g,4]
-    sigma_delta[4,5,g] <- rho[10,g]*sd_delta[g,4]*sd_delta[g,5]
-    sigma_delta[5,1,g] <- rho[4,g]*sd_delta[g,1]*sd_delta[g,5]
-    sigma_delta[5,2,g] <- rho[7,g]*sd_delta[g,2]*sd_delta[g,5]
-    sigma_delta[5,3,g] <- rho[9,g]*sd_delta[g,3]*sd_delta[g,5]
-    sigma_delta[5,4,g] <- rho[10,g]*sd_delta[g,4]*sd_delta[g,5]
-  } # end G loop
-
-  inv.sigma_delta[1:M_count,1:M_count,1] <- inverse(sigma_delta[,,1])
-  inv.sigma_delta[1:M_count,1:M_count,2] <- inverse(sigma_delta[,,2])
-
-
-## Model Estimates
-  for(c in 1:C_count) { # country loop
-    for(m in 1:M_count){ # method loop
-      for (t in 1:n_years) {
-        z[m,c,t] <- alpha_cms[1,m,c] + inprod(B.ik[c,t,],beta.k[1,m,c,])
-        r[m,c,t] <- alpha_cms[2,m,c] + inprod(B.ik[c,t,],beta.k[2,m,c,])
-      } # end time loop
-    } # end M loop
-  } # end C loop
-
-## Parameter Estimates
-  for(s in 1:2){ # sector loop
-    for(c in 1:C_count) { # country loop
-      for(m in 1:M_count){ # method loop
-        alpha_cms[s,m,c] ~ dnorm(beta_r[s,m,matchregion[c]],tau_alpha[s]) # sharing info across methods within a country so each country public/private sector has an intercept. Tau-alpha is the cross-method variance.
-        beta.k[s,m,c,kstar[c]] <- 0 # kstar[c] is the knot at tstar for country c. Just the value of the intercept
-        for(j in 1:(kstar[c]-1)){ # before kstar[c]
-          beta.k[s,m,c,(kstar[c] - j)] <- beta.k[s,m,c,(kstar[c] - j)+1] - delta.k[s,m,c,(kstar[c] - j)]
-        } # end K1 loop
-        for(j in (kstar[c]+1):K){ # after kstar[c]
-          beta.k[s,m,c,j] <- beta.k[s,m,c,(j-1)] + delta.k[s,m,c,(j-1)]
-        } # end K2 loop
-      } # end m loop
-
-      for(j in 1:H){
-        delta.k[s,c(1:M_count),c,j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s]) # delta are the slopes for country c and method m
-      } # end H loop
-    } # end C loop
-  } # end S loop
-
-## Estimating all the Categories here (including total private)
-  for(c in 1:C_count){ # country loop
-    for(m in 1:M_count){ # method loop
-      for (t in 1:n_years) { # years loop
-         P[1,m,c,t] <- 1/(1+exp(-(z[m,c,t]))) # modelling this as before assuming that z[m,c,t] is log(pi_public/pi_private)
-
-         Q[m,c,t] <- 1/(1+exp(-(r[m,c,t]))) # logit-inverse of ratio
-
-         U[m,c,t] <- 1-P[1,m,c,t] # this then gives you the total private sector
-
-         P[2,m,c,t] <- Q[m,c,t]*U[m,c,t] # this is assuming that the logit(P[2,m,c,t]/U[m,c,t]) = r[m,c,t] i.e., we are modelling the ratio of private medical to private
-
-         P[3,m,c,t] <- U[m,c,t] - P[2,m,c,t] # other = private - private medical
-      }
-    }
-  }
-
-## Likelihood
-  for (k in 1:n_obs) {
-    y[k, 1] ~ dnorm(P[1,matchmethod[k],matchcountry[k],matchyears[k]], tau_y[k,1])T(0,1)
-    y[k, 2] ~ dnorm(P[2,matchmethod[k],matchcountry[k],matchyears[k]], tau_y[k,2])T(0,1)
-
-    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
-    }
-
-## Priors
-  for(s in 1:2) { # cross method variance (within a country)
-    for(m in 1:M_count){ # method loop
-      for(r in 1:R_count){ # regional
-        beta_r[s,m,r] ~ dnorm(beta_world[s,m],tau_beta[s])
-      }
-       # world intercept
-       beta_world[s,m] ~ dnorm(0,0.1)
-    }
-    tau_alpha[s] <- sigma_alpha[s]^-2
-    sigma_alpha[s] ~ dt(0,1,1)T(0,)
-
-    tau_beta[s] <- sigma_beta[s]^-2
-    sigma_beta[s] ~ dt(0,1,1)T(0,)
-  }
-}", file=paste0(main_path,"/model.txt"))
-    } else { # national local
-      cat("model{
-## Variance structure
-  for(g in 1:2) { # Sector (public,crivate) loop for covariance
-    mu_delta[g,1:M_count] <- rep(0,M_count)
-    inv.sigma_delta[1:M_count,1:M_count,g] ~ dwish(natdf*natRmat[1:M_count,1:M_count,g],natdf) # S~dwish(R,c) => E(S) = p * solve(R)
-  }
-
-## Model Estimates
-for(m in 1:M_count){ # method loop
-  for (t in 1:n_years) {
-    z[m,t] <- alpha_cms[1,m] + inprod(B.ik[t,],beta.k[1,m,])
-    r[m,t] <- alpha_cms[2,m] + inprod(B.ik[t,],beta.k[2,m,])
-  } # end **after tstar** loop
-} # end M loop
-
-## Parameter Estimates
-  for(s in 1:2){ # sector loop
-    for(m in 1:M_count){ # method loop
-      alpha_cms[s,m] ~ dnorm(alphahat_region[s,m], tau_alphahat_cms[s]) # sharing info across methods within a subnat area so each subnat public/private sector has an intercept. Tau-alpha is the cross-method sector variance.
-      beta.k[s,m,kstar] <- 0 # kstar is the knot at tstar for country c. Just the value of the intercept
-      for(j in 1:(kstar-1)){ # before kstar
-        beta.k[s,m,(kstar - j)] <- beta.k[s,m,(kstar - j)+1] - delta.k[s,m,(kstar - j)]
-      } # end K1 loop
-      for(j in (kstar+1):K){ # after kstar
-        beta.k[s,m,j] <- beta.k[s,m,(j-1)] + delta.k[s,m,(j-1)]
-      } # end K2 loop
-    } # end m loop
-    for(j in 1:H){
-      delta.k[s,c(1:M_count),j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s]) # delta are the slopes for country c and method m
-    } # end H loop
-  } # end S loop
-
-## Estimating all the Categories here (including total private)
-  for(m in 1:M_count){ # method loop
-    for (t in 1:n_years) { # years loop
-      P[1,m,t] <- 1/(1+exp(-(z[m,t]))) # modelling this as before assuming that z[m,c,t] is log(pi_public/pi_private)
-      Q[m,t] <- 1/(1+exp(-(r[m,t]))) # logit-inverse of ratio
-      U[m,t] <- 1-P[1,m,t] # this then gives you the total private sector
-      P[2,m,t] <- Q[m,t]*U[m,t] # this is assuming that the logit(P[2,m,c,t]/U[m,c,t]) = r[m,c,t] i.e., we are modelling the ratio of private medical to private
-      P[3,m,t] <- U[m,t] - P[2,m,t] # other = private - private medical
-      }
-    }
-
-## Likelihood
-  for (k in 1:n_obs) {
-    y[k, 1] ~ dnorm(P[1,matchmethod[k],matchyears[k]], tau_y[k,1])T(0,1)
-    y[k, 2] ~ dnorm(P[2,matchmethod[k],matchyears[k]], tau_y[k,2])T(0,1)
-    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
-  }
-}", file=paste0(main_path,"/model.txt"))
-    }
-  } else {
-    if(model_type=="subnational") {
-      if(local==FALSE) { # subnational global nonspatial
-        cat("model{
-## Variance structure
-  for(g in 1:2) { # Sector (public,private) loop for rho
-    for(i in 1:M_count){ # Method loop i
-      mu_delta[g,i] <- 0
-      sd_delta[g,i] ~ dt(0,1/25,1)T(0,)
-      sigma_delta[i,i,g] <- pow(sd_delta[g,i],2)
-    }
-
-    sigma_delta[1,2,g] <- rho[1,g]*sd_delta[g,1]*sd_delta[g,2]
-    sigma_delta[1,3,g] <- rho[2,g]*sd_delta[g,1]*sd_delta[g,3]
-    sigma_delta[1,4,g] <- rho[3,g]*sd_delta[g,1]*sd_delta[g,4]
-    sigma_delta[1,5,g] <- rho[4,g]*sd_delta[g,1]*sd_delta[g,5]
-    sigma_delta[2,1,g] <- rho[1,g]*sd_delta[g,1]*sd_delta[g,2]
-    sigma_delta[2,3,g] <- rho[5,g]*sd_delta[g,2]*sd_delta[g,3]
-    sigma_delta[2,4,g] <- rho[6,g]*sd_delta[g,2]*sd_delta[g,4]
-    sigma_delta[2,5,g] <- rho[7,g]*sd_delta[g,2]*sd_delta[g,5]
-    sigma_delta[3,1,g] <- rho[2,g]*sd_delta[g,1]*sd_delta[g,3]
-    sigma_delta[3,2,g] <- rho[5,g]*sd_delta[g,2]*sd_delta[g,3]
-    sigma_delta[3,4,g] <- rho[8,g]*sd_delta[g,3]*sd_delta[g,4]
-    sigma_delta[3,5,g] <- rho[9,g]*sd_delta[g,3]*sd_delta[g,5]
-    sigma_delta[4,1,g] <- rho[3,g]*sd_delta[g,1]*sd_delta[g,4]
-    sigma_delta[4,2,g] <- rho[6,g]*sd_delta[g,2]*sd_delta[g,4]
-    sigma_delta[4,3,g] <- rho[8,g]*sd_delta[g,3]*sd_delta[g,4]
-    sigma_delta[4,5,g] <- rho[10,g]*sd_delta[g,4]*sd_delta[g,5]
-    sigma_delta[5,1,g] <- rho[4,g]*sd_delta[g,1]*sd_delta[g,5]
-    sigma_delta[5,2,g] <- rho[7,g]*sd_delta[g,2]*sd_delta[g,5]
-    sigma_delta[5,3,g] <- rho[9,g]*sd_delta[g,3]*sd_delta[g,5]
-    sigma_delta[5,4,g] <- rho[10,g]*sd_delta[g,4]*sd_delta[g,5]
-  } # end G loop
-
-  inv.sigma_delta[1:M_count,1:M_count,1] <- inverse(sigma_delta[,,1])
-  inv.sigma_delta[1:M_count,1:M_count,2] <- inverse(sigma_delta[,,2])
-
-## Model Estimates
-for(p in 1:P_count) { # province loop matched to C
-  for(m in 1:M_count){ # method loop
-    for (t in 1:n_years) {
-      z[m,p,t] <- alpha_pms[1,m,p] + inprod(B.ik[p,t,],beta.k[1,m,p,])
-      r[m,p,t] <- alpha_pms[2,m,p] + inprod(B.ik[p,t,],beta.k[2,m,p,])
-    } # end time loop
-  } # end M loop
-} # end P loop
-
-
-## Parameter Estimates
-  for(s in 1:2){ # sector loop
-    for(p in 1:P_count) { # province loop
-      for(m in 1:M_count){ # method loop
-        alpha_pms[s,m,p] ~ dnorm(alpha_cms[s,m,matchcountry[p]],tau_alpha[s])
-        beta.k[s,m,p,kstar[p]] <- 0
-        for(j in 1:(kstar[p]-1)){ # before kstar[p]
-          beta.k[s,m,p,(kstar[p] - j)] <- beta.k[s,m,p,(kstar[p] - j)+1] - delta.k[s,m,p,(kstar[p] - j)]
-        } # end K1 loop
-        for(j in (kstar[p]+1):K){ # after kstar[p]
-          beta.k[s,m,p,j] <- beta.k[s,m,p,(j-1)] + delta.k[s,m,p,(j-1)]
-        } # end K2 loop
-      } # end m loop
-      for(j in 1:H){
-        delta.k[s,c(1:M_count),p,j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s])
-      } # end H loop
-    } # end P loop
-  } # end S loop
-
-## Estimating all the Categories here (including total private)
-  for(p in 1:P_count){ # province loop
-    for(m in 1:M_count){ # method loop
-      for (t in 1:n_years) { # years loop
-         P[1,m,p,t] <- 1/(1+exp(-(z[m,p,t]))) # modelling this as before assuming that z[m,p,t] is log(pi_public/pi_private)
-
-         Q[m,p,t] <- 1/(1+exp(-(r[m,p,t]))) # logit-inverse of ratio
-
-         U[m,p,t] <- 1-P[1,m,p,t] # this then gives you the total private sector
-
-         P[2,m,p,t] <- Q[m,p,t]*U[m,p,t] # this is assuming that the logit(P[2,m,p,t]/U[m,p,t]) = r[m,p,t] i.e., we are modelling the ratio of private medical to private
-
-         P[3,m,p,t] <- U[m,p,t] - P[2,m,p,t] # other = private - private medical
-      }
-    }
-  }
-
-## Likelihood
-  for (k in 1:n_obs) {
-    y[k, 1] ~ dnorm(P[1,matchmethod[k],matchsubnat[k],matchyears[k]], tau_y[k,1])T(0,1)
-    y[k, 2] ~ dnorm(P[2,matchmethod[k],matchsubnat[k],matchyears[k]], tau_y[k,2])T(0,1)
-    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
-    }
-
-## Priors
-  for(s in 1:2) { # cross method variance (within a country)
-    for(m in 1:M_count){ # method loop
-      for(c in 1:C_count) { # country loop
-        alpha_cms[s,m,c] ~ dnorm(beta_r[s,m,matchregion[c]],tau_alpha[s])
-      }
-      for(r in 1:R_count){ # regional
-        beta_r[s,m,r] ~ dnorm(beta_world[s,m],tau_beta[s])
-      }
-       # world intercept
-       beta_world[s,m] ~ dnorm(0,0.1)
-    }
-    tau_alpha[s] <- sigma_alpha[s]^-2
-    sigma_alpha[s] ~ dt(0,1,1)T(0,)
-
-    tau_beta[s] <- sigma_beta[s]^-2
-    sigma_beta[s] ~ dt(0,1,1)T(0,)
-  }
-              }", file=paste0(main_path,"/model.txt"))
-      } else { # subnational local nonspatial
-        cat("model{
-## Variance structure
-  for(g in 1:2) { # Sector (public,private) loop for covariance
-    mu_delta[g,1:M_count] <- rep(0,M_count)
-    inv.sigma_delta[1:M_count,1:M_count,g] ~ dwish(natdf*natRmat[1:M_count,1:M_count,g],natdf) # S~dwish(R,p) => E(S) = p * solve(R)
-  }
-
-## Model Estimates
-  for(p in 1:P_count) { # subnat loop
-    for(m in 1:M_count){ # method loop
-      for (t in 1:n_years) {
-        z[m,p,t] <- alpha_pms[1,m,p] + inprod(B.ik[p,t,],beta.k[1,m,p,])
-        r[m,p,t] <- alpha_pms[2,m,p] + inprod(B.ik[p,t,],beta.k[2,m,p,])
-      } # end **after tstar** loop
-    } # end M loop
-  } # end P loop
-
-## Parameter Estimates
-  for(s in 1:2){ # sector loop
-    for(p in 1:P_count) { # subnat loop
-      for(m in 1:M_count){ # method loop
-        alpha_pms[s,m,p] ~ dnorm(alpha_cms_hat[s,m], tau_alpha_pms_hat[s]) # sharing info across methods within a subnat area so each subnat public/private sector has an intercept. Tau-alpha is the cross-method sector variance.
-        beta.k[s,m,p,kstar[p]] <- 0 # kstar[p] is the knot at tstar for country c. Just the value of the intercept
-        for(j in 1:(kstar[p]-1)){ # before kstar[p]
-          beta.k[s,m,p,(kstar[p] - j)] <- beta.k[s,m,p,(kstar[p] - j)+1] - delta.k[s,m,p,(kstar[p] - j)]
-        } # end K1 loop
-        for(j in (kstar[p]+1):K){ # after kstar[p]
-          beta.k[s,m,p,j] <- beta.k[s,m,p,(j-1)] + delta.k[s,m,p,(j-1)]
-        } # end K2 loop
-      } # end m loop
-
-      for(j in 1:H){
-        delta.k[s,c(1:M_count),p,j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s]) # delta are the slopes for country c and method m
-      } # end H loop
-
-    } # end C loop
-  } # end S loop
-
-## Estimating all the Categories here (including total private)
-  for(p in 1:P_count){ # country loop
-    for(m in 1:M_count){ # method loop
-      for (t in 1:n_years) { # years loop
-         P[1,m,p,t] <- 1/(1+exp(-(z[m,p,t]))) # modelling this as before assuming that z[m,p,t] is log(pi_public/pi_private)
-
-         Q[m,p,t] <- 1/(1+exp(-(r[m,p,t]))) # logit-inverse of ratio
-
-         U[m,p,t] <- 1-P[1,m,p,t] # this then gives you the total private sector
-
-         P[2,m,p,t] <- Q[m,p,t]*U[m,p,t] # this is assuming that the logit(P[2,m,p,t]/U[m,p,t]) = r[m,p,t] i.e., we are modelling the ratio of private medical to private
-
-         P[3,m,p,t] <- U[m,p,t] - P[2,m,p,t] # other = private - private medical
-      }
-    }
-  }
-
-## Likelihood
-  for (k in 1:n_obs) {
-    y[k, 1] ~ dnorm(P[1,matchmethod[k],matchsubnat[k],matchyears[k]], tau_y[k,1])T(0,1)
-    y[k, 2] ~ dnorm(P[2,matchmethod[k],matchsubnat[k],matchyears[k]], tau_y[k,2])T(0,1)
-
-    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
-    }
-
-## Priors
-  for(s in 1:2) { # cross method variance (within a country)
-    tau_alpha[s] ~ dt(0,1,1)T(0,)
-  }
-          }", file=paste0(main_path,"/model.txt"))
-      }
-    }
-  }
 }

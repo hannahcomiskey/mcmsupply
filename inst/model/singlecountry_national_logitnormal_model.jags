@@ -1,0 +1,52 @@
+model{
+## Variance structure
+  for(g in 1:2) { # Sector (public,crivate) loop for covariance
+    mu_delta[g,1:M_count] <- rep(0,M_count)
+    inv.sigma_delta[1:M_count,1:M_count,g] ~ dwish(natdf*natRmat[1:M_count,1:M_count,g],natdf) # S~dwish(R,c) => E(S) = p * solve(R)
+  }
+
+## Model Estimates
+for(m in 1:M_count){ # method loop
+  for (t in 1:n_years) {
+    z[m,t] <- alpha_cms[1,m] + inprod(B.ik[t,],beta.k[1,m,])
+    r[m,t] <- alpha_cms[2,m] + inprod(B.ik[t,],beta.k[2,m,])
+  } # end **after tstar** loop
+} # end M loop
+
+## Parameter Estimates
+  for(s in 1:2){ # sector loop
+    for(m in 1:M_count){ # method loop
+      alpha_cms[s,m] ~ dnorm(alphahat_region[s,m], tau_alphahat_cms[s]) # sharing info across methods within a subnat area so each subnat public/private sector has an intercept. Tau-alpha is the cross-method sector variance.
+      beta.k[s,m,kstar] <- 0 # kstar is the knot at tstar for country c. Just the value of the intercept
+      for(j in 1:(kstar-1)){ # before kstar
+        beta.k[s,m,(kstar - j)] <- beta.k[s,m,(kstar - j)+1] - delta.k[s,m,(kstar - j)]
+      } # end K1 loop
+      for(j in (kstar+1):K){ # after kstar
+        beta.k[s,m,j] <- beta.k[s,m,(j-1)] + delta.k[s,m,(j-1)]
+      } # end K2 loop
+    } # end m loop
+    for(j in 1:H){
+      delta.k[s,c(1:M_count),j] ~ dmnorm(mu_delta[s,],inv.sigma_delta[,,s]) # delta are the slopes for country c and method m
+    } # end H loop
+  } # end S loop
+
+## Estimating all the Categories here (including total private)
+  for(m in 1:M_count){ # method loop
+    for (t in 1:n_years) { # years loop
+      P[1,m,t] <- 1/(1+exp(-(z[m,t]))) # modelling this as before assuming that z[m,c,t] is log(pi_public/pi_private)
+      Q[m,t] <- 1/(1+exp(-(r[m,t]))) # logit-inverse of ratio
+      U[m,t] <- 1-P[1,m,t] # this then gives you the total private sector
+      P[2,m,t] <- Q[m,t]*U[m,t] # this is assuming that the logit(P[2,m,c,t]/U[m,c,t]) = r[m,c,t] i.e., we are modelling the ratio of private medical to private
+      P[3,m,t] <- U[m,t] - P[2,m,t] # other = private - private medical
+      logit.CM[m,t] <- logit(P[2,m,t]) # For logit-normal data model
+      logit.Public[m,t] <- logit(P[1,m,t]) # For logit-normal data model
+    }
+  }
+
+## Likelihood
+  for (k in 1:n_obs) {
+    y[k, 1] ~ dnorm(logit.Public[matchmethod[k], matchyears[k]], tau_y[k,1]) # Logit-normal data model
+    y[k, 2] ~ dnorm(logit.CM[matchmethod[k], matchyears[k]], tau_y[k,2])
+    tau_y[k,1:2] <- 1/(se_prop[k,1:2]^2)
+  }
+}

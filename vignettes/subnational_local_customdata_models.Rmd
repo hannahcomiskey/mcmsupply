@@ -22,13 +22,23 @@ library(mcmsupply)
 library(dplyr)
 ```
 
+## Try to use unsuitable data. The `get_data` function throws an error indicating that the Method column is missing from the custom user-supplied data.
 
-## Load the data 
+```{r, include=TRUE, message=FALSE, warning=FALSE, error=TRUE}
+
+cleaned_data <- get_data(national=FALSE, local=TRUE, 
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_bad.xlsx",
+                         mycountry="Ethiopia")
+```
+
+
+## Load the suitable data 
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
 cleaned_data <- get_data(national=FALSE, local=TRUE, 
-                         surveydata_filepath = "my_custom_data.xlsx",
-                         mycountry="Nepal")
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_good.xlsx",
+                         mycountry="Ethiopia")
 ```
 
 

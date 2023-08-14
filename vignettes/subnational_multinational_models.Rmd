@@ -5,7 +5,7 @@ output:
        toc: true
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{How to run a subnational level model for multiple countries}
+  %\VignetteIndexEntry{Running a subnational level multi-country model}
   %\usepackage[UTF-8]{inputenc}
 ---
 

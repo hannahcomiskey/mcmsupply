@@ -1,3 +1,15 @@
+## Updates
+
+── R CMD check results ─────────────────────────────────────────────────────────────────────────────────────────────────────── mcmsupply 0.2.2 ────
+Duration: 1m 35.3s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+- Updates to data for new single-country parameters
+- Updates to data for multi-country correlations 
+- Updates for Custom data bug fix
+- Removed truncated data - no longer required for illustration
+
 ## Resubmission 3
 - Updates to JAGS models following reviewers comments
 - Updates to standard error imputation for national-level data
