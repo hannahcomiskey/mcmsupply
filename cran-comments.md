@@ -5,6 +5,8 @@ Duration: 1m 35.3s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
+Passing all checks on Github. 
+
 - Updates to data for new single-country parameters
 - Updates to data for multi-country correlations 
 - Updates for Custom data bug fix
