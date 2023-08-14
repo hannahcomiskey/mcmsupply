@@ -13,4 +13,3 @@
 * Updates to data for new single-country parameters
 * Updates to data for multi-country correlations 
 * Updates for Custom data bug fix
-* Removed truncated data - no longer required for illustration
