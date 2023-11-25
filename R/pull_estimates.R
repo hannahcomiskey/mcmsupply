@@ -5,10 +5,10 @@
 #' @param country String. The name of the country you wish to inspect.
 #' @examples
 #' \dontrun{
-#' raw_data <- get_data(national=TRUE, local=TRUE, mycountry="Nepal")
-#' jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
-#' mod <- run_jags_model(jagsdata, n_iter=5, n_burnin=1, n_thin=1)
-#' estimates_2020 <- pull_estimates(model_output = mod, year=2020, country='Benin')
+#   raw_data <- get_data(national=TRUE, local=TRUE, mycountry="Nepal")
+#   jagsdata <- get_modelinputs(startyear=1990, endyear=2020.5, nsegments=12, raw_data)
+#   mod <- run_jags_model(jagsdata = jagsdata, jagsparams = NULL, n_iter = 5, n_burnin = 1, n_thin = 1)
+#   estimates <- pull_estimates(model_output = mod, year=2018, country="Nepal")
 #' }
 #' @return A list of model estimates for each method.
 #' @export
@@ -20,7 +20,7 @@ pull_estimates <- function(model_output, year, country) {
   estimates <- model_output$estimates
 
   # Country estimates
-  p <- estimates[which(estimates$Country==i & estimates$average_year==year_av), ] #%>% filter(sector_category=="Public")
+  p <- estimates[which(estimates$Country==country & estimates$average_year==year_av), ] #%>% filter(sector_category=="Public")
 
   message("Estimates ready!")
   return(p)
