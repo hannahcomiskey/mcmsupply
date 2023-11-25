@@ -3,6 +3,7 @@
 export(get_data)
 export(get_modelinputs)
 export(plot_estimates)
+export(pull_estimates)
 export(run_jags_model)
 import(R2jags)
 import(foreach)
