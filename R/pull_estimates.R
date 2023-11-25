@@ -10,7 +10,7 @@
 #   mod <- run_jags_model(jagsdata = jagsdata, jagsparams = NULL, n_iter = 5, n_burnin = 1, n_thin = 1)
 #   estimates <- pull_estimates(model_output = mod, year=2018, country="Nepal")
 #' }
-#' @return A list of model estimates for each method.
+#' @return A dataframe of model estimates for each method, with the median (50%), 80% and 95% credible intervals.
 #' @export
 
 pull_estimates <- function(model_output, year, country) {
