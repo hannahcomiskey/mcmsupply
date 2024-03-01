@@ -38,36 +38,40 @@ pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12,
 ```
 
 
-## Run JAGS model and get posterior point estimates with uncertainty
+## Run JAGS model and get posterior point estimates with uncertainty. 
+
+For speed and illustation purposes, we will use 10 itterations, with no burn in period and taking every third sample. This leaves only 9 samples. We DO NOT recommend this setting. The recommended settings are 80000 itterations, with 10000 burn in period and taking every 35th sample. This is commented out and listed underneath the below R code. 
 
 ```{r message=FALSE, eval=FALSE}
-mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, 
-                      n_iter = 80000, n_burnin = 10000, n_thin = 35)
+mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
+                      n_iter = 10, n_burnin = 1, n_thin = 3)
+                     # n_iter = 80000, n_burnin = 10000, n_thin = 35)
 ```
 
 
-## Check the model diagnostics using the print and plot function. We use this to evaluate the convergence of the model parameters.
+# Check the model diagnostics
+
+We use this to evaluate the convergence of the model parameters. We should expect to see R-hat values of approximately 1.05. The plot function will give you a visual summary for each parameter monitored. 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot(mod)
+plot(mod$JAGS)
 
-print(mod)
+print(mod$JAGS)
 ```
 
-
-# Plot the traceplots of some parameters to assess their convergence 
+Using the ggplot2 and tidybayes R packages, we will check the trace plots to assess the convergence of individual parameters.
+We expect to see a 'caterpillar' like appearance of the chains over the iterations. 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-sample_draws <- tidybayes::tidy_draws(mod$BUGSoutput$sims.matrix)
+sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
 
 var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
-  dplyr::mutate(chain = rep(1:2, each=2000)) %>%
-  dplyr::mutate(iteration = rep(1:2000, 2))
+  dplyr::mutate(chain = rep(1:2, each=mod$JAGS$BUGSoutput$n.keep)) %>%
+  dplyr::mutate(iteration = rep(1:mod$JAGS$BUGSoutput$n.keep, 2))
 
 ggplot2::ggplot(data=var) +
   ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
 ```
-
 
 ## Plot posterior point estimates with uncertainty
 

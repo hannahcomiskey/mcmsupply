@@ -421,7 +421,7 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
     jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
-                      Sigma_y = pkg_data$logit.varcov_array, # supply bivariate covariances
+                      Sigma_y = pkg_data$Sigma_y, # supply bivariate covariances
                       rho = my_SE_rho_matrix, # cross-method correlations
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,

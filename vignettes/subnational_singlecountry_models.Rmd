@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 library(mcmsupply)
-library(dplyr)
+set.seed(1209)
 ```
 
 
@@ -48,10 +48,12 @@ mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
 ```
 
 
-# Plot the traceplots of some parameters to assess their convergence 
+## Check the model diagnostics
+
+We use this to evaluate the convergence of the model parameters. We should expect to see R-hat values of approximately 1.05. The plot function will give you a visual summary for each parameter monitored. 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-sample_draws <- tidybayes::tidy_draws(mod$BUGSoutput$sims.matrix)
+sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
 
 var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
   dplyr::mutate(chain = rep(1:2, each=2000)) %>%
@@ -59,6 +61,18 @@ var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>
 
 ggplot2::ggplot(data=var) +
   ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
+```
+
+
+
+Using the ggplot2 and tidybayes R packages, we will check the trace plots to assess the convergence of individual parameters.
+We expect to see a 'caterpillar' like appearance of the chains over the iterations. 
+
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plot(mod$JAGS)
+
+print(mod$JAGS)
 ```
 
 
