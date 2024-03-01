@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 library(mcmsupply)
 library(dplyr)
+set.seed(1209)
 ```
 
 
@@ -44,6 +45,28 @@ pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
                       n_iter = 80000, n_burnin = 10000, n_thin = 35)
+```
+
+
+## Check the model diagnostics using the print and plot function. We use this to evaluate the convergence of the model parameters.
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plot(mod)
+
+print(mod)
+```
+
+# Plot the traceplots of some parameters to assess their convergence 
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+sample_draws <- tidybayes::tidy_draws(mod$BUGSoutput$sims.matrix)
+
+var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
+  dplyr::mutate(chain = rep(1:2, each=2000)) %>%
+  dplyr::mutate(iteration = rep(1:2000, 2))
+
+ggplot2::ggplot(data=var) +
+  ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
 ```
 
 

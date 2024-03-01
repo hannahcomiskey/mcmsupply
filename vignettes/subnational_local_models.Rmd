@@ -48,6 +48,20 @@ mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
 ```
 
 
+# Plot the traceplots of some parameters to assess their convergence 
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+sample_draws <- tidybayes::tidy_draws(mod$BUGSoutput$sims.matrix)
+
+var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
+  dplyr::mutate(chain = rep(1:2, each=2000)) %>%
+  dplyr::mutate(iteration = rep(1:2000, 2))
+
+ggplot2::ggplot(data=var) +
+  ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
+```
+
+
 ## Plot posterior point estimates with uncertainty
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}

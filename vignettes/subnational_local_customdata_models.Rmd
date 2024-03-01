@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 library(mcmsupply)
 library(dplyr)
+set.seed(1209)
 ```
 
 ## Try to use unsuitable data. The `get_data` function throws an error indicating that the Method column is missing from the custom user-supplied data.

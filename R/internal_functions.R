@@ -163,17 +163,18 @@ clean_subnat_names <- function(fp2030=TRUE, raw_subnatdata) {
 #' @noRd
 
 country_index_fun <- function(my_data, my_countries) {
-  my_data$index_country <- NA
-  for (i in 1:length(my_countries)) {
+  # my_data$index_country <- NA
+  # for (i in 1:length(my_countries)) {
     for (j in 1:nrow(my_data)) {
-      country_name <- my_countries[i]
-      if(my_data$Country[j]==country_name) {
-        my_data$index_country[j] <- i
-      }
-      else {
-        next
-      }
-    }
+      my_data$index_country[j] <- which(my_countries == my_data$Country[j])
+      # country_name <- my_countries[i]
+      # if(my_data$Country[j]==country_name) {
+      #   my_data$index_country[j] <- i
+      # }
+      # else {
+      #   next
+      # }
+   # }
   }
   return(my_data)
 }
@@ -188,17 +189,20 @@ country_index_fun <- function(my_data, my_countries) {
 
 continent_index_fun <- function(my_data) {
   n_con <- as.character(unique(my_data$continent))
-  my_data$index_continent <- NA
-  for (i in 1:length(n_con)) {
-    for (j in 1:nrow(my_data)) {
-      con_name <- n_con[i]
-      if (my_data$continent[j] == con_name) {
-        my_data$index_continent[j] <- i
-      } else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+  my_data$index_continent[j] <- which(n_con == my_data$continent[j])
   }
+  # my_data$index_continent <- NA
+  # for (i in 1:length(n_con)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     con_name <- n_con[i]
+  #     if (my_data$continent[j] == con_name) {
+  #       my_data$index_continent[j] <- i
+  #     }  # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1535,18 +1539,21 @@ get_subnational_r_z_samples <- function(pkg_data, local=FALSE, n_chain) {
 #' @noRd
 
 method_index_fun <- function(my_data, my_methods) {
-  my_data$index_method <- rep(NA, nrow(my_data))
-  for (i in 1:length(my_methods)) {
-    for (j in 1:nrow(my_data)) {
-      method_name <- my_methods[i]
-      if(my_data$Method[j]==method_name) {
-        my_data$index_method[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+  my_data$index_method[j] <- which(my_methods == my_data$Method[j])
   }
+  # my_data$index_method <- rep(NA, nrow(my_data))
+  # for (i in 1:length(my_methods)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     method_name <- my_methods[i]
+  #     if(my_data$Method[j]==method_name) {
+  #       my_data$index_method[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1733,18 +1740,21 @@ plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE
 #' @noRd
 
 region_index_fun <- function(my_data, n_region) {
-  my_data$index_region <- NA
-  for (i in 1:length(n_region)) {
-    for (j in 1:nrow(my_data)) {
-      region_name <- n_region[i]
-      if(my_data$Region[j]==region_name) {
-        my_data$index_region[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+    my_data$index_region[j] <- which(n_region == my_data$Region[j])
   }
+  # my_data$index_region <- NA
+  # for (i in 1:length(n_region)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     region_name <- n_region[i]
+  #     if(my_data$Region[j]==region_name) {
+  #       my_data$index_region[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1910,17 +1920,20 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
 #' @noRd
 
 sector_index_fun <- function(my_data, my_sectors) {
-  for (i in 1:length(my_sectors)) {
-    for (j in 1:nrow(my_data)) {
-      sector_name <- my_sectors[i]
-      if(my_data$sector_category[j]==sector_name) {
-        my_data$index_sector[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+    my_data$index_sector[j] <- which(my_sectors == my_data$sector_category[j])
   }
+  # for (i in 1:length(my_sectors)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     sector_name <- my_sectors[i]
+  #     if(my_data$sector_category[j]==sector_name) {
+  #       my_data$index_sector[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1966,9 +1979,9 @@ subnat_index_fun <- function(my_data, my_subnat, my_country) {
       if(my_data$Country[j]==country_name & my_data$Region[j]==subnat_name) {
         my_data$index_subnat[j] <- i
       }
-      else {
-        next
-      }
+      # else {
+      #   next
+      # }
     }
   }
   return(my_data)
@@ -1977,23 +1990,26 @@ subnat_index_fun <- function(my_data, my_subnat, my_country) {
 #' Apply subcontinent indexing to data
 #' @name superregion_index_fun
 #' @param my_data National level family planning source data
-#' @param n_region A vector of subcontinents listed in the dataset
-#' @return Dataframe with subconintental indexing applied
+#' @param n_region A vector of subcontinents listed in the data set
+#' @return Dataframe with sub-conintental indexing applied
 #' @noRd
 
 superregion_index_fun <- function(my_data, n_region) {
-  my_data$index_superregion <- NA
-  for (i in 1:length(n_region)) {
-    for (j in 1:nrow(my_data)) {
-      region_name <- n_region[i]
-      if(my_data$Super_region[j]==region_name) {
-        my_data$index_superregion[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+    my_data$index_superregion[j] <- which(n_region == my_data$Super_region[j])
   }
+  # my_data$index_superregion <- NA
+  # for (i in 1:length(n_region)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     region_name <- n_region[i]
+  #     if(my_data$Super_region[j]==region_name) {
+  #       my_data$index_superregion[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
