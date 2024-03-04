@@ -404,8 +404,8 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
                       Sigma_y = local_parms$Sigma_y,
                       alphahat_region = local_parms$alphahat_region,
                       tau_alphahat_cms = local_parms$tau_alphahat_cms,
-                      natRmat = local_parms$natRmat, # dwish on inverse
-                      natdf = length(pkg_data$n_method)+3,
+                      inv.sigma_delta = local_parms$natRmat, # dwish on inverse
+                      #natdf = length(pkg_data$n_method)+3,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
                       n_years = pkg_data$n_years,
@@ -465,7 +465,7 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
   # mydata <- superregion_index_fun(mydata, allregions)
   region_index_table <- tibble::tibble(Super_region = unique(mydata$Super_region), index_superregion = unique(mydata$index_superregion))
   dimnames(median_alpha_region_intercepts)[[3]] <- as.list(unlist(region_index_table$Super_region)) # Apply region names to parameter estimates
-  myalpha_med <- median_alpha_region_intercepts[,,region_country_match$Super_region] # Take out relevant region
+  myalpha_med <- median_alpha_region_intercepts[,,unique(region_country_match$Super_region)] # Take out relevant region
 
   # Get country-specific covariance matrix
   mySigma_y <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal[,,region_country_match$row_id]
