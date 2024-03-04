@@ -86,5 +86,7 @@ plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 estimates_2018 <- pull_estimates(model_output = mod, country = 'Nepal', year=2018)
+
+head(estimates_2018)
 ```
 

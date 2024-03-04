@@ -62,8 +62,8 @@ We expect to see a 'caterpillar' like appearance of the chains over the iteratio
 sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
 
 var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1]`) %>%
-  dplyr::mutate(chain = rep(1:2, each=2000)) %>%
-  dplyr::mutate(iteration = rep(1:2000, 2))
+  dplyr::mutate(chain = rep(1:2, each=mod$JAGS$BUGSoutput$n.keep)) %>%
+  dplyr::mutate(iteration = rep(1:mod$JAGS$BUGSoutput$n.keep, 2))
 
 ggplot2::ggplot(data=var) +
   ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1]`, color=as.factor(chain)))
@@ -80,7 +80,9 @@ plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
 ## Pull out estimates that you are particularly interested in
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-estimates_2018 <- pull_estimates(model_output = mod, country = 'Nepal', year=2018)
+estimates_2018 <- pull_estimates(model_output = mod, country = cleaned_natdata$args$mycountry, year=2018)
+
+head(estimates_2018)
 ```
 
 
