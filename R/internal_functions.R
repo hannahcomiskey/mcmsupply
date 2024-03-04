@@ -378,7 +378,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
   method_order <- c("Female sterilization", "Implants", "Injectables", "IUD", "Pill" ) # As per the method correlation matrix
   n_method <- c("Female Sterilization","Implants", "Injectables", "IUD","OC Pills")
   row_order <- mcmsupply::national_varcov_order_bivarlogitnormal # Order of variance covariance matrices arrays
-  FP_source_data_wide <- left_join(row_order, FP_source_data_wide) # ensure to match the order of the varcov
+  FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide) # ensure to match the order of the varcov
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
     message(paste0("Getting data for ",mycountry))
