@@ -2,6 +2,6 @@
 #' This array is used to inform the Normal prior of the country-level intercept in the single-country national model.
 #'
 #' @docType data
-#' @keywords national_theta_rms_hat_bivarlogitnormal
+#' @keywords national_theta_rms_hat_bivarlogitnorm
 #' @format  A array of 5 matrices with 2 rows and 5 columns
-"national_theta_rms_hat_bivarlogitnormal"
+"national_theta_rms_hat_bivarlogitnorm"
