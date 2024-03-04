@@ -453,7 +453,7 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
   # Read in national alpha estimates ---------------------------------
   median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_bivarlogitnormal # read in regional-level (alpha_rms) median estimates
   precision_alpha_country_intercepts <- mcmsupply::national_tau_alpha_cms_hat_bivarlogitnormal # read in country-level (alpha_cms) precision estimates
-  Bspline_sigma_matrix_median <- mcmsupply::national_sigma_delta_hat_bivarlogitnormal # read in national level correlations
+  Bspline_sigma_matrix_median <- mcmsupply::national_inv_sigma_delta_hat_bivarlogitnormal # read in national level correlations
   mydata <- get_national_data(fp2030=fp2030) # Read complete data set in without filtering for any country
 
   # Match regional intercepts to country names  ------------------------
@@ -1080,7 +1080,7 @@ get_subnational_global_P_samps <- function() {
 
 #' Combines the data sources to create one JAGS input list
 #' @name get_subnational_JAGSinput_list
-#' @param pkg_data The data list from the 'mcmsupply::get_national_modelinputs' function.
+#' @param pkg_data The data list from the 'mcmsupply::get_subnational_modelinputs' function.
 #' @param local TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.
 #' @param mycountry The name of country of interest. Default is NULL. For the names of potential countries, review vignette.
 #' @return returns a list ready for input into the JAGS model
