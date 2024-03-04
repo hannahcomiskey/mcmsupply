@@ -451,9 +451,9 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
 get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
 
   # Read in national alpha estimates ---------------------------------
-  median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_bivarlogitnormal # read in regional-level (alpha_rms) median estimates
-  precision_alpha_country_intercepts <- mcmsupply::national_tau_alpha_cms_hat_bivarlogitnormal # read in country-level (alpha_cms) precision estimates
-  Bspline_sigma_matrix_median <- mcmsupply::national_inv_sigma_delta_hat_bivarlogitnormal # read in national level correlations
+  median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_bivarlogitnorm # read in regional-level (alpha_rms) median estimates
+  precision_alpha_country_intercepts <- mcmsupply::national_tau_alpha_cms_hat_bivarlogitnorm # read in country-level (alpha_cms) precision estimates
+  Bspline_sigma_matrix_median <- mcmsupply::national_inv_sigma_delta_hat_bivarlogitnorm # read in national level correlations
   mydata <- get_national_data(fp2030=fp2030) # Read complete data set in without filtering for any country
 
   # Match regional intercepts to country names  ------------------------
