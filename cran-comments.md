@@ -1,4 +1,19 @@
-## Updates
+## Update 2
+
+  Status: OK
+   
+── R CMD check results ──────────────────────────────────────────────────────────────────────────────── mcmsupply 1.0.1 ────
+Duration: 1m 35s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+- Updates to national data for bivariate logit data following Journal of Royal Statistical Society, Series A: Statistics in Society
+- Updates to stored single-country national parameters for bivariate setting
+- Updates to national model (multi-country and single-country) to include covariance between estimated proportions in the likelihood
+- Improvement of coding logic following R Journal reviewer comments
+- Inclusion of 'pull_estimates' function and 'get_posterior_P_samples' function to aid users when reviewing the estimates and output of models.
+
+## Update 1
 
 ── R CMD check results ─────────────────────────────────────────────────────────────────────────────────────────────────────── mcmsupply 0.2.2 ────
 Duration: 1m 35.3s

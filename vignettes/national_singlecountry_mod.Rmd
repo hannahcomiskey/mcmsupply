@@ -74,6 +74,7 @@ ggplot2::ggplot(data=var) +
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plots <- plot_estimates(jagsdata = pkg_data, model_output = mod) 
+
 ```
 
 

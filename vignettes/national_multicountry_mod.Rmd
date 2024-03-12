@@ -46,7 +46,7 @@ For speed and illustration purposes, we will use 10 iterations, with no burn in 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
-                      n_iter = 10, n_burnin = 1, n_thin = 3)
+                      n_iter = 5, n_burnin = 1, n_thin = 1)
                      # n_iter = 80000, n_burnin = 10000, n_thin = 35)
 ```
 

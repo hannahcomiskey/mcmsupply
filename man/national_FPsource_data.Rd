@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{national_FPsource_data}}{
 
-A data frame with 491 rows and 15 columns:
+A data frame with 524 rows and 15 columns:
 \describe{
 \item{Country}{Country names}
 \item{Method}{Contraceptive method name}

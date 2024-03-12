@@ -42,9 +42,13 @@ pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,
 
 ## Run JAGS model and get posterior point estimates with uncertainty
 
+For speed and illustration purposes, we will use 10 iterations, with no burn in period and taking every third sample. This leaves only 9 samples. We DO NOT recommend this setting. The recommended settings are 40000 iterations, with 10000 burn in period and taking every 15th sample. This is commented out and listed underneath the below R code. 
+
+
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
-                      n_iter = 40000, n_burnin = 10000, n_thin = 15)
+                       n_iter = 10, n_burnin = 1, n_thin = 3)
+                      # n_iter = 40000, n_burnin = 10000, n_thin = 15)
 ```
 
 

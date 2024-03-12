@@ -38,7 +38,6 @@ head(national_FPsource_data)
 
 ```{r}
 head(subnat_FPsource_data)
-
 ```
 
 
@@ -64,7 +63,7 @@ country_names
 ## Estimated national correlations
 This is the estimated correlations for the rates of change between methods in the global national model. The approach for estimating correlations at the national level is very similar to that at the subnational level. For an example of how to calculate the subnational correlations, please review the `inst/data-raw/estimated_global_subnational_correlations.R` script.
 ```{r}
-national_estimated_correlations_logitnormal
+mcmsupply::national_estimated_correlations_bivarlogitnormal
 ```
 
 
@@ -82,15 +81,15 @@ subnational_estimated_correlations
 These are the estimated parameters used in a one-country national model run. `national_theta_rms_hat_logitnormal` are the regional intercepts used to inform the country-specific intercept of the model, the `national_tau_alpha_cms_hat_logitnormal` are the associated variance with these country-specific intercepts. `national_sigma_delta_hat_logitnormal` is the variance-covariance matrix used to inform the multivariate normal prior describing the first-order differences of the spline coefficients ($\delta_{k}$).
 
 ```{r}
-national_theta_rms_hat_logitnormal
+national_theta_rms_hat_bivarlogitnorm
 ```
 
 ```{r}
-national_tau_alpha_cms_hat_logitnormal
+national_tau_alpha_cms_hat_bivarlogitnorm
 ```
 
 ```{r}
-national_sigma_delta_hat_logitnormal
+national_inv_sigma_delta_hat_bivarlogitnorm
 ```
 
 ## <a name="cu"></a>

@@ -501,7 +501,6 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
 get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
 
   clean_FPsource <- standard_method_names(raw_data) # Standardizing method names
-
   n_method <- c("Female Sterilization", "Implants", "Injectables", "IUD", "OC Pills" ) # As per the method correlation matrix
   n_country <- unique(clean_FPsource$Country)
   n_superregion <- unique(clean_FPsource$Super_region)
