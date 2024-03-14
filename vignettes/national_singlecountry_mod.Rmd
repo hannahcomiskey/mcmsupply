@@ -89,7 +89,7 @@ head(estimates_2018)
 
 # Review the complete posterior sample of estimated method-supply shares
 
-This function will allow you to pull out the posterior smaple of estimated method supply shares. The posterior sample will be of size 'nposterior'. Note that 'nposterior' should not be larger than your total iterations (given in 'run_jags_model') 
+This function will allow you to pull out the posterior sample of estimated method supply shares. The posterior sample will be of size 'nposterior'. Note that 'nposterior' should not be larger than your total iterations (given in 'run_jags_model') 
 In this example, we supply the JAGS model object and the JAGS input data to the function, we set 'nposterior=4' to pull out 4 posterior samples.
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}

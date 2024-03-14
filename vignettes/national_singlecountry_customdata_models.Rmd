@@ -29,7 +29,7 @@ The `get_data` function throws an error indicating that the Method column is mis
 
 We set 'national=TRUE' for national datasets. As this is a single country estimation, we will also set 'local=TRUE'. In multicountry estimation, we can set 'local=FALSE'. The pathway to the example custom dataset is given, replace this with the pathway of your example dataset. Lastly, state the name of the country you have custom data for.
 
-You will get an error when you run this function. The data we supplied does not have the Method column. The warning message is telling you to check your input as the column 'Method' is either missing or incorrectly named. 
+You will get an error when you run this function. The data we supplied does not have the Method column. The warning message is telling you to check your input as the column 'Method' is either missing or incorrectly named, along with many others.
 
 ```{r, include=TRUE, message=FALSE, warning=FALSE, error=TRUE}
 
@@ -65,9 +65,10 @@ pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,
 
 ## Run JAGS model and get posterior point estimates with uncertainty
 
+For demonstartion purposes, the model settings are set too low, the suggested settings are commented out in the code below.
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
-                      n_iter = 40000, n_burnin = 10000, n_thin = 15)
+mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, n_iter = 40, n_burnin = 10, n_thin = 1)
+                     # n_iter = 40000, n_burnin = 10000, n_thin = 15)
 ```
 
 
