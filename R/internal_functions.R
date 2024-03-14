@@ -286,6 +286,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   # Filter where the sample size is smaller than 2 people across all three sectors ---------
   FP_source_data_wide <- national_FPsource_data %>% # Proportion data
+    dplyr::filter(is.na(Country)==FALSE) %>% # Remove any rows with missing country names
     dplyr::rename(Public.SE = se.Public,
            Commercial_medical.SE = se.Commercial_medical,
            Other.SE = se.Other) %>%
@@ -324,21 +325,22 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   col_index <- which(colnames(SE_source_data_wide_X)=="Commercial_medical.SE")-1 # column index before CM column, as CM=1
 
+  if(nrow(SE_source_data_wide_X)>0) {
   # Add in DEFT data to calculate variance
   SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database)
 
   # For an explanation fo this approach see: https://onlinestatbook.com/2/sampling_distributions/samp_dist_p.html
 
-  for(i in 1:nrow(SE_source_data_wide_X)) {
-    num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]<0.0001)
-    num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
-    DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
-    N1 <- sum(SE_source_data_wide_X[i, c('Other_n', 'Public_n', 'Commercial_medical_n')], na.rm=TRUE) # Number of women surveyed
-    phat <- 0.5/(N1+1) # Posterior mean of p under Jefferys prior for true prevalence of 0s.
-    SE.hat <- sqrt((phat*(1-phat))/N1) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
-    SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
+    for(i in 1:nrow(SE_source_data_wide_X)) {
+      num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]<0.0001)
+      num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
+      DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
+      N1 <- sum(SE_source_data_wide_X[i, c('Other_n', 'Public_n', 'Commercial_medical_n')], na.rm=TRUE) # Number of women surveyed
+      phat <- 0.5/(N1+1) # Posterior mean of p under Jefferys prior for true prevalence of 0s.
+      SE.hat <- sqrt((phat*(1-phat))/N1) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
+      SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
+    }
   }
-
   # if(nrow(SE_source_data_wide_X)>0) {
   #   for(i in 1:nrow(SE_source_data_wide_X)) {
   #     SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Add DEFT data
@@ -378,7 +380,15 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
   method_order <- c("Female sterilization", "Implants", "Injectables", "IUD", "Pill" ) # As per the method correlation matrix
   n_method <- c("Female Sterilization","Implants", "Injectables", "IUD","OC Pills")
   row_order <- mcmsupply::national_varcov_order_bivarlogitnormal # Order of variance covariance matrices arrays
-  FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide) # ensure to match the order of the varcov
+  row_order <- row_order %>% dplyr::left_join(area_classification) %>%
+    dplyr::mutate(Super_region = dplyr::case_when(Country=="Bolivia" ~ "South America",
+                                                  Country=="Kyrgyz Republic" ~ "Central Asia",
+                                                  Country=="Moldova" ~ "Eastern Europe",
+                                                  TRUE ~ as.character(Super_region)))
+  if(local==TRUE) {
+    row_order <- row_order %>% dplyr::filter(Country==mycountry)
+    }
+  FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide)
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
     message(paste0("Getting data for ",mycountry))
