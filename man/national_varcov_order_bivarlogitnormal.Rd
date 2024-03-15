@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{national_varcov_order_bivarlogitnormal}}{
 
-A data frame with 487 rows and 3 columns:
+A data frame with 558 rows and 3 columns:
 \describe{
 \item{Country}{Country names}
 \item{average_year}{Average year of the survey}

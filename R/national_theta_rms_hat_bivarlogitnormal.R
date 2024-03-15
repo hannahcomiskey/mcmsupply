@@ -3,5 +3,5 @@
 #'
 #' @docType data
 #' @keywords national_theta_rms_hat_bivarlogitnorm
-#' @format  A array of 5 matrices with 2 rows and 5 columns
+#' @format  A array of 6 matrices with 2 rows and 5 columns
 "national_theta_rms_hat_bivarlogitnorm"

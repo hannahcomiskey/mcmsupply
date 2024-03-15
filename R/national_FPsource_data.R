@@ -1,7 +1,7 @@
 #' DHS survey observations for the proportion of modern contraceptives supplied by the public and private sectors at the national level
 #'
 #' @format ## `national_FPsource_data`
-#' A data frame with 524 rows and 15 columns:
+#' A data frame with 562 rows and 15 columns:
 #' \describe{
 #'   \item{Country}{Country names}
 #'   \item{Method}{Contraceptive method name}

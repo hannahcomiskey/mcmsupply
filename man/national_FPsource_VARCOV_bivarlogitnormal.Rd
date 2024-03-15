@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{national_FPsource_VARCOV_bivarlogitnormal}}{
 
-An array of 2x2 matrices for each of the 515 observations in the national_FPsource_data.
+An array of 2x2 matrices for each of the 558 observations in the national_FPsource_data.
 Each 2x2 array corresponds to the variance of the public and private sectors on the diagonal and their corresponding covariances on the off-diagonal.
 }
 }
