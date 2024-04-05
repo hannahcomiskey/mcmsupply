@@ -1,0 +1,96 @@
+---
+title: "Running a subnational level single-country model"
+output: 
+  rmarkdown::html_vignette:
+       toc: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Running a subnational level single-country model}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Load your library
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+library(mcmsupply)
+set.seed(1209)
+```
+
+
+## Load the data 
+
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+cleaned_data <- get_data(national=FALSE, local=TRUE,
+                         mycountry="Nepal")
+```
+
+
+## Get the JAGS model inputs and the cleaned data
+
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,
+                            nsegments=12, raw_data = cleaned_data)
+
+```
+
+
+## Run JAGS model and get posterior point estimates with uncertainty
+
+For speed and illustration purposes, we will use 10 iterations, with no burn in period and taking every third sample. This leaves only 9 samples. We DO NOT recommend this setting. The recommended settings are 40000 iterations, with 10000 burn in period and taking every 15th sample. This is commented out and listed underneath the below R code. 
+
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
+                       n_iter = 10, n_burnin = 1, n_thin = 3)
+                      # n_iter = 40000, n_burnin = 10000, n_thin = 15)
+```
+
+
+## Check the model diagnostics
+
+We use this to evaluate the convergence of the model parameters. We should expect to see R-hat values of approximately 1.05. The plot function will give you a visual summary for each parameter monitored. 
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
+
+var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
+  dplyr::mutate(chain = rep(1:2, each=2000)) %>%
+  dplyr::mutate(iteration = rep(1:2000, 2))
+
+ggplot2::ggplot(data=var) +
+  ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
+```
+
+
+
+Using the ggplot2 and tidybayes R packages, we will check the trace plots to assess the convergence of individual parameters.
+We expect to see a 'caterpillar' like appearance of the chains over the iterations. 
+
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plot(mod$JAGS)
+
+print(mod$JAGS)
+```
+
+
+## Plot posterior point estimates with uncertainty
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
+```
+
+
+## Pull out estimates that you are particularly interested in
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+estimates_2018 <- pull_estimates(model_output = mod, country = 'Nepal', year=2018)
+
+head(estimates_2018)
+```

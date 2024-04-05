@@ -1,0 +1,128 @@
+---
+title: "Running a national level single-country model with custom data"
+output: 
+  rmarkdown::html_vignette:
+       toc: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Running a national level single-country model with custom data}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Load your library
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+library(mcmsupply)
+library(dplyr)
+set.seed(1209)
+```
+
+## Try to use unsuitable data in the `get_data` function. 
+
+The `get_data` function throws an error indicating that the Method column is missing from the custom user-supplied data.
+
+We set 'national=TRUE' for national datasets. As this is a single country estimation, we will also set 'local=TRUE'. In multicountry estimation, we can set 'local=FALSE'. The pathway to the example custom dataset is given, replace this with the pathway of your example dataset. Lastly, state the name of the country you have custom data for.
+
+You will get an error when you run this function. The data we supplied does not have the Method column. The warning message is telling you to check your input as the column 'Method' is either missing or incorrectly named, along with many others.
+
+```{r, include=TRUE, message=FALSE, warning=FALSE, error=TRUE}
+
+cleaned_data <- get_data(national=TRUE, local=TRUE, 
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_national_data_bad.xlsx",
+                         mycountry="Ethiopia")
+```
+
+## Load suitable data into the `get_data` function
+
+We repeat the steps from above, but this time we will use the correctly formatted national dataset. 
+
+Success! In this instance, the data you wish to use for your estimation is correct and in the correct format. Therefore the function runs without an error message.
+
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+
+cleaned_data <- get_data(national=TRUE, local=TRUE, 
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_national_data_good.xlsx",
+                         mycountry="Ethiopia")
+```
+
+
+## Get the JAGS model inputs and the cleaned data
+
+The rest of the mcmsupply workflow is the exact same as in the other vignettes, we continue to set up our model inputs and run the JAGS model.
+
+```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,
+                            nsegments=12, raw_data = cleaned_data)
+
+```
+
+
+## Run JAGS model and get posterior point estimates with uncertainty
+
+For demonstartion purposes, the model settings are set too low, the suggested settings are commented out in the code below.
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, n_iter = 40, n_burnin = 10, n_thin = 1)
+                     # n_iter = 40000, n_burnin = 10000, n_thin = 15)
+```
+
+
+## Check the model diagnostics
+
+We use this to evaluate the convergence of the model parameters. We should expect to see R-hat values of approximately 1.05. The plot function will give you a visual summary for each parameter monitored. 
+
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plot(mod$JAGS)
+
+print(mod$JAGS)
+```
+
+
+Using the ggplot2 and tidybayes R packages, we will check the trace plots to assess the convergence of individual parameters.
+We expect to see a 'caterpillar' like appearance of the chains over the iterations. 
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
+
+var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1]`) %>%
+  dplyr::mutate(chain = rep(1:2, each=mod$JAGS$BUGSoutput$n.keep)) %>%
+  dplyr::mutate(iteration = rep(1:mod$JAGS$BUGSoutput$n.keep, 2))
+
+ggplot2::ggplot(data=var) +
+  ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1]`, color=as.factor(chain)))
+```
+
+
+
+## Plot posterior point estimates with uncertainty
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
+```
+
+
+## Pull out estimates that you are particularly interested in
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+estimates_2018 <- pull_estimates(model_output = mod, country = 'Ethiopia', year=2018)
+
+head(estimates_2018)
+```
+
+
+# Review the complete posterior sample of estimated method-supply shares
+
+This function will allow you to pull out the posterior sample of estimated method supply shares. The posterior sample will be of size 'nposterior'. Note that 'nposterior' should not be larger than your total iterations (given in 'run_jags_model') 
+In this example, we supply the JAGS model object and the JAGS input data to the function, we set 'nposterior=4' to pull out 4 posterior samples.
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+post_samps <- get_posterior_P_samps(jagsdata = pkg_data, model_output = mod, nposterior=4)
+
+head(post_samps)
+```

@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 library(mcmsupply)
 library(dplyr)
+set.seed(1209)
 ```
 
 ## Try to use unsuitable data. The `get_data` function throws an error indicating that the Method column is missing from the custom user-supplied data.
@@ -64,4 +65,15 @@ mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
 ```
+
+
+## Pull out estimates that you are particularly interested in
+
+```{r, include=TRUE, message=FALSE, eval=FALSE}
+estimates_2018 <- pull_estimates(model_output = mod, country = 'Ethiopia', year=2018)
+
+head(estimates_2018)
+```
+
+
 

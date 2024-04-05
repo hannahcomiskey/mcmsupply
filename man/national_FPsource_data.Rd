@@ -7,17 +7,23 @@
 \format{
 \subsection{\code{national_FPsource_data}}{
 
-A data frame with 2448 rows and 9 columns:
+A data frame with 562 rows and 15 columns:
 \describe{
-\item{year}{Year of survey}
 \item{Country}{Country names}
-\item{Super_region}{Sub-continent names}
 \item{Method}{Contraceptive method name}
 \item{average_year}{Average year of the survey}
-\item{sector_category}{Name of sector}
-\item{proportion}{Proportion supplied by the sector}
-\item{SE.proportion}{Standard error associated with the proportion}
-\item{n}{Sample size associated with the observation}
+\item{year}{Year of the survey}
+\item{country_code}{ISO country codes}
+\item{Public}{Proportion supplied by the Public sector}
+\item{se.Public}{Standard error of proportion supplied by the Public sector}
+\item{Public_n}{Sample size used to calculate proportion supplied by the Public sector}
+\item{Commercial_medical}{Proportion supplied by the private Commercial medical sector}
+\item{se.Commercial_medical}{Standard error of proportion supplied by the private Commercial medical sector}
+\item{Commercial_medical_n}{Sample size used to calculate proportion supplied by the private Commercial medical sector}
+\item{Other}{Proportion supplied by the private Other sector}
+\item{se.Other}{Standard error of proportion supplied by the private Other sector}
+\item{Other_n}{Sample size used to calculate proportion supplied by the private Other sector}
+\item{check_sum}{Check to see if proportions sum to 1}
 }
 }
 }

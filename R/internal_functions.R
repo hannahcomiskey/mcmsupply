@@ -163,17 +163,18 @@ clean_subnat_names <- function(fp2030=TRUE, raw_subnatdata) {
 #' @noRd
 
 country_index_fun <- function(my_data, my_countries) {
-  my_data$index_country <- NA
-  for (i in 1:length(my_countries)) {
+  # my_data$index_country <- NA
+  # for (i in 1:length(my_countries)) {
     for (j in 1:nrow(my_data)) {
-      country_name <- my_countries[i]
-      if(my_data$Country[j]==country_name) {
-        my_data$index_country[j] <- i
-      }
-      else {
-        next
-      }
-    }
+      my_data$index_country[j] <- which(my_countries == my_data$Country[j])
+      # country_name <- my_countries[i]
+      # if(my_data$Country[j]==country_name) {
+      #   my_data$index_country[j] <- i
+      # }
+      # else {
+      #   next
+      # }
+   # }
   }
   return(my_data)
 }
@@ -188,17 +189,20 @@ country_index_fun <- function(my_data, my_countries) {
 
 continent_index_fun <- function(my_data) {
   n_con <- as.character(unique(my_data$continent))
-  my_data$index_continent <- NA
-  for (i in 1:length(n_con)) {
-    for (j in 1:nrow(my_data)) {
-      con_name <- n_con[i]
-      if (my_data$continent[j] == con_name) {
-        my_data$index_continent[j] <- i
-      } else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+  my_data$index_continent[j] <- which(n_con == my_data$continent[j])
   }
+  # my_data$index_continent <- NA
+  # for (i in 1:length(n_con)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     con_name <- n_con[i]
+  #     if (my_data$continent[j] == con_name) {
+  #       my_data$index_continent[j] <- i
+  #     }  # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -263,24 +267,36 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     national_FPsource_data <- national_FPsource_data %>% dplyr::filter(Country %in% FP_2030_countries)
   }
 
+  # Add subcontinental information
+  area_classification <- mcmsupply::Country_and_area_classification
+
+  area_classification <- area_classification %>%
+    dplyr::select(`Country or area`, `Region`) %>%
+    dplyr::rename(Country = `Country or area`,
+                  Super_region = Region)
+
+  national_FPsource_data <- national_FPsource_data %>% dplyr::left_join(area_classification)
+
+  # Adding missing country world regions
+  national_FPsource_data <- national_FPsource_data %>%
+    dplyr::mutate(Super_region = dplyr::case_when(Country=="Bolivia" ~ "South America",
+                              Country=="Kyrgyz Republic" ~ "Central Asia",
+                              Country=="Moldova" ~ "Eastern Europe",
+                              TRUE ~ as.character(Super_region)))
+
   # Filter where the sample size is smaller than 2 people across all three sectors ---------
   FP_source_data_wide <- national_FPsource_data %>% # Proportion data
-    dplyr::ungroup() %>%
-    dplyr::select(Country, Super_region, Method,  average_year, sector_category, proportion, SE.proportion, n) %>%
-    tidyr::pivot_wider(names_from = sector_category, values_from = c(proportion, SE.proportion,n)) %>% # separate data into columns for each sector
-    dplyr::rename(Commercial_medical = proportion_Commercial_medical,
-                  Public = proportion_Public,
-                  Other = proportion_Other,
-                  Public.SE = SE.proportion_Public,
-                  Commercial_medical.SE = SE.proportion_Commercial_medical,
-                  Other.SE = SE.proportion_Other) %>%
-    dplyr::arrange(Country)
+    dplyr::filter(is.na(Country)==FALSE) %>% # Remove any rows with missing country names
+    dplyr::rename(Public.SE = se.Public,
+           Commercial_medical.SE = se.Commercial_medical,
+           Other.SE = se.Other) %>%
+    dplyr::select(Country, Super_region, Method,  average_year, Commercial_medical, Other, Public,  Commercial_medical.SE, Other.SE, Public.SE,  Commercial_medical_n, Other_n, Public_n)
 
   # Make sure proportions add to 1 ----------
   FP_source_data_wide <- FP_source_data_wide %>%
     dplyr::rowwise() %>%
     dplyr::mutate(check_total = sum(Commercial_medical, Other, Public, na.rm = TRUE)) %>%
-    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical, Other, Public, Commercial_medical.SE, Other.SE, Public.SE, n_Commercial_medical, n_Other, n_Public, check_total)
+    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical, Other, Public, Commercial_medical.SE, Other.SE, Public.SE, Commercial_medical_n, Other_n, Public_n, check_total)
 
   # When check_Total=1, replace missing values with 0 ----------
   col_index <- which(colnames(FP_source_data_wide)=="Commercial_medical")-1 # column index before CM column, as CM=1
@@ -296,7 +312,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::mutate(Commercial_medical = (Commercial_medical*(nrow(FP_source_data_wide)-1)+0.33)/nrow(FP_source_data_wide)) %>%   # Y and SE transformation to account for (0,1) limits (total in sector)
     dplyr::mutate(Other = (Other*(nrow(FP_source_data_wide)-1)+0.33)/nrow(FP_source_data_wide)) %>%
     dplyr::mutate(Public = (Public*(nrow(FP_source_data_wide)-1)+0.33)/nrow(FP_source_data_wide)) %>%
-    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical, Other, Public, Commercial_medical.SE, Other.SE, Public.SE, n_Other, n_Public, n_Commercial_medical, check_total) #, count_NA, remainder)
+    dplyr::select(Country, Super_region, Method, average_year, Commercial_medical, Other, Public, Commercial_medical.SE, Other.SE, Public.SE, Other_n, Public_n, Commercial_medical_n, check_total) #, count_NA, remainder)
 
   # Clean SE values --------------
   FP_source_data_wide$count_SE.NA <- rowSums(is.na(FP_source_data_wide %>% dplyr::select(Public.SE, Commercial_medical.SE, Other.SE))) # count NAs
@@ -305,28 +321,44 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   # Using binomial distribution approximation to estimate variance
   SE_source_data_wide_X <- SE_source_data_wide_X %>%
-    dplyr::filter(n_Public>=20 | n_Commercial_medical >=20 | n_Other >=20) # Remove small sample sizes (DHS has 10 units sampled per cluster as min., 20 as average)
+    dplyr::filter(Public_n>=20 | Commercial_medical_n >=20 | Other_n >=20) # Remove small sample sizes (DHS has 10 units sampled per cluster as min., 20 as average)
 
   col_index <- which(colnames(SE_source_data_wide_X)=="Commercial_medical.SE")-1 # column index before CM column, as CM=1
 
   if(nrow(SE_source_data_wide_X)>0) {
+  # Add in DEFT data to calculate variance
+  SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database)
+
+  # For an explanation fo this approach see: https://onlinestatbook.com/2/sampling_distributions/samp_dist_p.html
+
     for(i in 1:nrow(SE_source_data_wide_X)) {
-      SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Add DEFT data
-      num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
-      num.SEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
+      num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]<0.0001)
       num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
-      if(length(num.SE0)==1 & length(num.SEnon0)>0) {
-        mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,col_index+num.SEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
-        SE_source_data_wide_X[i,col_index+num.SE0] <- mean.SE
-      } else{
-        DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
-        N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
-        phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
-        SE.hat <- sqrt((phat*(1-phat))/(N1+1)) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
-        SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
-      }
+      DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
+      N1 <- sum(SE_source_data_wide_X[i, c('Other_n', 'Public_n', 'Commercial_medical_n')], na.rm=TRUE) # Number of women surveyed
+      phat <- 0.5/(N1+1) # Posterior mean of p under Jefferys prior for true prevalence of 0s.
+      SE.hat <- sqrt((phat*(1-phat))/N1) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
+      SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
     }
   }
+  # if(nrow(SE_source_data_wide_X)>0) {
+  #   for(i in 1:nrow(SE_source_data_wide_X)) {
+  #     SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Add DEFT data
+  #     num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
+  #     num.SEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
+  #     num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
+  #     if(length(num.SE0)==1 & length(num.SEnon0)>0) {
+  #       mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,col_index+num.SEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
+  #       SE_source_data_wide_X[i,col_index+num.SE0] <- mean.SE
+  #     } else{
+  #       DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
+  #       N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
+  #       phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
+  #       SE.hat <- sqrt((phat*(1-phat))/(N1+1)) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
+  #       SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
+  #     }
+  #   }
+  # }
 
   FP_source_data_wide <- dplyr::bind_rows(SE_source_data_wide_norm, SE_source_data_wide_X) # Put data back together again
 
@@ -335,6 +367,28 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
     dplyr::filter(is.na(Public)==FALSE & is.na(Other)==FALSE | is.na(Public)==FALSE & is.na(Commercial_medical)==FALSE | is.na(Commercial_medical)==FALSE & is.na(Other)==FALSE)
 
   FP_source_data_wide <- FP_source_data_wide %>% dplyr::arrange(Country, Super_region, Method, average_year)
+
+  # Match standard methods naming
+  FP_source_data_wide <- FP_source_data_wide %>%
+    dplyr::mutate(Method = dplyr::case_when(Method =="Female sterilization" ~ "Female Sterilization",
+                              Method=="Pill" ~ "OC Pills",
+                              TRUE ~ as.character(Method)))
+
+  # Apply row-ids for pulling out covariance matrices
+  FP_source_data_wide$row_id <- c(1:nrow(FP_source_data_wide))
+
+  method_order <- c("Female sterilization", "Implants", "Injectables", "IUD", "Pill" ) # As per the method correlation matrix
+  n_method <- c("Female Sterilization","Implants", "Injectables", "IUD","OC Pills")
+  row_order <- mcmsupply::national_varcov_order_bivarlogitnormal # Order of variance covariance matrices arrays
+  row_order <- row_order %>% dplyr::left_join(area_classification) %>%
+    dplyr::mutate(Super_region = dplyr::case_when(Country=="Bolivia" ~ "South America",
+                                                  Country=="Kyrgyz Republic" ~ "Central Asia",
+                                                  Country=="Moldova" ~ "Eastern Europe",
+                                                  TRUE ~ as.character(Super_region)))
+  if(local==TRUE) {
+    row_order <- row_order %>% dplyr::filter(Country==mycountry)
+    }
+  FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide)
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
     message(paste0("Getting data for ",mycountry))
@@ -356,11 +410,12 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
   if(local==TRUE & is.null(mycountry)==FALSE) {
     local_parms <- get_national_local_parameters(mycountry=mycountry) # Get parameters for local informative priors for national data
     jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
-                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
+                     # se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
+                      Sigma_y = local_parms$Sigma_y,
                       alphahat_region = local_parms$alphahat_region,
                       tau_alphahat_cms = local_parms$tau_alphahat_cms,
-                      natRmat = local_parms$natRmat, # dwish on inverse
-                      natdf = length(pkg_data$n_method)+3,
+                      inv.sigma_delta = local_parms$natRmat, # dwish on inverse
+                      #natdf = length(pkg_data$n_method)+3,
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
                       n_years = pkg_data$n_years,
@@ -369,16 +424,15 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
                       H = pkg_data$H,
                       M_count = pkg_data$M_count,
                       matchmethod = pkg_data$matchmethod,
-                      matchyears = pkg_data$matchyears
-    )
+                      matchyears = pkg_data$matchyears)
   } else {
-    estimated_rho_matrix <- mcmsupply::national_estimated_correlations_logitnormal %>% # Get global correlations for national data
+    estimated_rho_matrix <- mcmsupply::national_estimated_correlations_bivarlogitnormal %>% # Get global correlations for national data
       dplyr::select(row, column, public_cor, private_cor)
     my_SE_rho_matrix <- estimated_rho_matrix %>%
       dplyr::select(public_cor, private_cor)
     jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
-                      se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
-                      rho = my_SE_rho_matrix,
+                      Sigma_y = pkg_data$Sigma_y, # supply bivariate covariances
+                      rho = my_SE_rho_matrix, # cross-method correlations
                       kstar = pkg_data$kstar,
                       B.ik = pkg_data$B.ik,
                       n_years = pkg_data$n_years,
@@ -407,25 +461,29 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
 get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
 
   # Read in national alpha estimates ---------------------------------
-  median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_logitnormal # read in regional-level (alpha_rms) median estimates
-  precision_alpha_country_intercepts <- mcmsupply::national_tau_alpha_cms_hat_logitnormal # read in country-level (alpha_cms) precision estimates
-  Bspline_sigma_matrix_median <- mcmsupply::national_sigma_delta_hat_logitnormal # read in national level correlations
+  median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_bivarlogitnorm # read in regional-level (alpha_rms) median estimates
+  precision_alpha_country_intercepts <- mcmsupply::national_tau_alpha_cms_hat_bivarlogitnorm # read in country-level (alpha_cms) precision estimates
+  Bspline_sigma_matrix_median <- mcmsupply::national_inv_sigma_delta_hat_bivarlogitnorm # read in national level correlations
   mydata <- get_national_data(fp2030=fp2030) # Read complete data set in without filtering for any country
 
   # Match regional intercepts to country names  ------------------------
   region_country_match <- mydata %>%
-    dplyr::select(Country, Super_region) %>%
+    dplyr::select(Country, Super_region, row_id) %>%
     dplyr::distinct() %>%
     dplyr::filter(Country==mycountry) # List of matching countries to super-regions
-
-  mydata <- superregion_index_fun(mydata, unique(mydata$Super_region))
+  # allregions <- unique(mydata$Super_region)[which(is.na(unique(mydata$Super_region))==FALSE)] # Remove any NAs
+  # mydata <- superregion_index_fun(mydata, allregions)
   region_index_table <- tibble::tibble(Super_region = unique(mydata$Super_region), index_superregion = unique(mydata$index_superregion))
   dimnames(median_alpha_region_intercepts)[[3]] <- as.list(unlist(region_index_table$Super_region)) # Apply region names to parameter estimates
-  myalpha_med <- median_alpha_region_intercepts[,,region_country_match$Super_region] # Take out relevant region
+  myalpha_med <- median_alpha_region_intercepts[,,unique(region_country_match$Super_region)] # Take out relevant region
+
+  # Get country-specific covariance matrix
+  mySigma_y <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal[,,region_country_match$row_id]
 
   return(list(alphahat_region = myalpha_med,
               tau_alphahat_cms = precision_alpha_country_intercepts,
-              natRmat = Bspline_sigma_matrix_median))
+              natRmat = Bspline_sigma_matrix_median,
+              Sigma_y = mySigma_y))
 }
 
 #' Get JAGS model inputs
@@ -453,7 +511,6 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
 get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
 
   clean_FPsource <- standard_method_names(raw_data) # Standardizing method names
-
   n_method <- c("Female Sterilization", "Implants", "Injectables", "IUD", "OC Pills" ) # As per the method correlation matrix
   n_country <- unique(clean_FPsource$Country)
   n_superregion <- unique(clean_FPsource$Super_region)
@@ -515,14 +572,14 @@ get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990
   clean_FPsource <- clean_FPsource %>%
     dplyr::rowwise() %>%
     dplyr::mutate(logit.Public = log(Public/(1-Public)),
-           logit.CM = log(Commercial_medical/(1-Commercial_medical)),
-           logit.Public.Var = ((1/(Public*(1-Public)))^2)*Public.SE^2,
-           logit.Public.SE = sqrt(logit.Public.Var),
-           logit.CM.Var = ((1/(Commercial_medical*(1-Commercial_medical)))^2)*Commercial_medical.SE^2,
-           logit.CM.SE = sqrt(logit.CM.Var)
+           logit.CM = log(Commercial_medical/(1-Commercial_medical))
     )
 
+  # Get bivariate covariance matrices
+  logit.varcov_array <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal
+
   return(list(data = clean_FPsource,
+              Sigma_y = logit.varcov_array,
               tstar = T_star$index_year,
               kstar = Kstar,
               B.ik = B.ik,
@@ -1032,7 +1089,7 @@ get_subnational_global_P_samps <- function() {
 
 #' Combines the data sources to create one JAGS input list
 #' @name get_subnational_JAGSinput_list
-#' @param pkg_data The data list from the 'mcmsupply::get_national_modelinputs' function.
+#' @param pkg_data The data list from the 'mcmsupply::get_subnational_modelinputs' function.
 #' @param local TRUE/FALSE. Default is FALSE for global runs. Decides if this is a single-country or global run.
 #' @param mycountry The name of country of interest. Default is NULL. For the names of potential countries, review vignette.
 #' @return returns a list ready for input into the JAGS model
@@ -1535,18 +1592,21 @@ get_subnational_r_z_samples <- function(pkg_data, local=FALSE, n_chain) {
 #' @noRd
 
 method_index_fun <- function(my_data, my_methods) {
-  my_data$index_method <- rep(NA, nrow(my_data))
-  for (i in 1:length(my_methods)) {
-    for (j in 1:nrow(my_data)) {
-      method_name <- my_methods[i]
-      if(my_data$Method[j]==method_name) {
-        my_data$index_method[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+  my_data$index_method[j] <- which(my_methods == my_data$Method[j])
   }
+  # my_data$index_method <- rep(NA, nrow(my_data))
+  # for (i in 1:length(my_methods)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     method_name <- my_methods[i]
+  #     if(my_data$Method[j]==method_name) {
+  #       my_data$index_method[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1733,18 +1793,21 @@ plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE
 #' @noRd
 
 region_index_fun <- function(my_data, n_region) {
-  my_data$index_region <- NA
-  for (i in 1:length(n_region)) {
-    for (j in 1:nrow(my_data)) {
-      region_name <- n_region[i]
-      if(my_data$Region[j]==region_name) {
-        my_data$index_region[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+    my_data$index_region[j] <- which(n_region == my_data$Region[j])
   }
+  # my_data$index_region <- NA
+  # for (i in 1:length(n_region)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     region_name <- n_region[i]
+  #     if(my_data$Region[j]==region_name) {
+  #       my_data$index_region[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1785,7 +1848,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
   #write_jags_model(main_path=main_path, model_type = "national", local=local)
 
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    jags_file <- system.file("model", "singlecountry_national_logitnormal_model.jags", package = "mcmsupply")
+    jags_file <- system.file("model", "singlecountry_national_bivarlogitnormal_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
                         model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1796,7 +1859,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
     f <- file.path(tempdir(), paste0("mod_",mycountry,"_national_results.RDS"))
     saveRDS(mod, f)
   } else {
-    jags_file <- system.file("model", "multicountry_national_logit_normal_model.jags", package = "mcmsupply")
+    jags_file <- system.file("model", "multicountry_national_bivarlogit_normal_model.jags", package = "mcmsupply")
     mod <- R2jags::jags(data=myjagsdata,
                         parameters.to.save=jagsparams,
                         model.file = jags_file, #system.file(main_path, "/model.txt", package = "mcmsupply"),
@@ -1850,7 +1913,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
  for(chain in 1:n_chain){ ## Do chains separately ------------------------------
     set.seed(chain*1239)
     if(local==FALSE) { # multi-country subnational
-      jags_file <- system.file("model", "multicountry_subnational_logit_normal_model.jags", package = "mcmsupply")
+      jags_file <- system.file("model", "multicountry_subnational_logitnormal_model.jags", package = "mcmsupply")
       mod <- R2jags::jags(data = myjagsdata,
                           parameters.to.save = jagsparams,
                           model.file = jags_file,
@@ -1910,17 +1973,20 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
 #' @noRd
 
 sector_index_fun <- function(my_data, my_sectors) {
-  for (i in 1:length(my_sectors)) {
-    for (j in 1:nrow(my_data)) {
-      sector_name <- my_sectors[i]
-      if(my_data$sector_category[j]==sector_name) {
-        my_data$index_sector[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+    my_data$index_sector[j] <- which(my_sectors == my_data$sector_category[j])
   }
+  # for (i in 1:length(my_sectors)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     sector_name <- my_sectors[i]
+  #     if(my_data$sector_category[j]==sector_name) {
+  #       my_data$index_sector[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
 
@@ -1966,9 +2032,9 @@ subnat_index_fun <- function(my_data, my_subnat, my_country) {
       if(my_data$Country[j]==country_name & my_data$Region[j]==subnat_name) {
         my_data$index_subnat[j] <- i
       }
-      else {
-        next
-      }
+      # else {
+      #   next
+      # }
     }
   }
   return(my_data)
@@ -1977,22 +2043,26 @@ subnat_index_fun <- function(my_data, my_subnat, my_country) {
 #' Apply subcontinent indexing to data
 #' @name superregion_index_fun
 #' @param my_data National level family planning source data
-#' @param n_region A vector of subcontinents listed in the dataset
-#' @return Dataframe with subconintental indexing applied
+#' @param n_region A vector of subcontinents listed in the data set
+#' @return Dataframe with sub-conintental indexing applied
 #' @noRd
 
 superregion_index_fun <- function(my_data, n_region) {
-  my_data$index_superregion <- NA
-  for (i in 1:length(n_region)) {
-    for (j in 1:nrow(my_data)) {
-      region_name <- n_region[i]
-      if(my_data$Super_region[j]==region_name) {
-        my_data$index_superregion[j] <- i
-      }
-      else {
-        next
-      }
-    }
+  for (j in 1:nrow(my_data)) {
+    my_data$index_superregion[j] <- which(n_region == my_data$Super_region[j])
   }
+  # my_data$index_superregion <- NA
+  # for (i in 1:length(n_region)) {
+  #   for (j in 1:nrow(my_data)) {
+  #     region_name <- n_region[i]
+  #     if(my_data$Super_region[j]==region_name) {
+  #       my_data$index_superregion[j] <- i
+  #     }
+  #     # else {
+  #     #   next
+  #     # }
+  #   }
+  # }
   return(my_data)
 }
+
