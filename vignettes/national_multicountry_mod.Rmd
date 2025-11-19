@@ -33,6 +33,8 @@ cleaned_natdata <- get_data(national=TRUE)
 
 ## Get the JAGS model inputs and the cleaned data
 
+To run this you must have JAGS installed. See https://sourceforge.net/projects/mcmc-jags/ for download instructions.
+
 ```{r, include=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, 
                             nsegments=12, raw_data = cleaned_natdata)
@@ -46,8 +48,8 @@ For speed and illustration purposes, we will use 10 iterations, with no burn in 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
-                      n_iter = 5, n_burnin = 1, n_thin = 1)
-                     # n_iter = 80000, n_burnin = 10000, n_thin = 35)
+                      #n_iter = 5, n_burnin = 1, n_thin = 1)
+                     n_iter = 80000, n_burnin = 10000, n_thin = 35)
 ```
 
 
