@@ -163,18 +163,9 @@ clean_subnat_names <- function(fp2030=TRUE, raw_subnatdata) {
 #' @noRd
 
 country_index_fun <- function(my_data, my_countries) {
-  # my_data$index_country <- NA
-  # for (i in 1:length(my_countries)) {
-    for (j in 1:nrow(my_data)) {
+  my_data$index_country <- NA_integer_
+  for (j in 1:nrow(my_data)) {
       my_data$index_country[j] <- which(my_countries == my_data$Country[j])
-      # country_name <- my_countries[i]
-      # if(my_data$Country[j]==country_name) {
-      #   my_data$index_country[j] <- i
-      # }
-      # else {
-      #   next
-      # }
-   # }
   }
   return(my_data)
 }
@@ -188,21 +179,11 @@ country_index_fun <- function(my_data, my_countries) {
 #' @noRd
 
 continent_index_fun <- function(my_data) {
+  my_data$index_continent <- NA_integer_
   n_con <- as.character(unique(my_data$continent))
   for (j in 1:nrow(my_data)) {
   my_data$index_continent[j] <- which(n_con == my_data$continent[j])
   }
-  # my_data$index_continent <- NA
-  # for (i in 1:length(n_con)) {
-  #   for (j in 1:nrow(my_data)) {
-  #     con_name <- n_con[i]
-  #     if (my_data$continent[j] == con_name) {
-  #       my_data$index_continent[j] <- i
-  #     }  # else {
-  #     #   next
-  #     # }
-  #   }
-  # }
   return(my_data)
 }
 
@@ -341,24 +322,6 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
       SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
     }
   }
-  # if(nrow(SE_source_data_wide_X)>0) {
-  #   for(i in 1:nrow(SE_source_data_wide_X)) {
-  #     SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Add DEFT data
-  #     num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
-  #     num.SEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
-  #     num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
-  #     if(length(num.SE0)==1 & length(num.SEnon0)>0) {
-  #       mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,col_index+num.SEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
-  #       SE_source_data_wide_X[i,col_index+num.SE0] <- mean.SE
-  #     } else{
-  #       DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
-  #       N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
-  #       phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
-  #       SE.hat <- sqrt((phat*(1-phat))/(N1+1)) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
-  #       SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
-  #     }
-  #   }
-  # }
 
   FP_source_data_wide <- dplyr::bind_rows(SE_source_data_wide_norm, SE_source_data_wide_X) # Put data back together again
 
@@ -1592,6 +1555,7 @@ get_subnational_r_z_samples <- function(pkg_data, local=FALSE, n_chain) {
 #' @noRd
 
 method_index_fun <- function(my_data, my_methods) {
+  my_data$index_method <- NA_integer_
   for (j in 1:nrow(my_data)) {
   my_data$index_method[j] <- which(my_methods == my_data$Method[j])
   }
@@ -1793,21 +1757,10 @@ plot_subnational_point_estimates <- function(pkg_data, model_output, local=FALSE
 #' @noRd
 
 region_index_fun <- function(my_data, n_region) {
+  my_data$index_region <- NA_integer_
   for (j in 1:nrow(my_data)) {
     my_data$index_region[j] <- which(n_region == my_data$Region[j])
   }
-  # my_data$index_region <- NA
-  # for (i in 1:length(n_region)) {
-  #   for (j in 1:nrow(my_data)) {
-  #     region_name <- n_region[i]
-  #     if(my_data$Region[j]==region_name) {
-  #       my_data$index_region[j] <- i
-  #     }
-  #     # else {
-  #     #   next
-  #     # }
-  #   }
-  # }
   return(my_data)
 }
 
@@ -1973,6 +1926,7 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
 #' @noRd
 
 sector_index_fun <- function(my_data, my_sectors) {
+  my_data$index_sector <- NA_integer_
   for (j in 1:nrow(my_data)) {
     my_data$index_sector[j] <- which(my_sectors == my_data$sector_category[j])
   }
@@ -2025,6 +1979,7 @@ standard_method_names <- function(my_data) {
 #' @noRd
 
 subnat_index_fun <- function(my_data, my_subnat, my_country) {
+  my_data$index_subnat <- NA_integer_
   for (i in 1:length(my_subnat)) {
     for (j in 1:nrow(my_data)) {
       subnat_name <- my_subnat[i]
@@ -2048,21 +2003,10 @@ subnat_index_fun <- function(my_data, my_subnat, my_country) {
 #' @noRd
 
 superregion_index_fun <- function(my_data, n_region) {
+  my_data$index_superregion <- NA_integer_
   for (j in 1:nrow(my_data)) {
     my_data$index_superregion[j] <- which(n_region == my_data$Super_region[j])
   }
-  # my_data$index_superregion <- NA
-  # for (i in 1:length(n_region)) {
-  #   for (j in 1:nrow(my_data)) {
-  #     region_name <- n_region[i]
-  #     if(my_data$Super_region[j]==region_name) {
-  #       my_data$index_superregion[j] <- i
-  #     }
-  #     # else {
-  #     #   next
-  #     # }
-  #   }
-  # }
   return(my_data)
 }
 
