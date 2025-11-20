@@ -80,4 +80,10 @@ utils::globalVariables(c("Country",
                          "index_subnat",
                          "mod",
                          "sample_id",
-                         "p_samp"))
+                         "p_samp",
+                         "Status",
+                         "Type",
+                         "Year",
+                         "modern_method_source",
+                         "national_FPsource_data",
+                         "v005"))

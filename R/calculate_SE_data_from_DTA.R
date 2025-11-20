@@ -33,7 +33,7 @@
 #' @importFrom haven read_dta as_factor
 #' @importFrom dplyr mutate case_when filter group_by count rename %>%
 #' @importFrom tidyr pivot_wider
-#' @importFrom survey svydesign svyby svymean update
+#' @importFrom survey svydesign svyby svymean
 #' @importFrom stats vcov
 #' @importFrom tibble as_tibble
 #' @importFrom xlsx write.xlsx
@@ -164,7 +164,7 @@ calculate_SE_data_from_DTA <- function(filepath, myresultsfolder) {
   prop_mat <- merge(prop_mat, counts_wide)
 
   ## --- Export proportions ---
-  xlsx::write.xlsx(
+  openxlsx::write.xlsx(
     prop_mat,
     file.path(myresultsfolder, "proportions",
               paste0("prop_", country_code, "_", year, "_SEdf.xlsx"))
@@ -180,7 +180,7 @@ calculate_SE_data_from_DTA <- function(filepath, myresultsfolder) {
                   year = year)
 
   ## --- Export VCOV ---
-  xlsx::write.xlsx(
+  openxlsx::write.xlsx(
     vcov_matrix,
     file.path(myresultsfolder, "varcov",
               paste0("varcov_", country_code, "_", year, "_SEdf.xlsx"))

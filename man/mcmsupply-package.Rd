@@ -12,7 +12,7 @@ Family Planning programs and initiatives typically use nationally representative
 Useful links:
 \itemize{
   \item \url{https://hannahcomiskey.github.io/mcmsupply/}
-  \item \url{https://hannahcomiskey.github.io/mcmsupply/}
+  \item \url{https://github.com/hannahcomiskey/mcmsupply}
 }
 
 }

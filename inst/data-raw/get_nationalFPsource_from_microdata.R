@@ -244,7 +244,7 @@ my_SEdf$country_code <- country_code
 my_SEdf$year <- year
 my_SEdf <- merge(my_SEdf, counts)
 
-xlsx::write.xlsx(as.data.frame(my_SEdf), paste(folder, "/", country_code,"_", year, "_SEdf.xlsx" , sep=""))
+openxlsx::write.xlsx(as.data.frame(my_SEdf), paste(folder, "/", country_code,"_", year, "_SEdf.xlsx" , sep=""))
 
 
 ##############################################
