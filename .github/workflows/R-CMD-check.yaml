@@ -1,58 +1,74 @@
-# .github/workflows/R-CMD-check.yaml
-name: R-CMD-check
-
+# Workflow for checking R package, including rjags and rcsvcheck
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
 
+name: R-CMD-check
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,   r: 'release'}
-          - {os: ubuntu-latest,  r: 'devel'}
-          - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
+          - {os: macos-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'devel'}
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'oldrel-1'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      # 1. Checkout code
       - uses: actions/checkout@v3
 
-      # 2. Setup R
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
 
-      # 3. Install JAGS on Linux
-      - name: Install JAGS on Linux
+      # Install JAGS before rjags
+      - name: Install JAGS (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y jags
 
-      # 4. Install JAGS on macOS
-      - name: Install JAGS on macOS
+      - name: Install JAGS (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
           brew install jags
 
-      # 5. Install R package dependencies
+      # Install pak first for dependency resolution
+      - name: Install pak
+        run: Rscript -e 'install.packages("pak")'
+
+      # Install rcsvcheck from GitHub (if required)
+      - name: Install rcsvcheck from GitHub
+        run: |
+          Rscript -e 'if (!requireNamespace("remotes")) install.packages("remotes")'
+          Rscript -e 'remotes::install_github("username/rcsvcheck")'
+
+      # Install remaining dependencies via setup-r-dependencies
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rjags, rcsvcheck, any::rcmdcheck
+          extra-packages: rjags, rcmdcheck, covr, sessioninfo
 
-      # 6. Run R CMD check
-      - name: Check R package
-        uses: r-lib/actions/check-r-package@v2
+      # Check R package
+      - uses: r-lib/actions/check-r-package@v3
         with:
           upload-snapshots: true
+
+      # Show testthat output
+      - name: Show testthat output
+        if: always()
+        run: |
+          find ${{ runner.temp }}/package -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
