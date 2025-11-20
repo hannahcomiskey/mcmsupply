@@ -36,7 +36,7 @@
 #' @importFrom survey svydesign svyby svymean
 #' @importFrom stats vcov
 #' @importFrom tibble as_tibble
-#' @importFrom xlsx write.xlsx
+#' @importFrom openxlsx write.xlsx
 #'
 #' @examples
 #' \dontrun{
