@@ -1,108 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/404.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/local_national_mod.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/multi_national_mod.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/package_data.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/subnational_local_customdata_models.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/subnational_local_models.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/articles/subnational_multinational_models.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/index.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/motivation-letter.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/Bspline_sigma_matrix_median.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/Country_and_area_classification.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/country_names.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/estimated_global_subnational_correlations.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/estimated_national_correlations.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/get_data.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/get_subnational_modelinputs.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/mcmsupply-package.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/median_alpha_region_intercepts.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/median_alphacms.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_data.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_format.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/plot_estimates.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/precision_alpha_country_intercepts.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/run_jags_model.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/sigma_delta_hat.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnat_FPsource_data.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnat_FPsource_format.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/tau_alpha_pms_hat.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/trunc_national_FPsource_data.html</loc>
-  </url>
-  <url>
-    <loc>https://hannahcomiskey.github.io/mcmsupply/reference/trunc_subnat_FPsource_data.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/404.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/LICENSE-text.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/index.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/national_multicountry_mod.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/national_singlecountry_customdata_models.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/national_singlecountry_mod.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/package_data.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/subnational_multicountry_models.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/subnational_singlecountry_customdata_models.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/articles/subnational_singlecountry_models.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/authors.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/index.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/news/index.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/Country_and_area_classification.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/DEFT_DHS_database.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/calculate_SE_data_from_DTA.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/check_data_freshness.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/country_names.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/get_data.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/get_posterior_P_samps.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/get_subnational_modelinputs.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/harvest_dhs.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/index.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/mcmsupply-package.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_VARCOV_bivarlogitnormal.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_data.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_format.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_estimated_correlations_bivarlogitnormal.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_inv_sigma_delta_hat_bivarlogitnorm.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_tau_alpha_cms_hat_bivarlogitnorm.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_theta_rms_hat_bivarlogitnorm.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/national_varcov_order_bivarlogitnormal.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/plot_estimates.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/pull_estimates.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/run_jags_model.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnat_FPsource_data.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnat_FPsource_format.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnational_alpha_cms_hat.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnational_estimated_correlations.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnational_inv.sigma_delta_hat.html</loc></url>
+<url><loc>https://hannahcomiskey.github.io/mcmsupply/reference/subnational_tau_alpha_pms_hat.html</loc></url>
 </urlset>
+

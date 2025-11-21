@@ -1,15 +1,15 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  local_national_mod: local_national_mod.html
-  multi_national_mod: multi_national_mod.html
+  national_multicountry_mod: national_multicountry_mod.html
+  national_singlecountry_customdata_models: national_singlecountry_customdata_models.html
+  national_singlecountry_mod: national_singlecountry_mod.html
   package_data: package_data.html
-  subnational_local_customdata_models: subnational_local_customdata_models.html
-  subnational_local_models: subnational_local_models.html
-  subnational_multinational_models: subnational_multinational_models.html
-last_built: 2023-07-05T13:27Z
+  subnational_multicountry_models: subnational_multicountry_models.html
+  subnational_singlecountry_customdata_models: subnational_singlecountry_customdata_models.html
+  subnational_singlecountry_models: subnational_singlecountry_models.html
+last_built: 2025-11-21T00:25Z
 urls:
   reference: https://hannahcomiskey.github.io/mcmsupply/reference
   article: https://hannahcomiskey.github.io/mcmsupply/articles
-
