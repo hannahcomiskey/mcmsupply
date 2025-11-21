@@ -147,7 +147,7 @@ cleaned_SE_source <- cleaned_SE_source %>%
 load("~/Documents/R/mcmsupply/data/national_FPsource_data.rda") # load existing data
 
 # # # Save all observations before any filtering based on sample size
-joined_SE_source <- bind_rows(national_FPsource_data, cleaned_SE_source)
+joined_SE_source <- bind_rows(national_FPsource_data, cleaned_SE_source) %>%
 
 saveRDS(joined_SE_source, file="inst/data-raw/SE_source_data_2025.RDS")
 
@@ -470,7 +470,7 @@ trans_SE <- SE_source_data_wide_X %>%
 
 final_covar_df.new <- anti_join(final_covar_df, row_ids) # remove old rows from dataset
 final_covar_df.new <- rbind(final_covar_df.new, trans_SE) # replace with updated SE values
-final_covar_df.new <- final_covar_df.new %>% mutate(average_year = Year + 0.5)
+final_covar_df.new <- final_covar_df.new %>% mutate(average_year = Year + 0.5) %>% distinct()
 
 # Get unique combinations of variables to recreate matrices
 my_ids <- final_covar_df.new %>% ungroup() %>% select(Country, average_year, Method) %>% distinct()
@@ -495,7 +495,14 @@ for(i in 1:nrow(my_ids)[1]) {
 
 # Bind to existing data
 varcov.exist <- abind::abind(national_FPsource_VARCOV_bivarlogitnormal, varcov.new, along=3)
-my_ids.exist <- bind_rows(national_varcov_order_bivarlogitnormal, my_ids)
+my_ids.exist <- bind_rows(national_varcov_order_bivarlogitnormal, my_ids) %>%
+  group_by(Country, average_year, Method) %>%  # group first
+  mutate(unique_id = row_number()) %>% # count repititions
+  ungroup() %>%
+  mutate(row_id = 1:n()) %>% # assign an ID for each entry
+  filter(unique_id == 1) # only use the first ID for each combo
+
+varcov.exist <- varcov.exist[,,my_ids.exist$row_id] # extract unique entries as per above
 
 saveRDS(varcov.exist, file="inst/data-raw/national_FPsource_VARCOV_bivar.RDS")
 saveRDS(my_ids.exist, file='inst/data-raw/national_varcov_order_bivarlogitnormal.RDS')
@@ -530,7 +537,7 @@ transform_vcov_logit <- function(vcov_mat, p) {
 }
 
 # Delta method to transform covariance matrix ---------------------------
-varcov.logit <- array(dim = c(2, 2, nrow( my_ids.exist)))
+varcov.logit <- array(dim = c(2, 2, nrow(my_ids.exist)))
 for(i in 1:nrow(my_ids.exist)) {
   print(i)
   myid <- my_ids.exist[i,]

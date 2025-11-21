@@ -350,7 +350,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
                                                   TRUE ~ as.character(Super_region)))
   if(local==TRUE) {
     row_order <- row_order %>% dplyr::filter(Country==mycountry)
-    }
+  }
   FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide)
 
   if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
@@ -565,6 +565,8 @@ get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990
 }
 
 #' Get median and 95% credible interval for posterior samples of P from national JAGS model
+#' @importFrom stats median
+#' @importFrom stats quantile
 #' @name get_national_P_median_quantiles
 #' @param country_index_table Dataframe with country indexing applied. Used to match estimates to data.
 #' @param method_index_table Dataframe with method indexing applied. Used to match estimates to data.
@@ -923,6 +925,8 @@ get_subnational_global_P_CM <- function() {
 }
 
 #' Get median, 95% and 80% credible intervals for posterior samples of P from JAGS model
+#' @importFrom stats median
+#' @importFrom stats quantile
 #' @name get_subnational_global_P_estimates
 #' @param P_samp Output of the `mcmsupply::get_subnational_global_P_samps()` function.
 #' @param subnat_index_table Dataframe with subnational district indexing applied. Used to match estimates to data.
@@ -1107,6 +1111,8 @@ get_subnational_JAGSinput_list <- function(pkg_data, local= FALSE, mycountry=NUL
 }
 
 #' Get median, 95% and 80% credible intervals for posterior samples of P from local JAGS model
+#' @importFrom stats median
+#' @importFrom stats quantile
 #' @name get_subnational_local_P_estimates
 #' @param Psamps posterior samples of P for one sector from JAGS model
 #' @param param_names names of the parameters you wish to summarise

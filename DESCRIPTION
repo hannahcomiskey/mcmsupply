@@ -34,7 +34,6 @@ Imports:
     tidybayes,
     runjags,
     rjags,
-    stats,
     rlang,
     abind,
     dplyr,
