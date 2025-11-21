@@ -1,5 +1,6 @@
 url: "https://hannahcomiskey.github.io/mcmsupply/"
 template:
+  bootstrap: 5
   bootswatch: minty
   theme: breeze-light
   sidebar:
@@ -14,6 +15,8 @@ template:
           this material are those of the author(s) and do not necessarily reflect
           the views of the Science Foundation Ireland.
 
+build:
+  run_examples: false
+
 development:
   mode: auto
-
