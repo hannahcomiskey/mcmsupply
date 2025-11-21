@@ -1,4 +1,4 @@
-# Workflow for checking R package, including rjags and rcsvcheck
+# Workflow for checking R package, including rjags
 on:
   push:
     branches: [main, master]
@@ -33,7 +33,7 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
-      # Install JAGS before rjags
+      # Install JAGS for Linux and macOS
       - name: Install JAGS (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -46,27 +46,26 @@ jobs:
           brew update
           brew install jags
 
-      # Install pak first for dependency resolution
+      # Install pak for modern dependency management
       - name: Install pak
-        run: Rscript -e 'install.packages("pak")'
+        run: Rscript -e 'install.packages("pak", repos="https://cloud.r-project.org")'
 
-      # Install rcsvcheck from GitHub (if required)
-      - name: Install rcsvcheck from GitHub
-        run: |
-          Rscript -e 'if (!requireNamespace("remotes")) install.packages("remotes")'
-          Rscript -e 'remotes::install_github("username/rcsvcheck")'
-
-      # Install remaining dependencies via setup-r-dependencies
+      # Install package dependencies including rjags
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rjags, rcmdcheck, covr, sessioninfo
+          extra-packages: |
+            rcmdcheck
+            rjags
+            covr
+            sessioninfo
+          needs: check
 
-      # Check R package
+      # Run package checks
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
 
-      # Show testthat output
+      # Display testthat output
       - name: Show testthat output
         if: always()
         run: |
