@@ -164,27 +164,51 @@ calculate_SE_data <- function(filepath, myresultsfolder) {
 
 
 # List files in directory
-fileloc <- "vignettes/calculate_supplyshares_from_DTA/dta_files/" # Where I store my input .DTA files
-fileres <- "vignettes/calculate_supplyshares_from_DTA/"  # Where I store my output folders
-my_files <- list.files(fileloc) # gives the name of all the files in the fileloc pathway
+fileloc <- "~/Documents/Family Planning/DTA_files/2025/dta_files/"
+fileres <- "~/Documents/R/mcmsupply/inst/data-raw/calculate_supplyshares_from_DTA/"
 
-# This function will run through all the .DTA files in the my_files vector and apply the calculate_SE function
+my_files <- list.files(fileloc) # All files in the directory
+
+# Initialize dud list
 dud_list <- vector()
+
+# Required variables
+vars_needed <- c("v000","v007","v024","v313","v502","v312","v327",
+                 "v021","v023","v005")
+
 for(i in my_files) {
   print(i)
-  myfilepath <- paste0(fileloc, i) # create one filepath using the filename i and the fileloc
-  vars_needed <- c("v000","v007","v024","v313","v502","v312","v327",
-                   "v021","v023","v005")
-  test_data <- haven::read_dta(file = myfilepath, col_select = all_of(vars_needed))
-  if(is.null(unique(test_data$v023))==TRUE) { # The proportions need the strata column to be calculated
-    dud_list <- c(i, dud_list) # Lists all the files that failed the check. NOTE: I always review this as sometimes files just fail the check, but are actually okay
-    next
-  } else {
-    tryCatch({calculate_SE_data(filepath = myfilepath, myresultsfolder=fileres)}, error=function(e){
-      dud_list <- c(i, dud_list)
-      cat("ERROR :",conditionMessage(e), "\n") # Prints error message if a file gives an error within the function
-    })
-  }
-  saveRDS(dud_list, paste0(fileres, "/dud_jobrun.RDS")) # save the dudlist with the results
-}
+  myfilepath <- file.path(fileloc, i) # Construct full path
 
+  # Read only headers first to check
+  file_vars <- tryCatch({
+    names(haven::read_dta(myfilepath, n_max = 0))
+  }, error = function(e) {
+    warning(paste("Failed to read file:", i, " — skipping."))
+    dud_list <<- c(dud_list, i)
+    return(NULL)
+  })
+
+  # If failed to read headers, skip file
+  if(is.null(file_vars)) {
+    next
+  }
+
+  # Check if all required columns are present
+  if(!all(vars_needed %in% file_vars)) {
+    warning(paste("Missing required columns in file:", i, " — skipping."))
+    dud_list <- c(dud_list, i)
+    next
+  }
+
+  # Try running the function if columns are present
+  tryCatch({
+    calculate_SE_data(filepath = myfilepath, myresultsfolder = fileres)
+  }, error = function(e) {
+    warning(paste("Error processing file:", i, " —", conditionMessage(e)))
+    dud_list <<- c(dud_list, i)
+  })
+
+  # Save dud list after each iteration
+  saveRDS(dud_list, file.path(fileres, "dud_jobrun.RDS"))
+}

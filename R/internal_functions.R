@@ -268,9 +268,6 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
   # Filter where the sample size is smaller than 2 people across all three sectors ---------
   FP_source_data_wide <- national_FPsource_data %>% # Proportion data
     dplyr::filter(is.na(Country)==FALSE) %>% # Remove any rows with missing country names
-    dplyr::rename(Public.SE = se.Public,
-           Commercial_medical.SE = se.Commercial_medical,
-           Other.SE = se.Other) %>%
     dplyr::select(Country, Super_region, Method,  average_year, Commercial_medical, Other, Public,  Commercial_medical.SE, Other.SE, Public.SE,  Commercial_medical_n, Other_n, Public_n)
 
   # Make sure proportions add to 1 ----------

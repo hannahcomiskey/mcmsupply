@@ -1,3 +1,13 @@
+## Update 3
+══ Results ════════════════════════════════════════════════════════════════════════════════════════════════════════
+Duration: 7.2 s
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 20 ]
+
+- Updates to national data for new survey years
+- New functionality to check data freshness against latest available online
+
+
 ## Update 2
 
   Status: OK

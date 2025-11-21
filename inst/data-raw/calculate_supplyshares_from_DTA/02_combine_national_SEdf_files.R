@@ -127,7 +127,7 @@ cleaned_SE_source <- joined_df %>%
   mutate(year= ifelse(nchar(year)==2, year+1900, year))
 
 # Checking what surveys are present
-cleaned_SE_source %>% select(Country, year) %>% distinct()
+View(cleaned_SE_source %>% select(Country, year) %>% distinct())
 
 # Extracting the method we are interested in for now (removing condoms, other, emergency)
 cleaned_SE_source <- cleaned_SE_source %>%
@@ -143,30 +143,30 @@ cleaned_SE_source <- cleaned_SE_source %>%
                          "Injectable" = "Injectables")) %>%
   mutate(average_year = year + 0.5)
 
-# Load existing data to merge in new observations
-load("~/Documents/R/mcmsupply/data/national_FPsource_data.rda") # load existing data
+# # Load existing data to merge in new observations
+# load("~/Documents/R/mcmsupply/data/national_FPsource_data.rda") # load existing data
 
-# # # Save all observations before any filtering based on sample size
-joined_SE_source <- bind_rows(national_FPsource_data, cleaned_SE_source) %>%
+# # # # Save all observations before any filtering based on sample size
+# joined_SE_source <- bind_rows(national_FPsource_data, cleaned_SE_source)
 
-saveRDS(joined_SE_source, file="inst/data-raw/SE_source_data_2025.RDS")
+saveRDS(cleaned_SE_source, file="inst/data-raw/SE_source_data_2025.RDS")
 
 # # Removing observations with less than 15 sampling units
-SE15_source <- joined_SE_source %>%
+SE15_source <- cleaned_SE_source %>%
   filter(Public_n >=15 | Commercial_medical_n>=15 | Other_n >=15)
 included_groups <- SE15_source %>% select(Country, Method, average_year) %>% distinct()
-SE15_source1 <- left_join(included_groups, joined_SE_source)
+SE15_source1 <- left_join(included_groups, cleaned_SE_source)
 SE15_source1 <- collapse_methods_fun(SE15_source1)
 saveRDS(SE15_source1, file="inst/data-raw/SE_source_data_15_2025.RDS")
 
 # # Removing observations with less than 20 sampling units and keeping 3 sectors if at least one is >= 20.
 # # NOTE: I use this dataset in estimation
-SE20_source <- joined_SE_source %>%
+SE20_source <- cleaned_SE_source %>%
   filter(Public_n >=20 | Commercial_medical_n>=20 | Other_n >=20)
 included_groups <- SE20_source %>% select(Country, Method, average_year) %>% distinct()
-SE20_source1 <- left_join(included_groups, joined_SE_source)
+SE20_source1 <- left_join(included_groups, cleaned_SE_source)
 SE20_source1 <- collapse_methods_fun(SE20_source1)
-saveRDS(SE20_source1, file="inst/data-raw/national_FPsource_data.RDS")
+saveRDS(SE20_source1, file="inst/data-raw/SE_source_data_20_2025.RDS")
 
 
 #######################################################################
@@ -184,7 +184,6 @@ country_codes <- substr(my_SEestimate_files,8,9)
 # Match country codes and country to create new column in each file
 load("data/Country_and_area_classification.rda") # country codes and names
 year_codes <- gsub("(.*_){2}(\\d+)_.+", "\\2", my_SEestimate_files)
-
 
 # Hacky: Fixing up year-codes (this list evolved over time. Feel free to improve!)
 updated_year_codes <- vector()
@@ -283,7 +282,7 @@ saveRDS(varcov, file= "inst/data-raw/SE_source_data_VARCOV_2025.RDS") # save the
 # When running the mcmsupply R package, if you need to supply data use the proportions and this logit-transformed variance-covariance matrix
 
 # Read in the proportions data
-SE_source_data <- readRDS("inst/data-raw/national_FPsource_data.RDS") %>%
+SE_source_data <- readRDS("inst/data-raw/SE_source_data_20_2025.RDS") %>%
   rename(Public.SE = se.Public,
          Commercial_medical.SE = se.Commercial_medical,
          Other.SE = se.Other) # Bivariate setting
@@ -392,8 +391,7 @@ FP_source_data_wide <- FP_source_data_wide %>%
   mutate(index_year = match(average_year,all_years))
 
 # Read in variance array ------------------
-load("~/Documents/R/mcmsupply/data/national_FPsource_VARCOV_bivarlogitnormal.rda") # existing 3D format
-vcov_array <- readRDS('inst/data-raw/SE_source_data_VARCOV_2025.RDS')
+vcov_array <- readRDS('inst/data-raw/SE_source_data_VARCOV_2025.RDS') # new observations
 names_varcov <- readRDS('inst/data-raw/names_varcov_2025.RDS') # order of array as calculated
 country_codes <- tibble(Code = substr(names_varcov, 1,2)) # Extract country codes
 
@@ -405,26 +403,29 @@ year_codes <- word(names_varcov, 2, sep = "_")
 array_codes <- country_codes %>% mutate(Year = as.numeric(year_codes)) %>% rename(Country = 'Country Name') # Matches dim of var-cov to pull out index of array to match data.
 data_codes <- FP_source_data_wide %>% ungroup() %>% select(Country, Method, index_method, average_year) %>% mutate(Year = floor(average_year))
 
-cleaned_SE_source <- method_index_fun(cleaned_SE_source, n_method)
+FP_source_data_wide <- method_index_fun(FP_source_data_wide, n_method)
+saveRDS(FP_source_data_wide, file="inst/data-raw/national_FPsource_data.RDS")
 
 # Transform the variance-covariance array to a matrix containing all the observations in the correct order
 final_covar_df <- tibble()
-for(i in 1:nrow(cleaned_SE_source)) { # newly added proportions data from above
-  tmp <- cleaned_SE_source[i,]
+for(i in 1:nrow(FP_source_data_wide)) { # newly added proportions data from above
+  tmp <- FP_source_data_wide[i,]
   mycountry <- tmp$Country
-  myyear <- tmp$year #as.numeric(tmp$average_year)-0.5 # match var-covar file names
+  myyear <- floor(tmp$average_year)
   mymethod <- tmp$index_method
   array_num <- which(array_codes$Country==mycountry & array_codes$Year==myyear)
-  varcov_mat_tmp <- vcov_array[,,mymethod,array_num]
-  SE_vals <- sqrt(diag(varcov_mat_tmp))
-  cov_vals <- c(varcov_mat_tmp[1,2], varcov_mat_tmp[2,1])
-  mytib <- tibble(Country = mycountry,
+  if(length(array_num)!=0) { # if it is newly added data
+    varcov_mat_tmp <- vcov_array[,,mymethod,array_num]
+    SE_vals <- sqrt(diag(varcov_mat_tmp))
+    cov_vals <- c(varcov_mat_tmp[1,2], varcov_mat_tmp[2,1])
+    mytib <- tibble(Country = mycountry,
                     Year = myyear,
                     Method = n_method[mymethod],
                     Sector = c('Public', 'Commercial_medical'),
                     SE_obs = SE_vals,
                     Covar_obs = cov_vals)
-  final_covar_df <- rbind(final_covar_df, mytib)
+    final_covar_df <- rbind(final_covar_df, mytib)
+  }
 }
 
 
@@ -493,43 +494,31 @@ for(i in 1:nrow(my_ids)[1]) {
   solve(varcov.new[,,i]) # check for suitability in dmnorm
 }
 
-# Bind to existing data
-varcov.exist <- abind::abind(national_FPsource_VARCOV_bivarlogitnormal, varcov.new, along=3)
-my_ids.exist <- bind_rows(national_varcov_order_bivarlogitnormal, my_ids) %>%
-  group_by(Country, average_year, Method) %>%  # group first
-  mutate(unique_id = row_number()) %>% # count repititions
-  ungroup() %>%
-  mutate(row_id = 1:n()) %>% # assign an ID for each entry
-  filter(unique_id == 1) # only use the first ID for each combo
+saveRDS(varcov.new, file="inst/data-raw/national_FPsource_VARCOV_bivar.RDS")
+saveRDS(my_ids, file='inst/data-raw/national_varcov_order_bivarlogitnormal.RDS')
 
-varcov.exist <- varcov.exist[,,my_ids.exist$row_id] # extract unique entries as per above
-
-saveRDS(varcov.exist, file="inst/data-raw/national_FPsource_VARCOV_bivar.RDS")
-saveRDS(my_ids.exist, file='inst/data-raw/national_varcov_order_bivarlogitnormal.RDS')
-
-
-# Assume you have a 2x2 variance-covariance matrix 'vcov_mat' (observed varcov)
-# and a vector of parameter estimates 'beta' (observed proportions)
-# Define the logistic function
+# Assume you have a 2x2 variance-covariance matrix 'vcov_mat' (observed varcov) and a vector of parameter estimates 'beta' (observed proportions)
+# Define logistic function and its derivative
 logit <- function(p) {
   return(log(p / (1 - p)))
 }
 
-# Compute the derivative of the logit function
 grad_logit <- function(p) {
-  return(1 / (p * (1 - p)))
+  return( 1 / (p * (1 - p)))
 }
 
-# Transform the 2x2 variance-covariance matrix onto the logit scale (https://www.stat.rice.edu/~dobelman/notes_papers/math/TaylorAppDeltaMethod.pdf)
+# Function to transform 2x2 covariance matrix to logit scale
 transform_vcov_logit <- function(vcov_mat, p) {
-  # Calculate the gradient of the logit function
+  # Compute gradient
   J <- grad_logit(p)
 
-  # Transform the variance-covariance matrix onto the logit scale
-  vcov_logit <- matrix(NA, nrow=dim(vcov_mat)[1], ncol=dim(vcov_mat)[2])
-  for(i in 1:dim(vcov_mat)[1]) {
-    for(j in 1:dim(vcov_mat)[2]) {
-      vcov_logit[i,j] <- J[i]* J[j] *vcov_mat[i,j]
+  # Initialize transformed matrix
+  vcov_logit <- matrix(NA, nrow = nrow(vcov_mat), ncol = ncol(vcov_mat))
+
+  # Element-wise delta method
+  for(i in 1:nrow(vcov_mat)) {
+    for(j in 1:ncol(vcov_mat)) {
+      vcov_logit[i,j] <- J[i] * J[j] * vcov_mat[i,j]
     }
   }
 
@@ -537,26 +526,61 @@ transform_vcov_logit <- function(vcov_mat, p) {
 }
 
 # Delta method to transform covariance matrix ---------------------------
-varcov.logit <- array(dim = c(2, 2, nrow(my_ids.exist)))
-for(i in 1:nrow(my_ids.exist)) {
+varcov.logit <- array(dim = c(2, 2, nrow(my_ids)))
+
+for(i in 1:nrow(my_ids)) {
   print(i)
-  myid <- my_ids.exist[i,]
 
-  my_p <- FP_source_data_wide %>% # Get public and private sectors
-    select(Country, average_year, Method, Public, Commercial_medical) %>%
-    filter(Country==myid$Country & average_year==myid$average_year &  Method==myid$Method) %>%
+  myid <- my_ids[i,]
+
+  # Extract observed proportions
+  my_p <- FP_source_data_wide %>%
+    filter(Country == myid$Country,
+           average_year == myid$average_year,
+           Method == myid$Method) %>%
     select(Public, Commercial_medical) %>%
-    unlist() %>% as.vector()
+    unlist() %>%
+    as.vector()
 
-  myvcov <- varcov.exist[,,i]
+  # Extract covariance matrix
+  myvcov <- varcov.new[,,i]
 
+  # Apply delta-method logit transformation
   covmat_tmp <- transform_vcov_logit(myvcov, my_p)
 
-  solve(covmat_tmp)
+  # Safeguards
 
+  # 1. Check for NA/Inf values
+  if(any(!is.finite(covmat_tmp))) {
+    stop(paste0("covmat_tmp contains NA/Inf at index i=", i))
+  }
+
+  # 2. Force symmetry
+  covmat_tmp <- (covmat_tmp + t(covmat_tmp)) / 2
+
+  # 3. Check condition number
+  cond_number <- kappa(covmat_tmp, exact = TRUE)
+  if(cond_number > 1e12) {
+    warning(paste0("covmat_tmp is ill-conditioned (κ = ", format(cond_number, digits=3),
+                   ") at index i=", i, ". Applying ridge regularisation."))
+  }
+
+  # 4. Add small ridge regularisation to stabilise inversion
+  ridge <- 1e-8
+  covmat_tmp <- covmat_tmp + diag(ridge, nrow(covmat_tmp))
+
+  # 5. Attempt inversion safely
+  tryCatch({
+    solve(covmat_tmp)
+  }, error = function(e){
+    stop(paste0("Matrix still singular at index i=", i, ". Inspect data."))
+  })
+
+  # Store stabilized covariance
   varcov.logit[,,i] <- covmat_tmp
-
 }
 
-# These are the logit transformed variance-covariance matrices to be used in the mcmsupply R package
+# -----------------------------
+# Save results
+# -----------------------------
 saveRDS(varcov.logit, file="inst/data-raw/national_FPsource_VARCOV_bivarlogitnormal.RDS")

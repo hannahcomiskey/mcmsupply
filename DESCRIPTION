@@ -3,7 +3,7 @@ Type: Package
 Title: Estimating Public and Private Sector Contraceptive Market Supply Shares
 Version: 1.0.2
 Authors@R:
-    c(person("Hannah", "Comiskey", email="hannah.comiskey.2015@mumail.ie", 
+    c(person("Hannah", "Comiskey", email="hannahcomiskey68@gmail.com", 
     role = c("aut", "cre")),
     person("Niamh", "Cahill", role = "aut"),
     person("Leontine", "Alkema", role ="aut"))
