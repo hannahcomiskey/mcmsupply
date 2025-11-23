@@ -35,4 +35,6 @@ https://arxiv.org/abs/2212.03844
  <!-- badges: start -->
   [![R-CMD-check](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml)
   <!-- badges: end -->
- 
+
+ ## Acknowledgements
+ This package was developed during the 2025 NUMBAT Hackathon. We thank [Monash NUMBATs](https://numbat.space/) and [Monash EBS](https://www.monash.edu/business/ebs) for organising the event and providing resources that enabled collaborative development.
