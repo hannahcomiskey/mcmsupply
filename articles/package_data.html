@@ -112,6 +112,8 @@ runs</a> <code>subnational_alpha_cms_hat</code>,
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahcomiskey.github.io/mcmsupply/">mcmsupply</a></span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: replacing previous import 'stats::filter' by 'dplyr::filter' when</span></span>
+<span><span class="co">## loading 'mcmsupply'</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="section">
@@ -130,7 +132,7 @@ there is a vignette
 <code>inst/data-raw</code> folder that explains how the national level
 data was calculated using the DHS micro-data. A similar approach was
 used for the subnational data using IPUMS data.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">national_FPsource_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 21</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># Rowwise: </span></span></span>
@@ -147,7 +149,7 @@ used for the subnational data using IPUMS data.</p>
 <span><span class="co">## <span style="color: #949494;">#   check_sum &lt;dbl&gt;, count_SE.NA &lt;dbl&gt;, DEFT &lt;dbl&gt;, row_id &lt;int&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   index_country &lt;int&gt;, index_region &lt;int&gt;, index_method &lt;int&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   index_year &lt;int&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subnat_FPsource_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       Country     Region               Method average_year  sector_categories</span></span>
 <span><span class="co">## 1 Afghanistan Badakhshan Female Sterilization       2015.5 Commercial_medical</span></span>
@@ -177,7 +179,7 @@ low-level divisions (country) and higher-level divisions (sub-regions,
 regions). After loading the package, enter
 <code>Country and area classification</code> into the console to access
 this data.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Country_and_area_classification</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 231 × 8</span></span></span>
 <span><span class="co">##    `Country or area`   `ISO Code` `Major area`         Region `Developed region`</span></span>
@@ -195,7 +197,7 @@ this data.</p>
 <span><span class="co">## <span style="color: #949494;"># ℹ 221 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: `Least developed country` &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   `Sub-Saharan Africa` &lt;chr&gt;, FP2020 &lt;chr&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="op">?</span><span class="va">Country_and_area_classification</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -210,7 +212,7 @@ this data.</p>
 the national and subnational administrative division in the preloaded
 data of the mcmsupply package. After loading the package, enter
 <code>country_names</code> into the console to access this data.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">country_names</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 30 × 3</span></span></span>
 <span><span class="co">##    `Country names`              National level data ava…¹ Subnational level da…²</span></span>
@@ -228,7 +230,7 @@ data of the mcmsupply package. After loading the package, enter
 <span><span class="co">## <span style="color: #949494;"># ℹ 20 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ abbreviated names: ¹​`National level data available`,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   ²​`Subnational level data available`</span></span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="op">?</span><span class="va">country_names</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -246,7 +248,7 @@ subnational level. For an example of how to calculate the subnational
 correlations, please review the
 <code>inst/data-raw/estimated_global_subnational_correlations.R</code>
 script.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">mcmsupply</span><span class="fu">::</span><span class="va"><a href="../reference/national_estimated_correlations_bivarlogitnormal.html">national_estimated_correlations_bivarlogitnormal</a></span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 4</span></span></span>
 <span><span class="co">##    row         column               public_cor private_cor</span></span>
@@ -276,7 +278,7 @@ how we calculated these correlations at the subnational level, please
 review the
 <code>inst/data-raw/estimated_global_subnational_correlations.R</code>
 script.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subnational_estimated_correlations</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 4</span></span></span>
 <span><span class="co">##    row         column               public_cor private_cor</span></span>
@@ -309,7 +311,7 @@ associated variance with these country-specific intercepts.
 variance-covariance matrix used to inform the multivariate normal prior
 describing the first-order differences of the spline coefficients
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\delta_{k}</annotation></semantics></math>).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">national_theta_rms_hat_bivarlogitnorm</span></span></code></pre></div>
 <pre><code><span><span class="co">## , , 1</span></span>
 <span><span class="co">## </span></span>
@@ -346,10 +348,10 @@ describing the first-order differences of the spline coefficients
 <span><span class="co">##          [,1]     [,2]     [,3]      [,4]      [,5]</span></span>
 <span><span class="co">## [1,] 1.103074 1.788250 1.904318 0.4001253 0.1891328</span></span>
 <span><span class="co">## [2,] 5.068090 6.166153 3.337933 6.1742769 2.1654082</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">national_tau_alpha_cms_hat_bivarlogitnorm</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1.5156756 0.4571958</span></span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">national_inv_sigma_delta_hat_bivarlogitnorm</span></span></code></pre></div>
 <pre><code><span><span class="co">## , , 1</span></span>
 <span><span class="co">## </span></span>
@@ -387,7 +389,7 @@ with these province-specific intercepts.
 variance-covariance matrix used to inform the multi-variate normal prior
 on first-order differences of the spline coefficients for the
 one-country subnational model.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subnational_alpha_cms_hat</span></span></code></pre></div>
 <pre><code><span><span class="co">## , , Benin</span></span>
 <span><span class="co">## </span></span>
@@ -526,10 +528,10 @@ one-country subnational model.</p>
 <span><span class="co">##          [,1]     [,2]     [,3]     [,4]      [,5]</span></span>
 <span><span class="co">## [1,] 1.317705 1.758903 2.014544 1.552914 0.9099968</span></span>
 <span><span class="co">## [2,] 3.732717 4.927628 3.146861 4.686576 1.7962100</span></span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subnational_tau_alpha_pms_hat</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2.035571 1.507170</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subnational_inv.sigma_delta_hat</span></span></code></pre></div>
 <pre><code><span><span class="co">## , , 1</span></span>
 <span><span class="co">## </span></span>

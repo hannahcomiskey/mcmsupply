@@ -28,6 +28,9 @@ runs, and national and subnational family planning source data.
 library(mcmsupply)
 ```
 
+    ## Warning: replacing previous import 'stats::filter' by 'dplyr::filter' when
+    ## loading 'mcmsupply'
+
 ## 
 
 ## Family planning source data

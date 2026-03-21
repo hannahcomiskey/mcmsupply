@@ -34,7 +34,7 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Hannah Comiskey <hannah.comiskey.2015@mumail.ie>
+**Maintainer**: Hannah Comiskey <hannahcomiskey68@gmail.com>
 
 Authors:
 
