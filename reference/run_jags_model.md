@@ -67,16 +67,11 @@ returns the jags model object
 # \donttest{
 raw_data <- get_data(national=TRUE, local=TRUE, mycountry="Nepal")
 #> Using preloaded dataset!
-#> Joining with `by = join_by(Country)`
-#> Joining with `by = join_by(Country)`
-#> Joining with `by = join_by(Country, average_year, Method, Super_region)`
-#> Getting data for Nepal
+#> Error in dplyr::select(., `Country or area`, Region): Can't select columns that don't exist.
+#> ✖ Column `Country or area` doesn't exist.
 jagsdata <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12, raw_data)
+#> Error: object 'raw_data' not found
 run_jags_model(jagsdata, n_iter=5, n_burnin=1, n_thin=1)
-#> Using preloaded dataset!
-#> Joining with `by = join_by(Country)`
-#> Joining with `by = join_by(Country)`
-#> Joining with `by = join_by(Country, average_year, Method, Super_region)`
-#> Error in dimnames(median_alpha_region_intercepts) <- `*vtmp*`: length of 'dimnames' [3] not equal to array extent
+#> Error: object 'jagsdata' not found
 # }
 ```

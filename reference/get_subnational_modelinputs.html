@@ -96,9 +96,10 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using preloaded dataset!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country, average_year)`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Getting data for Nepal</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country)`</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::select(., `Country or area`, Region):</span> Can't select columns that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `Country or area` doesn't exist.</span>
 <span class="r-in"><span><span class="va">jagsdata</span> <span class="op">&lt;-</span> <span class="fu">get_modelinputs</span><span class="op">(</span>startyear<span class="op">=</span><span class="fl">1990</span>, endyear<span class="op">=</span><span class="fl">2030.5</span>, nsegments<span class="op">=</span><span class="fl">12</span>, <span class="va">raw_data</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding missing grouping variables: `Country`, `index_country`</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'raw_data' not found</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
