@@ -1,0 +1,17 @@
+# subnational_tau_alpha_pms_hat The median estimates of the precision for the subnational-level country, sector-, method-specific intercepts in the multi-country subnational model. This vector is used to inform the precision in the Normal prior of the subnational-level intercept in single-country subnational models.
+
+subnational_tau_alpha_pms_hat The median estimates of the precision for
+the subnational-level country, sector-, method-specific intercepts in
+the multi-country subnational model. This vector is used to inform the
+precision in the Normal prior of the subnational-level intercept in
+single-country subnational models.
+
+## Usage
+
+``` r
+subnational_tau_alpha_pms_hat
+```
+
+## Format
+
+A vector of two precision estimates

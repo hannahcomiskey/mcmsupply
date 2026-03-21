@@ -1,0 +1,199 @@
+# mcmsupply
+
+`mcmsupply` is a R package that enables users to estimate the public and
+private sector contributions to the modern contraceptive method market
+supplies over time in low- and middle-income countries. `mcmsupply` uses
+Bayesian hierarchical models, combined with cross-method correlations to
+maximise the precision of model estimates, even in data-sparse settings.
+This R package has functionality for users to estimate an individual
+country’s market supply shares or run more complex multi-country models.
+The data and JAGS models are available at the national and subnational
+administration levels. Lastly, there is functionality available for
+users to supply custom datasets if they wish.
+
+## Zenodo link
+
+[![DOI](https://zenodo.org/badge/473641889.svg)](https://zenodo.org/badge/latestdoi/473641889)
+
+## Installation
+
+The package can be installed by cloning this repository
+`git clone https://github.com/hannahcomiskey/mcmsupply.git` and then
+running `devtools::install()`
+
+or using the R command `install.packages("mcmsupply")`
+
+## Motivation
+
+Quantifying the public/private sector supply of contraceptive methods
+within countries is vital for effective and sustainable family planning
+(FP) delivery. In many low and middle-income countries (LMIC), measuring
+the contraceptive supply source often relies on Demographic Health
+Surveys (DHS). However, many of these countries carry out the DHS
+approximately every 3-5 years and do not have recent data beyond
+2015/16. Our objective in estimating the set of related contraceptive
+supply-share outcomes (proportion of modern contraceptive methods
+supplied by the public/private sectors) is to take advantage of latent
+attributes present in dataset to produce annual, country-specific
+estimates and projections with uncertainty. We propose a Bayesian,
+hierarchical, penalized-spline model with multivariate-normal spline
+coefficients to capture cross-method correlations. Our approach offers
+an intuitive way to share information across countries and
+sub-continents, model the changes in the contraceptive supply share over
+time, account for survey observational errors and produce probabilistic
+estimates and projections that are informed by past changes in the
+contraceptive supply share as well as correlations between rates of
+change across different methods. These results will provide valuable
+information for evaluating FP program effectiveness. To the best of our
+knowledge, it is the first model of its kind to estimate these
+quantities.
+
+Keywords: Bayesian, family planning, splines, correlation, hierarchical,
+time-series
+
+## Citation and link to the national contraceptive method supply share model paper
+
+Comiskey, Hannah, Alkema, Leontine, and Cahill, Niamh. “Estimating the
+proportion of modern contraceptives supplied by the public and private
+sectors using a Bayesian hierarchical penalized spline model.” arXiv
+preprint arXiv:2212.03844 (2022).
+
+<https://arxiv.org/abs/2212.03844>
+
+## mcmsupply R package website
+
+[![](https://raw.githubusercontent.com/hannahcomiskey/mcmsupply/master/badge/mcmsupply_badge.png)](http://hannahcomiskey.github.io/mcmsupply/)
+
+## R-CMD-Check status
+
+[![R-CMD-check](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hannahcomiskey/mcmsupply/actions/workflows/R-CMD-check.yaml)
+
+\## Acknowledgements This package was developed during the 2025 NUMBAT
+Hackathon. We thank [Monash NUMBATs](https://numbat.space/) and [Monash
+EBS](https://www.monash.edu/business/ebs) for organising the event and
+providing resources that enabled collaborative development.
+
+# Package index
+
+## All functions
+
+- [`Country_and_area_classification`](https://hannahcomiskey.github.io/mcmsupply/reference/Country_and_area_classification.md)
+  : The Country and area classification according to the United Nations
+  Standaistical Division, Standard country or area codes for statistical
+  use (M49). Adapted for use in FP2030 by the Track20 project. A subset
+  of data from the United Nations country classifications
+- [`DEFT_DHS_database`](https://hannahcomiskey.github.io/mcmsupply/reference/DEFT_DHS_database.md)
+  : DEFT_DHS_database A database of the design effects for some of the
+  DHS surveys in the national and subnational datasets. Due to due to
+  multistage and clustering of the DHS sample, the average standard
+  error is increased by a design effect (DEFT) factor over that in an
+  equivalent simple random sample.
+- [`calculate_SE_data_from_DTA()`](https://hannahcomiskey.github.io/mcmsupply/reference/calculate_SE_data_from_DTA.md)
+  : Calculate Standard Errors and Variance-Covariance Matrices for DHS
+  Subnational Estimates
+- [`check_data_freshness()`](https://hannahcomiskey.github.io/mcmsupply/reference/check_data_freshness.md)
+  : Check Data Freshness Against DHS Reference
+- [`country_names`](https://hannahcomiskey.github.io/mcmsupply/reference/country_names.md)
+  : The names of the countries with national and subnational
+  administration level data stored
+- [`get_data()`](https://hannahcomiskey.github.io/mcmsupply/reference/get_data.md)
+  : Wrapper function that retrieves the DHS data used for modelling the
+  proportion of modern contraceptives supplied by the public and private
+  sectors at the national and subnational administration levels.
+- [`get_posterior_P_samps()`](https://hannahcomiskey.github.io/mcmsupply/reference/get_posterior_P_samps.md)
+  : Function to pull the complete posterior sample for the national
+  method-supply share estimates. Functionality for the subnational
+  models is still under development.
+- [`get_modelinputs()`](https://hannahcomiskey.github.io/mcmsupply/reference/get_subnational_modelinputs.md)
+  : Get JAGS model inputs
+- [`harvest_dhs()`](https://hannahcomiskey.github.io/mcmsupply/reference/harvest_dhs.md)
+  : Harvest DHS Dataset Availability
+- [`national_FPsource_VARCOV_bivarlogitnormal`](https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_VARCOV_bivarlogitnormal.md)
+  : An array of variance-covariance matrices transformed onto the
+  logit-scale via the delta method. Each matrix corresponds to the DHS
+  survey logit-transformed observations for the proportion of modern
+  contraceptives supplied by the public and private sectors at the
+  national level
+- [`national_FPsource_data`](https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_data.md)
+  : DHS survey observations for the proportion of modern contraceptives
+  supplied by the public and private sectors at the national level
+- [`national_FPsource_format`](https://hannahcomiskey.github.io/mcmsupply/reference/national_FPsource_format.md)
+  : A checklist for ensuring national-level custom data is appropriate
+  to be used for estimation
+- [`national_estimated_correlations_bivarlogitnormal`](https://hannahcomiskey.github.io/mcmsupply/reference/national_estimated_correlations_bivarlogitnormal.md)
+  : The estimated national-level correlations between the rates of
+  change in methods
+- [`national_inv_sigma_delta_hat_bivarlogitnorm`](https://hannahcomiskey.github.io/mcmsupply/reference/national_inv_sigma_delta_hat_bivarlogitnorm.md)
+  : The median estimate for the national-level variance-covariance
+  matrix of the delta.k terms in the multi-country national model.
+- [`national_tau_alpha_cms_hat_bivarlogitnorm`](https://hannahcomiskey.github.io/mcmsupply/reference/national_tau_alpha_cms_hat_bivarlogitnorm.md)
+  : The median estimates of the precision for the national-level
+  country, sector-, method-specific intercepts in the multi-country
+  national model. This vector is used to inform the precision in the
+  Normal prior of the national-level intercept in single-country
+  national models.
+- [`national_theta_rms_hat_bivarlogitnorm`](https://hannahcomiskey.github.io/mcmsupply/reference/national_theta_rms_hat_bivarlogitnorm.md)
+  : The median estimates of the national-level sub-continental, sector-,
+  method-specific intercepts in the multi-country national model. This
+  array is used to inform the Normal prior of the country-level
+  intercept in the single-country national model.
+- [`national_varcov_order_bivarlogitnormal`](https://hannahcomiskey.github.io/mcmsupply/reference/national_varcov_order_bivarlogitnormal.md)
+  : The order of observations to join the variance-covariance array data
+  and the DHS survey observations for the proportion of modern
+  contraceptives supplied by the public and private sectors at the
+  national level
+- [`plot_estimates()`](https://hannahcomiskey.github.io/mcmsupply/reference/plot_estimates.md)
+  : Wrapper function to plot the JAGS estimates
+- [`pull_estimates()`](https://hannahcomiskey.github.io/mcmsupply/reference/pull_estimates.md)
+  : Function to pull method-supply share median estimates and credible
+  intervals for a given year and country.
+- [`run_jags_model()`](https://hannahcomiskey.github.io/mcmsupply/reference/run_jags_model.md)
+  : Wrapper function to run the jags model for estimating the proportion
+  of modern contraceptive methods supplied by the public & private
+  Sectors using a Bayesian hierarchical penalized spline model for the
+  national and subnational administration levels
+- [`subnat_FPsource_data`](https://hannahcomiskey.github.io/mcmsupply/reference/subnat_FPsource_data.md)
+  : DHS survey observations for the proportion of modern contraceptives
+  supplied by the public and private sectors at the subnational
+  administration level.
+- [`subnat_FPsource_format`](https://hannahcomiskey.github.io/mcmsupply/reference/subnat_FPsource_format.md)
+  : A checklist for ensuring subnational-level custom data is
+  appropriate to be used for estimation
+- [`subnational_alpha_cms_hat`](https://hannahcomiskey.github.io/mcmsupply/reference/subnational_alpha_cms_hat.md)
+  : The median estimates of the subnational-level country, sector-,
+  method-specific intercepts in the multi-country subnational model.
+  This array is used to inform the Normal prior of the subnational-level
+  intercept in the single-country subnational model.
+- [`subnational_estimated_correlations`](https://hannahcomiskey.github.io/mcmsupply/reference/subnational_estimated_correlations.md)
+  : The estimated subnational-level correlations between the rates of
+  change in methods
+- [`subnational_inv.sigma_delta_hat`](https://hannahcomiskey.github.io/mcmsupply/reference/subnational_inv.sigma_delta_hat.md)
+  : The median estimate for the subnational-level precision matrix of
+  the delta.k terms in the multi-country subnational model. This array
+  is used to inform the multi-variate normal prior in the single-country
+  subnational model.
+- [`subnational_tau_alpha_pms_hat`](https://hannahcomiskey.github.io/mcmsupply/reference/subnational_tau_alpha_pms_hat.md)
+  : subnational_tau_alpha_pms_hat The median estimates of the precision
+  for the subnational-level country, sector-, method-specific intercepts
+  in the multi-country subnational model. This vector is used to inform
+  the precision in the Normal prior of the subnational-level intercept
+  in single-country subnational models.
+
+# Articles
+
+### All vignettes
+
+- [Running a national level multi-country
+  model](https://hannahcomiskey.github.io/mcmsupply/articles/national_multicountry_mod.md):
+- [Running a national level single-country model with custom
+  data](https://hannahcomiskey.github.io/mcmsupply/articles/national_singlecountry_customdata_models.md):
+- [Running a national level single-country
+  model](https://hannahcomiskey.github.io/mcmsupply/articles/national_singlecountry_mod.md):
+- [Package
+  data](https://hannahcomiskey.github.io/mcmsupply/articles/package_data.md):
+- [Running a subnational level multi-country
+  model](https://hannahcomiskey.github.io/mcmsupply/articles/subnational_multicountry_models.md):
+- [Running a subnational level single-country model with custom
+  data](https://hannahcomiskey.github.io/mcmsupply/articles/subnational_singlecountry_customdata_models.md):
+- [Running a subnational level single-country
+  model](https://hannahcomiskey.github.io/mcmsupply/articles/subnational_singlecountry_models.md):
