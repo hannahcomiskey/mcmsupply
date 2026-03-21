@@ -15,12 +15,12 @@ Source:
 
 Comiskey H, Cahill N, Alkema L (2026). *mcmsupply: Estimating Public and
 Private Sector Contraceptive Market Supply Shares*. R package version
-1.0.2, <https://hannahcomiskey.github.io/mcmsupply/>.
+1.0.3, <https://hannahcomiskey.github.io/mcmsupply/>.
 
     @Manual{,
       title = {mcmsupply: Estimating Public and Private Sector Contraceptive Market Supply Shares},
       author = {Hannah Comiskey and Niamh Cahill and Leontine Alkema},
       year = {2026},
-      note = {R package version 1.0.2},
+      note = {R package version 1.0.3},
       url = {https://hannahcomiskey.github.io/mcmsupply/},
     }
