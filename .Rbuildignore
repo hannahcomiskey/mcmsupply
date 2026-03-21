@@ -1,13 +1,13 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data/..rd
-^README.md
+^README\.md$
 ^cran-comments\.md$
-^RJournal.sty
-^RJreferences.bib
-^mcmsupply.Rmd
-^motivation-letter.md
-^motivation-letter.pdf
+^RJournal\.sty$
+^RJreferences\.bib$
+^mcmsupply\.Rmd$
+^motivation-letter\.md$
+^motivation-letter\.pdf$
 ^_pkgdown\.yml$
 ^doc$
 ^docs$
@@ -15,4 +15,23 @@
 ^\.github$
 ^badge$
 ^CRAN-SUBMISSION$
+<<<<<<< Updated upstream
 ^_pkgdown\.yml$
+=======
+
+# Extra ignores to clean up check notes
+^\.DS_Store$
+^R/\.DS_Store$
+^data/\.DS_Store$
+^inst/\.DS_Store$
+^inst/model/\.DS_Store$
+
+^\.Rhistory$
+^\.RData$
+^\.RDataTmp$
+^\.RDataTmp1$
+^\.Ruserdata$
+
+^\.git$
+^\.gitignore$
+>>>>>>> Stashed changes

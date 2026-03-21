@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Hannah Comiskey \email{hannah.comiskey.2015@mumail.ie}
+\strong{Maintainer}: Hannah Comiskey \email{hannahcomiskey68@gmail.com}
 
 Authors:
 \itemize{
