@@ -1,7 +1,7 @@
 Package: mcmsupply
 Type: Package
 Title: Estimating Public and Private Sector Contraceptive Market Supply Shares
-Version: 1.0.2
+Version: 1.0.3
 Authors@R:
     c(person("Hannah", "Comiskey", email="hannahcomiskey68@gmail.com", 
     role = c("aut", "cre")),
