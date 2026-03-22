@@ -1796,7 +1796,7 @@ run_national_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
     } else { # local
       jagsparams <- c("P",
                       "alpha_cms",
-                      "beta.k",
+                      # "beta.k",
                       "inv.sigma_delta")
     }
   }
