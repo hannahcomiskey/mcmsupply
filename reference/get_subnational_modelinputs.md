@@ -71,9 +71,8 @@ raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
 #> Using preloaded dataset!
 #> Joining with `by = join_by(Country, average_year)`
 #> Getting data for Nepal
-#> Error in dplyr::select(., `Country or area`, Region): Can't select columns that don't exist.
-#> ✖ Column `Country or area` doesn't exist.
+#> Joining with `by = join_by(Country)`
 jagsdata <- get_modelinputs(startyear=1990, endyear=2030.5, nsegments=12, raw_data)
-#> Error: object 'raw_data' not found
+#> Adding missing grouping variables: `Country`, `index_country`
 # }
 ```

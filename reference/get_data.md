@@ -57,7 +57,6 @@ raw_data <- get_data(national=FALSE, local=TRUE, mycountry="Nepal")
 #> Using preloaded dataset!
 #> Joining with `by = join_by(Country, average_year)`
 #> Getting data for Nepal
-#> Error in dplyr::select(., `Country or area`, Region): Can't select columns that don't exist.
-#> ✖ Column `Country or area` doesn't exist.
+#> Joining with `by = join_by(Country)`
 # }
 ```

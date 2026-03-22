@@ -107,12 +107,17 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_data.html">get_data</a></span><span class="op">(</span>national<span class="op">=</span><span class="cn">TRUE</span>, local<span class="op">=</span><span class="cn">TRUE</span>, mycountry<span class="op">=</span><span class="st">"Nepal"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using preloaded dataset!</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::select(., `Country or area`, Region):</span> Can't select columns that don't exist.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `Country or area` doesn't exist.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country, average_year, Method, Super_region)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Getting data for Nepal</span>
 <span class="r-in"><span><span class="va">jagsdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_subnational_modelinputs.html">get_modelinputs</a></span><span class="op">(</span>startyear<span class="op">=</span><span class="fl">1990</span>, endyear<span class="op">=</span><span class="fl">2025.5</span>, nsegments<span class="op">=</span><span class="fl">12</span>, <span class="va">raw_data</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'raw_data' not found</span>
 <span class="r-in"><span><span class="fu">run_jags_model</span><span class="op">(</span><span class="va">jagsdata</span>, n_iter<span class="op">=</span><span class="fl">5</span>, n_burnin<span class="op">=</span><span class="fl">1</span>, n_thin<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'jagsdata' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using preloaded dataset!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(Country, average_year, Method, Super_region)`</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dimnames(median_alpha_region_intercepts) &lt;- `*vtmp*`:</span> length of 'dimnames' [3] not equal to array extent</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
